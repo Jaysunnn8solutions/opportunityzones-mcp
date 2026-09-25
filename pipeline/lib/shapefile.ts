@@ -4,7 +4,9 @@
  * here, so a full GIS dependency would be dead weight.
  *
  * .shp: 100-byte header, then records of [big-endian record header][little-
- * endian shape]. Polygon (5) records hold a bbox, part offsets, and points.
+ * endian shape]. Polygon (5) and polyline (3) records share one layout: a bbox,
+ * part offsets, and points, so both are read here (a polyline's parts are
+ * returned as "rings").
  * .dbf: fixed-width dBASE III table.
  */
 
@@ -24,7 +26,7 @@ export function readShpPolygons(buf: Uint8Array): Array<ShpPolygon | null> {
     const type = view.getInt32(rec, true);
     if (type === 0) {
       out.push(null);
-    } else if (type === 5 || type === 15 || type === 25) {
+    } else if (type === 5 || type === 15 || type === 25 || type === 3 || type === 13 || type === 23) {
       const numParts = view.getInt32(rec + 36, true);
       const numPoints = view.getInt32(rec + 40, true);
       const partsAt = rec + 44;
@@ -45,7 +47,7 @@ export function readShpPolygons(buf: Uint8Array): Array<ShpPolygon | null> {
       }
       out.push({ rings });
     } else {
-      throw new Error(`Unsupported shape type ${type}; expected polygons`);
+      throw new Error(`Unsupported shape type ${type}; expected polygons or polylines`);
     }
     at = rec + contentBytes;
   }

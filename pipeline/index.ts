@@ -36,6 +36,7 @@ import { buildOz1Lists } from "./oz1/lists";
 import { buildOz2Designated } from "./oz2/designated";
 import { buildOz2Eligible } from "./oz2/eligible";
 import { buildOz2Rural } from "./oz2/rural";
+import { buildInterstateDistance } from "./roads/interstate";
 
 const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["crosswalk (blocks, 2020 P.L. counts, LODES)", buildCrosswalk],
@@ -54,6 +55,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["HMDA mortgage lending by tract", () => buildHmda()],
   ["Anchor institutions: colleges and hospitals", buildAnchors],
   ["HUD Small Area Fair Market Rents", buildSafmr],
+  ["Distance to the nearest Interstate", buildInterstateDistance],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
