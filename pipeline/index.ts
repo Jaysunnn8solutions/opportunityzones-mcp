@@ -26,6 +26,7 @@ import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
 import { compare } from "./oz1/compare";
 import { buildOz1Lists } from "./oz1/lists";
+import { buildOz2Designated } from "./oz2/designated";
 import { buildOz2Eligible } from "./oz2/eligible";
 
 const STAGES: Array<[string, () => Promise<unknown>]> = [
@@ -34,6 +35,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["ACS 5-year vintages", buildAcsVintages],
   ["CPI-U", buildCpi],
   ["OZ 2.0 eligible tracts", buildOz2Eligible],
+  ["OZ 2.0 designations (pending Treasury)", buildOz2Designated],
   ["FHFA tract house price index", buildFhfaHpi],
   ["Connecticut GEOID harmonisation", buildCtTracts],
   ["2010 tract adjacency", buildAdjacency],
