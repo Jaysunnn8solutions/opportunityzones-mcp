@@ -454,6 +454,23 @@ export const SOURCES = {
       "Distance to the Interstate network bears on logistics and access. Computed offline because live HPMS queries for it took 2-17 s; TIGER is one 38 MB national file of the same centerlines.",
     access: ["file-pipeline"],
   },
+  foursquarePlaces: {
+    id: "foursquarePlaces",
+    name: "Foursquare Open Source Places",
+    publisher: "Foursquare Labs, Inc.",
+    homepage: "https://docs.foursquare.com/data-products/docs/access-fsq-os-places",
+    license: "Apache License 2.0",
+    commercialUse: "attribution",
+    attribution: "Foursquare Open Source Places, © Foursquare Labs, Inc., licensed under Apache 2.0",
+    geography: "Place point, looked up around a site (no areal aggregation)",
+    vintage: "Current release at query time; each place carries date_refreshed",
+    notes:
+      "NOT YET VERIFIED LIVE: the Iceberg catalog endpoint, warehouse and table come from the Places Portal code page (needs the owner's account) and FSQ_PORTAL_TOKEN is not set. Free account; the separate paid Places API is never used. Queried per site with a box around a ~1 km-rounded point; never bulk-downloaded. Closed places excluded.",
+    purposes: ["feasibility"],
+    rationale:
+      "Everyday amenities near a site (grocery, pharmacy, bank, restaurants, retail) bear on residential and commercial feasibility. OS Places is the only openly licensed national place dataset with commercial rights.",
+    access: ["api-runtime"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
