@@ -73,10 +73,10 @@ export const SOURCES = {
       "Census tract. Vintages 2010-2019 are tabulated on 2010 tracts; 2020 onward on 2020 tracts (verified: Delaware has 218 tracts in 2010-2019, 262 from 2020).",
     vintage: "2006-2010, 2012-2016, 2013-2017, 2020-2024",
     notes:
-      "Dollar figures are in each vintage's final-year dollars. Missing estimates arrive as sentinels such as -666666666 and are mapped to null.",
-    purposes: ["statutory", "impact-baseline"],
+      "Dollar figures are in each vintage's final-year dollars. Missing estimates arrive as sentinels such as -666666666 and are mapped to null. B25034 (year structure built, 2020-2024) is pulled by pipeline/acs/housingAge.ts.",
+    purposes: ["statutory", "feasibility", "impact-baseline"],
     rationale:
-      "Statutory: median family income and poverty rate are the inputs of the § 1400Z-1(c)(1) low-income-community test. Impact baseline: tract income, rents, home values, vacancy and population before and after the 2018 designations. No other source publishes these at tract level.",
+      "Statutory: median family income and poverty rate are the inputs of the § 1400Z-1(c)(1) low-income-community test. Impact baseline: tract income, rents, home values, vacancy and population before and after the 2018 designations. Feasibility: the age of the housing stock (B25034), including the only tract-level count of homes built since 2020. No other source publishes these at tract level.",
     access: ["api-pipeline"],
   },
   decennialPl: {
