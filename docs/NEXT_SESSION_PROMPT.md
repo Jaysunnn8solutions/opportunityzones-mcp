@@ -74,7 +74,7 @@ Sources to add, in priority order:
 |---|---|---|---|---|
 | 1 | 2027 OZ designations (Treasury/CDFI) | statutory | pipeline | Not yet published. Build the ingest stage and schema now so it lands the day it appears. |
 | 2 | Census urban areas (2020) + places > 50,000 | statutory | pipeline | **Done (block-based), `pipeline/oz2/rural.ts`.** Follows IRS Notice 2025-50 and Treasury's March 2026 rural methodology; agrees with Treasury's flag on 98.3% of tracts and explains each. **Follow-up:** Treasury excludes detached "islands" of an urban area and counts urban areas that only touch a city; both need full-resolution urban area, place and 2020 tract polygons (~1 GB) to reproduce, which would move the explained share toward 100%. Treasury's flag stays the authority either way. |
-| 3 | HUD Qualified Census Tracts + Difficult Development Areas | feasibility | pipeline | LIHTC 30% basis boost; common OZ stacking. |
+| 3 | HUD Qualified Census Tracts + Difficult Development Areas | feasibility | pipeline | **Done, `pipeline/hud/qctDda.ts`.** From HUD's own ArcGIS services (huduser.gov returns an empty HTTP 202 to scripts). DDAs carried to tracts as a land share via the ZCTA-tract file. |
 | 4 | CDFI Fund NMTC eligible tracts | feasibility | pipeline | Same publisher as the OZ lists. Mind the tract vintage. |
 | 5 | ACS year structure built (B25034) | statutory | pipeline (Census API) | Relevant to the substantial-improvement test on existing buildings. Add to the existing ACS stage. Its "built 2020 or later" share is also the only **tract-level** new-construction signal (lags a few years); pair it with #15. |
 | 6 | EPA brownfields (ACRES) + Superfund NPL (SEMS) | feasibility | runtime and pipeline | Per-tract counts/flags; point lookup near a site. |

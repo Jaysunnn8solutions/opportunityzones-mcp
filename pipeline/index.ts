@@ -21,6 +21,7 @@ import { buildCpi } from "./cpi";
 import { buildCrosswalk } from "./crosswalk/blocks";
 import { buildCtTracts } from "./crosswalk/connecticut";
 import { buildFhfaHpi } from "./fhfa/hpi";
+import { buildHudQctDda } from "./hud/qctDda";
 import { log } from "./lib/http";
 import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
@@ -40,6 +41,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["FHFA tract house price index", buildFhfaHpi],
   ["Connecticut GEOID harmonisation", buildCtTracts],
   ["OZ 2.0 rural status, reproduced and explained", buildOz2Rural],
+  ["HUD Qualified Census Tracts and Difficult Development Areas", buildHudQctDda],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
