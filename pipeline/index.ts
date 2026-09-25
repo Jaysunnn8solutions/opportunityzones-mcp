@@ -23,6 +23,7 @@ import { buildCrosswalk } from "./crosswalk/blocks";
 import { buildCtTracts } from "./crosswalk/connecticut";
 import { buildFhfaHpi } from "./fhfa/hpi";
 import { buildNmtc } from "./cdfi/nmtc";
+import { buildEpaSites } from "./epa/sites";
 import { buildHudQctDda } from "./hud/qctDda";
 import { log } from "./lib/http";
 import { buildAdjacency } from "./oz1/adjacency";
@@ -46,6 +47,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["HUD Qualified Census Tracts and Difficult Development Areas", buildHudQctDda],
   ["NMTC low-income community eligibility", buildNmtc],
   ["Housing age (ACS B25034)", buildHousingAge],
+  ["EPA Superfund and brownfield sites by tract", buildEpaSites],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
