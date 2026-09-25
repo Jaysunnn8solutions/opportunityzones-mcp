@@ -336,6 +336,23 @@ export const SOURCES = {
       "NMTC is a federal credit commonly paired with OZ investment in the same places. The CDFI Fund's file is the authority on which tracts qualify.",
     access: ["file-pipeline"],
   },
+  epaSites: {
+    id: "epaSites",
+    name: "EPA Superfund (National Priorities List) and Brownfields (ACRES) site locations",
+    publisher: "U.S. Environmental Protection Agency",
+    homepage: "https://geopub.epa.gov/arcgis/rest/services/EMEF/efpoints/MapServer",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Environmental Protection Agency, Envirofacts: Superfund (NPL) and Brownfields (ACRES) sites",
+    geography: "Site points; counted by 2020 census tract using 1:500,000 boundaries",
+    vintage: "Live at query time (runtime); snapshot at pipeline run (tract counts)",
+    notes:
+      "1,373 NPL and ~44,000 ACRES points. Runtime queries send EPA a point rounded to ~1 km with a padded radius and filter locally, so the exact searched site never leaves the product. A listed brownfield may already be cleaned up; each result links to EPA's record.",
+    purposes: ["feasibility"],
+    rationale:
+      "Contamination history bears on whether and how a site can be developed, and brownfield cleanup is a common part of OZ projects. EPA's registries are the authoritative record; no other national source lists these sites.",
+    access: ["api-runtime", "api-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
