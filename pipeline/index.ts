@@ -16,6 +16,7 @@
  *  - FHFA checks its boundary vintage against the ACS tract lists.
  */
 
+import { buildHousingAge } from "./acs/housingAge";
 import { buildAcsVintages } from "./acs/vintages";
 import { buildCpi } from "./cpi";
 import { buildCrosswalk } from "./crosswalk/blocks";
@@ -44,6 +45,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["OZ 2.0 rural status, reproduced and explained", buildOz2Rural],
   ["HUD Qualified Census Tracts and Difficult Development Areas", buildHudQctDda],
   ["NMTC low-income community eligibility", buildNmtc],
+  ["Housing age (ACS B25034)", buildHousingAge],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
