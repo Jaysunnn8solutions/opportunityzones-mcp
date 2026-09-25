@@ -1,0 +1,2533 @@
+{
+  "generatedFrom": "data/oz1/analysis.csv",
+  "covariates": [
+    "log median home value, 2012-16",
+    "log median gross rent, 2012-16",
+    "log median household income, 2012-16",
+    "poverty rate, 2012-16",
+    "vacancy rate, 2012-16",
+    "owner-occupied share, 2012-16",
+    "log population, 2012-16",
+    "log population density",
+    "bachelor's degree or higher, 2012-16",
+    "real change in home value, 2006-10 to 2012-16",
+    "real change in rent, 2006-10 to 2012-16",
+    "real change in household income, 2006-10 to 2012-16",
+    "change in population, 2006-10 to 2012-16",
+    "log jobs located in tract, 2015",
+    "change in jobs, 2012 to 2015"
+  ],
+  "checks": [
+    {
+      "name": "2018 lists reconcile",
+      "status": "pass",
+      "detail": "8,764 designated = 8,566 LIC + 198 contiguous, matching the 8,764 on CDFI's final list (reference)."
+    },
+    {
+      "name": "Crosswalk conserves the 2020 Census",
+      "status": "pass",
+      "detail": "334,735,155 people allocated to 2010 tracts, equal to the 2020 Census count of 334,735,155 (US + PR, reference)."
+    },
+    {
+      "name": "2020-24 ACS population survives conversion to 2010 tracts",
+      "status": "pass",
+      "detail": "338,071,412 after conversion vs 338,079,229 in the pulled tracts (0.002% apart)."
+    },
+    {
+      "name": "Every populated 2020 tract is in the 2020-24 ACS",
+      "status": "note",
+      "detail": "14 populated 2020 tracts (76,505 people, county 36103) are not published in the 2020-24 ACS; their outcomes are null. For Suffolk County, NY (36103) these tracts appear in the 2017-21 and 2018-22 releases and disappear from 2019-23 on. List: data/oz1/acs2024_missing_tracts.csv."
+    },
+    {
+      "name": "Tract geography maps plausibly",
+      "status": "pass",
+      "detail": "272 of 73,053 tracts (0.37%) more than doubled or halved between the 2012-16 ACS and the 2020 Census; a mis-mapped tract would show up here, as do real booms and busts."
+    },
+    {
+      "name": "Reproduces the Urban Institute's published tract means",
+      "status": "note",
+      "detail": "On Urban's own universe and the same 2012-16 ACS, 5 of 6 measures match its published designated and control means (within 1% for dollars, 0.2 pp for rates). See the table for the ones that do not."
+    },
+    {
+      "name": "Inflation adjustment",
+      "status": "pass",
+      "detail": "CPI-U 2016-to-2024 factor 1.307, from BLS annual averages 240.007 and 313.689 (reference)."
+    }
+  ],
+  "specs": [
+    {
+      "id": "main",
+      "title": "Main",
+      "description": "All designated LIC tracts vs all eligible LIC tracts not designated, matched within state (k=5).",
+      "treated": 7657,
+      "controls": 23324,
+      "usableControls": 22402,
+      "matched": 7299,
+      "unmatched": {
+        "missing-covariates": 358
+      },
+      "maxAbsSmdAfter": 0.18704670458927128,
+      "balance": [
+        {
+          "covariate": "log median home value, 2012-16",
+          "meanTreated": 11.659838997060248,
+          "meanControlAll": 11.758094127557365,
+          "meanControlMatched": 11.666741266082527,
+          "smdBefore": -0.1506648906044343,
+          "smdAfter": -0.010583972581405976
+        },
+        {
+          "covariate": "log median gross rent, 2012-16",
+          "meanTreated": 6.629603550154859,
+          "meanControlAll": 6.711923180795974,
+          "meanControlMatched": 6.651201081619581,
+          "smdBefore": -0.2738889109193053,
+          "smdAfter": -0.07185800428584084
+        },
+        {
+          "covariate": "log median household income, 2012-16",
+          "meanTreated": 10.396565512459109,
+          "meanControlAll": 10.546151887209648,
+          "meanControlMatched": 10.448144529471952,
+          "smdBefore": -0.45441193375718614,
+          "smdAfter": -0.15668620154200424
+        },
+        {
+          "covariate": "poverty rate, 2012-16",
+          "meanTreated": 0.29781436984518284,
+          "meanControlAll": 0.24588936595705813,
+          "meanControlMatched": 0.2759142883298071,
+          "smdBefore": 0.44348697315303953,
+          "smdAfter": 0.18704670458927128
+        },
+        {
+          "covariate": "vacancy rate, 2012-16",
+          "meanTreated": 0.15318680847102334,
+          "meanControlAll": 0.1387451087608249,
+          "meanControlMatched": 0.14165679248919472,
+          "smdBefore": 0.14538268257987305,
+          "smdAfter": 0.11607114725168469
+        },
+        {
+          "covariate": "owner-occupied share, 2012-16",
+          "meanTreated": 0.4562119879517743,
+          "meanControlAll": 0.519383952843054,
+          "meanControlMatched": 0.4791421334996834,
+          "smdBefore": -0.30354796671934464,
+          "smdAfter": -0.1101817723989656
+        },
+        {
+          "covariate": "log population, 2012-16",
+          "meanTreated": 8.193093831452574,
+          "meanControlAll": 8.213313020766224,
+          "meanControlMatched": 8.245645742579043,
+          "smdBefore": -0.04205506545368935,
+          "smdAfter": -0.1093057702688462
+        },
+        {
+          "covariate": "log population density",
+          "meanTreated": 6.348167433827936,
+          "meanControlAll": 6.548471695139253,
+          "meanControlMatched": 6.555434486156064,
+          "smdBefore": -0.0912131877030937,
+          "smdAfter": -0.09438385596444786
+        },
+        {
+          "covariate": "bachelor's degree or higher, 2012-16",
+          "meanTreated": 0.16705041679819171,
+          "meanControlAll": 0.1879743152865817,
+          "meanControlMatched": 0.1615913253515166,
+          "smdBefore": -0.17196046992375402,
+          "smdAfter": 0.04486486736914156
+        },
+        {
+          "covariate": "real change in home value, 2006-10 to 2012-16",
+          "meanTreated": -0.16447794318947853,
+          "meanControlAll": -0.17169500641371468,
+          "meanControlMatched": -0.1754873493718027,
+          "smdBefore": 0.026172149668344358,
+          "smdAfter": 0.03992480284719688
+        },
+        {
+          "covariate": "real change in rent, 2006-10 to 2012-16",
+          "meanTreated": 0.01651600808466914,
+          "meanControlAll": 0.011136003556825296,
+          "meanControlMatched": 0.009173599826009104,
+          "smdBefore": 0.03215429148321009,
+          "smdAfter": 0.04388285067713542
+        },
+        {
+          "covariate": "real change in household income, 2006-10 to 2012-16",
+          "meanTreated": -0.061341881664611735,
+          "meanControlAll": -0.06309609369788421,
+          "meanControlMatched": -0.07337319369534556,
+          "smdBefore": 0.008430908607772696,
+          "smdAfter": 0.05782362122638412
+        },
+        {
+          "covariate": "change in population, 2006-10 to 2012-16",
+          "meanTreated": 0.02206125391149469,
+          "meanControlAll": 0.021889539149183207,
+          "meanControlMatched": 0.015150594909174803,
+          "smdBefore": 0.0010708545180780323,
+          "smdAfter": 0.04309653005899965
+        },
+        {
+          "covariate": "log jobs located in tract, 2015",
+          "meanTreated": 7.159616128682011,
+          "meanControlAll": 6.594423805565086,
+          "meanControlMatched": 6.935504904901979,
+          "smdBefore": 0.44670145019032403,
+          "smdAfter": 0.17712697885628884
+        },
+        {
+          "covariate": "change in jobs, 2012 to 2015",
+          "meanTreated": 0.04164737360049322,
+          "meanControlAll": 0.04887075536916328,
+          "meanControlMatched": 0.04043984730266949,
+          "smdBefore": -0.021787589806185566,
+          "smdAfter": 0.0036422119859808068
+        }
+      ],
+      "effects": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7060,
+          "att": 0.01760708612993385,
+          "ciLow": 0.0052651764413311885,
+          "ciHigh": 0.029315835235669194,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.310186409266288,
+          "meanMatchedControls": 0.292579323136355
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3333,
+          "att": -0.0005006697937293718,
+          "ciLow": -0.005816851699732728,
+          "ciHigh": 0.004967894025373689,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.28442127065406553,
+          "meanMatchedControls": 0.28492194044779473
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2487,
+          "att": 0.002767633527007102,
+          "ciLow": -0.005215955321252782,
+          "ciHigh": 0.010644489601693882,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3402039368114187,
+          "meanMatchedControls": 0.33743630328441215
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7211,
+          "att": 0.007087427296075469,
+          "ciLow": 0.0013058371247774798,
+          "ciHigh": 0.0132281635906764,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.08553596199556227,
+          "meanMatchedControls": 0.07844853469948708
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7249,
+          "att": 0.009083371899342397,
+          "ciLow": 0.0015579686066197148,
+          "ciHigh": 0.016504562651783572,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.1730626563498403,
+          "meanMatchedControls": 0.16397928445049922
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7298,
+          "att": 0.004474334222937784,
+          "ciLow": -0.0016023653936526534,
+          "ciHigh": 0.010027435898700643,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": -0.0007710508495478123,
+          "meanMatchedControls": -0.0052453850724856
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7298,
+          "att": 0.018415487677103392,
+          "ciLow": 0.013412343799659951,
+          "ciHigh": 0.023356244248523374,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.04249717912852831,
+          "meanMatchedControls": 0.024081691451424966
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7010,
+          "att": 0.02035232936947237,
+          "ciLow": 0.009408615933170675,
+          "ciHigh": 0.030696708514101428,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.03113222417974324,
+          "meanMatchedControls": 0.01077989481027107
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7298,
+          "att": -0.0032443159581392535,
+          "ciLow": -0.005973941626762317,
+          "ciHigh": -0.0003569908140509087,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.06309572398328338,
+          "meanMatchedControls": -0.059851408025143875
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7298,
+          "att": 0.001010725267539056,
+          "ciLow": -0.001075998020162171,
+          "ciHigh": 0.003185180299149586,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.021916353935324772,
+          "meanMatchedControls": -0.022927079202863847
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7298,
+          "att": -0.00411932868922993,
+          "ciLow": -0.00669491687772131,
+          "ciHigh": -0.0016058663033651434,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021349256000274014,
+          "meanMatchedControls": 0.02546858468950407
+        }
+      ],
+      "effectsBiasCorrected": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7060,
+          "att": 0.024362392313423742,
+          "ciLow": 0.012316037283676742,
+          "ciHigh": 0.03617406950889593,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.310186409266288,
+          "meanMatchedControls": 0.292579323136355
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3333,
+          "att": -0.0023680430637771483,
+          "ciLow": -0.007168326783209587,
+          "ciHigh": 0.0028719147560785072,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.28442127065406553,
+          "meanMatchedControls": 0.28492194044779473
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2487,
+          "att": 0.00046214075407318637,
+          "ciLow": -0.007422981026620563,
+          "ciHigh": 0.00822369625931999,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3402039368114187,
+          "meanMatchedControls": 0.33743630328441215
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7211,
+          "att": 0.010674163005060853,
+          "ciLow": 0.005171236139440955,
+          "ciHigh": 0.016785925972341055,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.08553596199556227,
+          "meanMatchedControls": 0.07844853469948708
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7249,
+          "att": 0.0009802756799898562,
+          "ciLow": -0.006853143311421972,
+          "ciHigh": 0.008362619930186003,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.1730626563498403,
+          "meanMatchedControls": 0.16397928445049922
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7298,
+          "att": 0.0029051057163034097,
+          "ciLow": -0.0031173465681191854,
+          "ciHigh": 0.008264276856028586,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": -0.0007710508495478123,
+          "meanMatchedControls": -0.0052453850724856
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7298,
+          "att": 0.01550291941997809,
+          "ciLow": 0.010657933864634601,
+          "ciHigh": 0.020297390933844087,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.04249717912852831,
+          "meanMatchedControls": 0.024081691451424966
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7010,
+          "att": 0.03580017174100931,
+          "ciLow": 0.025686018888094762,
+          "ciHigh": 0.04509029492211956,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.03113222417974324,
+          "meanMatchedControls": 0.01077989481027107
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7298,
+          "att": 0.004018150342958047,
+          "ciLow": 0.0014471055379232816,
+          "ciHigh": 0.006581915090680643,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.06309572398328338,
+          "meanMatchedControls": -0.059851408025143875
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7298,
+          "att": 0.0012517473636238917,
+          "ciLow": -0.0006949371764574778,
+          "ciHigh": 0.0032622028161237867,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.021916353935324772,
+          "meanMatchedControls": -0.022927079202863847
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7298,
+          "att": -0.003910174084892418,
+          "ciLow": -0.0065867267946362424,
+          "ciHigh": -0.001529077956727883,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021349256000274014,
+          "meanMatchedControls": 0.02546858468950407
+        }
+      ]
+    },
+    {
+      "id": "donut",
+      "title": "Donut (spillover check)",
+      "description": "Controls that border any designated tract are excluded, since effects can leak next door: Freedman, Kouchekinia and Neumark (NBER WP 34589, 2025) find about 83% of OZ job gains offset by losses in nearby low-income tracts.",
+      "treated": 7657,
+      "controls": 11037,
+      "usableControls": 10553,
+      "matched": 7299,
+      "unmatched": {
+        "missing-covariates": 358
+      },
+      "maxAbsSmdAfter": 0.33094405335969224,
+      "balance": [
+        {
+          "covariate": "log median home value, 2012-16",
+          "meanTreated": 11.659838997060248,
+          "meanControlAll": 11.845246274273476,
+          "meanControlMatched": 11.701948752134912,
+          "smdBefore": -0.28102035391694996,
+          "smdAfter": -0.06382542504428675
+        },
+        {
+          "covariate": "log median gross rent, 2012-16",
+          "meanTreated": 6.629603550154859,
+          "meanControlAll": 6.749626250559715,
+          "meanControlMatched": 6.664197959896685,
+          "smdBefore": -0.39533197624502103,
+          "smdAfter": -0.11394741431524145
+        },
+        {
+          "covariate": "log median household income, 2012-16",
+          "meanTreated": 10.396565512459109,
+          "meanControlAll": 10.607737372501461,
+          "meanControlMatched": 10.48759596890773,
+          "smdBefore": -0.6606247398458169,
+          "smdAfter": -0.2847773922025184
+        },
+        {
+          "covariate": "poverty rate, 2012-16",
+          "meanTreated": 0.29781436984518284,
+          "meanControlAll": 0.22521734023784742,
+          "meanControlMatched": 0.26035682158736273,
+          "smdBefore": 0.6414075762449106,
+          "smdAfter": 0.33094405335969224
+        },
+        {
+          "covariate": "vacancy rate, 2012-16",
+          "meanTreated": 0.15318680847102334,
+          "meanControlAll": 0.1295361955595561,
+          "meanControlMatched": 0.13377790684896562,
+          "smdBefore": 0.23738441376654082,
+          "smdAfter": 0.19480978149072417
+        },
+        {
+          "covariate": "owner-occupied share, 2012-16",
+          "meanTreated": 0.4562119879517743,
+          "meanControlAll": 0.5242201420856614,
+          "meanControlMatched": 0.48584224602975684,
+          "smdBefore": -0.32689132399408105,
+          "smdAfter": -0.14242224946040336
+        },
+        {
+          "covariate": "log population, 2012-16",
+          "meanTreated": 8.193093831452574,
+          "meanControlAll": 8.241366054271666,
+          "meanControlMatched": 8.26549184445012,
+          "smdBefore": -0.10161865854638588,
+          "smdAfter": -0.15240626042446698
+        },
+        {
+          "covariate": "log population density",
+          "meanTreated": 6.348167433827936,
+          "meanControlAll": 6.674127015194748,
+          "meanControlMatched": 6.61701282607185,
+          "smdBefore": -0.15109492568489125,
+          "smdAfter": -0.1246202808074765
+        },
+        {
+          "covariate": "bachelor's degree or higher, 2012-16",
+          "meanTreated": 0.16705041679819171,
+          "meanControlAll": 0.20343207642471292,
+          "meanControlMatched": 0.1652431268347361,
+          "smdBefore": -0.2913159925178315,
+          "smdAfter": 0.014471370324397968
+        },
+        {
+          "covariate": "real change in home value, 2006-10 to 2012-16",
+          "meanTreated": -0.16447794318947853,
+          "meanControlAll": -0.16148850372311208,
+          "meanControlMatched": -0.17453448291749085,
+          "smdBefore": -0.011148771131683338,
+          "smdAfter": 0.037504709851364004
+        },
+        {
+          "covariate": "real change in rent, 2006-10 to 2012-16",
+          "meanTreated": 0.01651600808466914,
+          "meanControlAll": 0.013029249873021915,
+          "meanControlMatched": 0.005625614764491766,
+          "smdBefore": 0.02122416808985759,
+          "smdAfter": 0.06629067011873797
+        },
+        {
+          "covariate": "real change in household income, 2006-10 to 2012-16",
+          "meanTreated": -0.061341881664611735,
+          "meanControlAll": -0.06452145980479503,
+          "meanControlMatched": -0.07577884131474662,
+          "smdBefore": 0.015617647824477419,
+          "smdAfter": 0.07091234796921825
+        },
+        {
+          "covariate": "change in population, 2006-10 to 2012-16",
+          "meanTreated": 0.02206125391149469,
+          "meanControlAll": 0.029602576230455736,
+          "meanControlMatched": 0.016491682858209487,
+          "smdBefore": -0.04858698713306192,
+          "smdAfter": 0.03588345195407636
+        },
+        {
+          "covariate": "log jobs located in tract, 2015",
+          "meanTreated": 7.159616128682011,
+          "meanControlAll": 6.620874263701329,
+          "meanControlMatched": 6.911429892469738,
+          "smdBefore": 0.42613660902958256,
+          "smdAfter": 0.19631153244625824
+        },
+        {
+          "covariate": "change in jobs, 2012 to 2015",
+          "meanTreated": 0.04164737360049322,
+          "meanControlAll": 0.05620263394295499,
+          "meanControlMatched": 0.044343563220332304,
+          "smdBefore": -0.044854229594998934,
+          "smdAfter": -0.00830871488345093
+        }
+      ],
+      "effects": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7060,
+          "att": 0.017288214648630815,
+          "ciLow": 0.003779731886273132,
+          "ciHigh": 0.02998882700226129,
+          "rawDifference": 0.013173006991018754,
+          "meanTreated": 0.310186409266288,
+          "meanMatchedControls": 0.29289819461765804
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3349,
+          "att": 0.0035077593389071203,
+          "ciLow": -0.0035192842426180005,
+          "ciHigh": 0.009687458368262732,
+          "rawDifference": 0.013237712224944687,
+          "meanTreated": 0.2847861924365484,
+          "meanMatchedControls": 0.28127843309764006
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2491,
+          "att": 0.007665440498795665,
+          "ciLow": -0.0008022407649683934,
+          "ciHigh": 0.016456535528646225,
+          "rawDifference": 0.015320590541378243,
+          "meanTreated": 0.3398200227940579,
+          "meanMatchedControls": 0.33215458229526196
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7211,
+          "att": 0.004305698227152958,
+          "ciLow": -0.003170775041875609,
+          "ciHigh": 0.011761601654447241,
+          "rawDifference": 0.0016741054455968601,
+          "meanTreated": 0.08553596199556227,
+          "meanMatchedControls": 0.08123026376840961
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7249,
+          "att": 0.01325587277155462,
+          "ciLow": 0.004913112636849937,
+          "ciHigh": 0.02194151508531656,
+          "rawDifference": 0.029538854116141794,
+          "meanTreated": 0.1730626563498403,
+          "meanMatchedControls": 0.15980678357828668
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7298,
+          "att": 0.002064677388805162,
+          "ciLow": -0.004928659752553919,
+          "ciHigh": 0.008776308041351521,
+          "rawDifference": 0.0013042720409146952,
+          "meanTreated": -0.0007710508495478123,
+          "meanMatchedControls": -0.0028357282383529663
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7298,
+          "att": 0.017390436533502317,
+          "ciLow": 0.011097128830233732,
+          "ciHigh": 0.02328939904475252,
+          "rawDifference": 0.01344254866802453,
+          "meanTreated": 0.04249717912852831,
+          "meanMatchedControls": 0.02510674259502617
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7010,
+          "att": 0.004467511232667595,
+          "ciLow": -0.005512806161801428,
+          "ciHigh": 0.014757905450068259,
+          "rawDifference": -0.01063963741301524,
+          "meanTreated": 0.03113222417974324,
+          "meanMatchedControls": 0.026664712947075488
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7298,
+          "att": -0.004173480391066067,
+          "ciLow": -0.006904070916979125,
+          "ciHigh": -0.0012999248251281542,
+          "rawDifference": -0.018172863079366504,
+          "meanTreated": -0.06309572398328338,
+          "meanMatchedControls": -0.05892224359221703
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7298,
+          "att": 0.0018454532599342258,
+          "ciLow": -0.0005800336205626386,
+          "ciHigh": 0.004278310660539729,
+          "rawDifference": -0.004260862227552186,
+          "meanTreated": -0.021916353935324772,
+          "meanMatchedControls": -0.023761807195259006
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7298,
+          "att": -0.006359901401205793,
+          "ciLow": -0.00904151558260018,
+          "ciHigh": -0.0036209099070124958,
+          "rawDifference": -0.0035205618643414337,
+          "meanTreated": 0.021349256000274014,
+          "meanMatchedControls": 0.027709157401479854
+        }
+      ],
+      "effectsBiasCorrected": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7060,
+          "att": 0.025499231630617653,
+          "ciLow": 0.011752386432030111,
+          "ciHigh": 0.03903902029344336,
+          "rawDifference": 0.013173006991018754,
+          "meanTreated": 0.310186409266288,
+          "meanMatchedControls": 0.29289819461765804
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3349,
+          "att": -0.0024504626631137033,
+          "ciLow": -0.008816664779621248,
+          "ciHigh": 0.003060917263521421,
+          "rawDifference": 0.013237712224944687,
+          "meanTreated": 0.2847861924365484,
+          "meanMatchedControls": 0.28127843309764006
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2491,
+          "att": 0.00020456989652765782,
+          "ciLow": -0.007713930008758484,
+          "ciHigh": 0.00844225197123908,
+          "rawDifference": 0.015320590541378243,
+          "meanTreated": 0.3398200227940579,
+          "meanMatchedControls": 0.33215458229526196
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7211,
+          "att": 0.012287559944049908,
+          "ciLow": 0.00598316797275738,
+          "ciHigh": 0.019535520519679522,
+          "rawDifference": 0.0016741054455968601,
+          "meanTreated": 0.08553596199556227,
+          "meanMatchedControls": 0.08123026376840961
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7249,
+          "att": 0.0009513211810801652,
+          "ciLow": -0.007325307860356774,
+          "ciHigh": 0.009676919596812224,
+          "rawDifference": 0.029538854116141794,
+          "meanTreated": 0.1730626563498403,
+          "meanMatchedControls": 0.15980678357828668
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7298,
+          "att": 0.0018002425471799997,
+          "ciLow": -0.005356848815298708,
+          "ciHigh": 0.008468974443912751,
+          "rawDifference": 0.0013042720409146952,
+          "meanTreated": -0.0007710508495478123,
+          "meanMatchedControls": -0.0028357282383529663
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7298,
+          "att": 0.016614095155593,
+          "ciLow": 0.010650800461334027,
+          "ciHigh": 0.02230369428611356,
+          "rawDifference": 0.01344254866802453,
+          "meanTreated": 0.04249717912852831,
+          "meanMatchedControls": 0.02510674259502617
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7010,
+          "att": 0.0206205456705922,
+          "ciLow": 0.010640939009502727,
+          "ciHigh": 0.031109316515918757,
+          "rawDifference": -0.01063963741301524,
+          "meanTreated": 0.03113222417974324,
+          "meanMatchedControls": 0.026664712947075488
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7298,
+          "att": 0.008588783163359391,
+          "ciLow": 0.006026891062858446,
+          "ciHigh": 0.011257171046391765,
+          "rawDifference": -0.018172863079366504,
+          "meanTreated": -0.06309572398328338,
+          "meanMatchedControls": -0.05892224359221703
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7298,
+          "att": 0.0028775555399691995,
+          "ciLow": 0.000554320884649847,
+          "ciHigh": 0.005079787319288609,
+          "rawDifference": -0.004260862227552186,
+          "meanTreated": -0.021916353935324772,
+          "meanMatchedControls": -0.023761807195259006
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7298,
+          "att": -0.006024400274489011,
+          "ciLow": -0.008804148638332626,
+          "ciHigh": -0.003323879308266888,
+          "rawDifference": -0.0035205618643414337,
+          "meanTreated": 0.021349256000274014,
+          "meanMatchedControls": 0.027709157401479854
+        }
+      ]
+    },
+    {
+      "id": "clean_xwalk",
+      "title": "Unchanged boundaries only",
+      "description": "Treated and controls restricted to 2010 tracts identical to one 2020 tract, so no 2020-24 value is approximated by the crosswalk. Caution: tracts were split in 2020 largely because they grew, so this also drops the fastest-growing tracts in both groups and is not an independent check of growth outcomes (housing units, population, jobs).",
+      "treated": 6070,
+      "controls": 19216,
+      "usableControls": 18513,
+      "matched": 5800,
+      "unmatched": {
+        "missing-covariates": 270
+      },
+      "maxAbsSmdAfter": 0.19745308014489643,
+      "balance": [
+        {
+          "covariate": "log median home value, 2012-16",
+          "meanTreated": 11.655484191651396,
+          "meanControlAll": 11.753313426088658,
+          "meanControlMatched": 11.664189537474153,
+          "smdBefore": -0.14779190586336985,
+          "smdAfter": -0.013151279959876932
+        },
+        {
+          "covariate": "log median gross rent, 2012-16",
+          "meanTreated": 6.629855107107124,
+          "meanControlAll": 6.710792619219059,
+          "meanControlMatched": 6.65374332464472,
+          "smdBefore": -0.26873341750038116,
+          "smdAfter": -0.0793150440304205
+        },
+        {
+          "covariate": "log median household income, 2012-16",
+          "meanTreated": 10.387132354972858,
+          "meanControlAll": 10.544634142305208,
+          "meanControlMatched": 10.44219370589931,
+          "smdBefore": -0.4801654360477834,
+          "smdAfter": -0.16786195271035975
+        },
+        {
+          "covariate": "poverty rate, 2012-16",
+          "meanTreated": 0.29982093318103314,
+          "meanControlAll": 0.24570621447145358,
+          "meanControlMatched": 0.27674944109532273,
+          "smdBefore": 0.4631307698126334,
+          "smdAfter": 0.19745308014489643
+        },
+        {
+          "covariate": "vacancy rate, 2012-16",
+          "meanTreated": 0.15266451583620688,
+          "meanControlAll": 0.13752698397504468,
+          "meanControlMatched": 0.14087324657800843,
+          "smdBefore": 0.15560606427627463,
+          "smdAfter": 0.12120820084267166
+        },
+        {
+          "covariate": "owner-occupied share, 2012-16",
+          "meanTreated": 0.4490763291465522,
+          "meanControlAll": 0.519725007839899,
+          "meanControlMatched": 0.4736866090085289,
+          "smdBefore": -0.34226305558056686,
+          "smdAfter": -0.11922642772717942
+        },
+        {
+          "covariate": "log population, 2012-16",
+          "meanTreated": 8.119831526496837,
+          "meanControlAll": 8.15215261814998,
+          "meanControlMatched": 8.177408892258804,
+          "smdBefore": -0.07464832347820861,
+          "smdAfter": -0.13297984704685625
+        },
+        {
+          "covariate": "log population density",
+          "meanTreated": 6.468809933686221,
+          "meanControlAll": 6.6103485168541,
+          "meanControlMatched": 6.661156946885554,
+          "smdBefore": -0.06442310750564008,
+          "smdAfter": -0.0875492182582591
+        },
+        {
+          "covariate": "bachelor's degree or higher, 2012-16",
+          "meanTreated": 0.16194424767068974,
+          "meanControlAll": 0.18428784489818004,
+          "meanControlMatched": 0.15736606450629045,
+          "smdBefore": -0.19015233690052807,
+          "smdAfter": 0.03896204441056163
+        },
+        {
+          "covariate": "real change in home value, 2006-10 to 2012-16",
+          "meanTreated": -0.16963374606206888,
+          "meanControlAll": -0.1748510963539149,
+          "meanControlMatched": -0.18029110628871584,
+          "smdBefore": 0.01884049590699829,
+          "smdAfter": 0.03848504326867879
+        },
+        {
+          "covariate": "real change in rent, 2006-10 to 2012-16",
+          "meanTreated": 0.017368923050000016,
+          "meanControlAll": 0.010903176844379647,
+          "meanControlMatched": 0.009627569157591378,
+          "smdBefore": 0.03869771280428285,
+          "smdAfter": 0.04633226856079537
+        },
+        {
+          "covariate": "real change in household income, 2006-10 to 2012-16",
+          "meanTreated": -0.06282436708965543,
+          "meanControlAll": -0.06389060712850486,
+          "meanControlMatched": -0.07471355747831543,
+          "smdBefore": 0.005130080887031438,
+          "smdAfter": 0.05720335586061728
+        },
+        {
+          "covariate": "change in population, 2006-10 to 2012-16",
+          "meanTreated": 0.015443680875862079,
+          "meanControlAll": 0.016930707852860154,
+          "meanControlMatched": 0.01022988428000543,
+          "smdBefore": -0.009415692133740602,
+          "smdAfter": 0.03301318964208308
+        },
+        {
+          "covariate": "log jobs located in tract, 2015",
+          "meanTreated": 7.072943190589649,
+          "meanControlAll": 6.509764694570268,
+          "meanControlMatched": 6.8482915875676085,
+          "smdBefore": 0.4481998334440404,
+          "smdAfter": 0.1787866755728369
+        },
+        {
+          "covariate": "change in jobs, 2012 to 2015",
+          "meanTreated": 0.037883201281034576,
+          "meanControlAll": 0.04813552282342158,
+          "meanControlMatched": 0.03891804839519286,
+          "smdBefore": -0.029989095894876628,
+          "smdAfter": -0.003027034337025253
+        }
+      ],
+      "effects": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 5607,
+          "att": 0.017861719181826233,
+          "ciLow": 0.0040981756167413905,
+          "ciHigh": 0.031137433560450914,
+          "rawDifference": 0.015217401262015096,
+          "meanTreated": 0.30629391229712805,
+          "meanMatchedControls": 0.28843219311530277
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 2642,
+          "att": 0.0005629790786020718,
+          "ciLow": -0.005947995476753241,
+          "ciHigh": 0.006784189782361579,
+          "rawDifference": 0.007358065565773841,
+          "meanTreated": 0.28583625113171846,
+          "meanMatchedControls": 0.28527327205311687
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 1981,
+          "att": 0.0020260736178697608,
+          "ciLow": -0.006744534674531935,
+          "ciHigh": 0.010613560455917468,
+          "rawDifference": 0.009760960732420998,
+          "meanTreated": 0.3421690497021702,
+          "meanMatchedControls": 0.3401429760843002
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 5741,
+          "att": 0.008706803965453211,
+          "ciLow": 0.0012977947334378802,
+          "ciHigh": 0.015713447933402742,
+          "rawDifference": 0.004922026119035305,
+          "meanTreated": 0.08429900054171735,
+          "meanMatchedControls": 0.07559219657626436
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 5755,
+          "att": 0.0068024823392412136,
+          "ciLow": -0.0017803200657771359,
+          "ciHigh": 0.015478033267358783,
+          "rawDifference": 0.02285888415043552,
+          "meanTreated": 0.16887815204865256,
+          "meanMatchedControls": 0.16207566970941228
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 5799,
+          "att": 0.004401919576047591,
+          "ciLow": -0.0019274663951174024,
+          "ciHigh": 0.010585122485305205,
+          "rawDifference": 0.0010420802310292564,
+          "meanTreated": -0.005303764145542328,
+          "meanMatchedControls": -0.009705683721589916
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 5799,
+          "att": 0.017668048605794108,
+          "ciLow": 0.012198630898452719,
+          "ciHigh": 0.02321361164083045,
+          "rawDifference": 0.014323507845205818,
+          "meanTreated": 0.037726762283152214,
+          "meanMatchedControls": 0.0200587136773582
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 5553,
+          "att": 0.018364202298217173,
+          "ciLow": 0.005989179326173112,
+          "ciHigh": 0.03012659280144633,
+          "rawDifference": -0.0046211320196197225,
+          "meanTreated": 0.027478993513416237,
+          "meanMatchedControls": 0.009114791215198967
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 5799,
+          "att": -0.002887779517934116,
+          "ciLow": -0.005659315376991047,
+          "ciHigh": -0.00011770488063039452,
+          "rawDifference": -0.014519802637447912,
+          "meanTreated": -0.06217779629073986,
+          "meanMatchedControls": -0.05929001677280586
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 5799,
+          "att": 0.000356140035868255,
+          "ciLow": -0.001980833882731802,
+          "ciHigh": 0.002579470755573825,
+          "rawDifference": -0.0021011870208820574,
+          "meanTreated": -0.022291700344887134,
+          "meanMatchedControls": -0.02264784038075535
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 5799,
+          "att": -0.0048458051772719375,
+          "ciLow": -0.007574735916605988,
+          "ciHigh": -0.0021994596970637444,
+          "rawDifference": -0.0028852414247980233,
+          "meanTreated": 0.020641623602345213,
+          "meanMatchedControls": 0.025487428779617186
+        }
+      ],
+      "effectsBiasCorrected": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 5607,
+          "att": 0.025138869178627857,
+          "ciLow": 0.01110068161553406,
+          "ciHigh": 0.03813329890829599,
+          "rawDifference": 0.015217401262015096,
+          "meanTreated": 0.30629391229712805,
+          "meanMatchedControls": 0.28843219311530277
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 2642,
+          "att": -0.0022411089229295313,
+          "ciLow": -0.00843552055558419,
+          "ciHigh": 0.003851456410160458,
+          "rawDifference": 0.007358065565773841,
+          "meanTreated": 0.28583625113171846,
+          "meanMatchedControls": 0.28527327205311687
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 1981,
+          "att": -0.001449315015886875,
+          "ciLow": -0.010305733787905095,
+          "ciHigh": 0.006812422465327174,
+          "rawDifference": 0.009760960732420998,
+          "meanTreated": 0.3421690497021702,
+          "meanMatchedControls": 0.3401429760843002
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 5741,
+          "att": 0.012535472346841138,
+          "ciLow": 0.005326764891219092,
+          "ciHigh": 0.01945873603129649,
+          "rawDifference": 0.004922026119035305,
+          "meanTreated": 0.08429900054171735,
+          "meanMatchedControls": 0.07559219657626436
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 5755,
+          "att": -0.0007314289120932642,
+          "ciLow": -0.009827189280872228,
+          "ciHigh": 0.007711734771812344,
+          "rawDifference": 0.02285888415043552,
+          "meanTreated": 0.16887815204865256,
+          "meanMatchedControls": 0.16207566970941228
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 5799,
+          "att": 0.0035589784408186927,
+          "ciLow": -0.0027131979666996835,
+          "ciHigh": 0.010078511303513685,
+          "rawDifference": 0.0010420802310292564,
+          "meanTreated": -0.005303764145542328,
+          "meanMatchedControls": -0.009705683721589916
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 5799,
+          "att": 0.015582915124180925,
+          "ciLow": 0.010533168565512833,
+          "ciHigh": 0.020994234808986597,
+          "rawDifference": 0.014323507845205818,
+          "meanTreated": 0.037726762283152214,
+          "meanMatchedControls": 0.0200587136773582
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 5553,
+          "att": 0.03421948242002083,
+          "ciLow": 0.02263341673216293,
+          "ciHigh": 0.04468992978422642,
+          "rawDifference": -0.0046211320196197225,
+          "meanTreated": 0.027478993513416237,
+          "meanMatchedControls": 0.009114791215198967
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 5799,
+          "att": 0.004681068467502699,
+          "ciLow": 0.002101818655496244,
+          "ciHigh": 0.007276678263159154,
+          "rawDifference": -0.014519802637447912,
+          "meanTreated": -0.06217779629073986,
+          "meanMatchedControls": -0.05929001677280586
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 5799,
+          "att": 0.0005169661239424953,
+          "ciLow": -0.0018607166398644716,
+          "ciHigh": 0.0026970028441495376,
+          "rawDifference": -0.0021011870208820574,
+          "meanTreated": -0.022291700344887134,
+          "meanMatchedControls": -0.02264784038075535
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 5799,
+          "att": -0.004371451627732866,
+          "ciLow": -0.0070252415930530734,
+          "ciHigh": -0.0018130634005101823,
+          "rawDifference": -0.0028852414247980233,
+          "meanTreated": 0.020641623602345213,
+          "meanMatchedControls": 0.025487428779617186
+        }
+      ]
+    },
+    {
+      "id": "caliper",
+      "title": "Caliper 0.5 SD",
+      "description": "Main, but matches further than 0.5 standard deviations (RMS across covariates) are dropped.",
+      "treated": 7657,
+      "controls": 23324,
+      "usableControls": 22402,
+      "matched": 3633,
+      "unmatched": {
+        "caliper": 3666,
+        "missing-covariates": 358
+      },
+      "maxAbsSmdAfter": 0.1140392218085201,
+      "balance": [
+        {
+          "covariate": "log median home value, 2012-16",
+          "meanTreated": 11.696475097613842,
+          "meanControlAll": 11.758094127557365,
+          "meanControlMatched": 11.703427766965346,
+          "smdBefore": -0.09817144683868212,
+          "smdAfter": -0.011076993751016624
+        },
+        {
+          "covariate": "log median gross rent, 2012-16",
+          "meanTreated": 6.663580542582305,
+          "meanControlAll": 6.711923180795974,
+          "meanControlMatched": 6.6670044859404225,
+          "smdBefore": -0.1677758956327506,
+          "smdAfter": -0.011882991593569077
+        },
+        {
+          "covariate": "log median household income, 2012-16",
+          "meanTreated": 10.492056052342354,
+          "meanControlAll": 10.546151887209648,
+          "meanControlMatched": 10.511089467128565,
+          "smdBefore": -0.18906885017005703,
+          "smdAfter": -0.06652315944964557
+        },
+        {
+          "covariate": "poverty rate, 2012-16",
+          "meanTreated": 0.26041045731902057,
+          "meanControlAll": 0.24588936595705813,
+          "meanControlMatched": 0.25109744449769283,
+          "smdBefore": 0.1403515995207838,
+          "smdAfter": 0.09001363694018302
+        },
+        {
+          "covariate": "vacancy rate, 2012-16",
+          "meanTreated": 0.12829275726672182,
+          "meanControlAll": 0.1387451087608249,
+          "meanControlMatched": 0.12372075052685316,
+          "smdBefore": -0.11710043274561646,
+          "smdAfter": 0.05122138956545258
+        },
+        {
+          "covariate": "owner-occupied share, 2012-16",
+          "meanTreated": 0.5002875891769878,
+          "meanControlAll": 0.519383952843054,
+          "meanControlMatched": 0.5075442256566368,
+          "smdBefore": -0.09678269636636665,
+          "smdAfter": -0.036777517297650233
+        },
+        {
+          "covariate": "log population, 2012-16",
+          "meanTreated": 8.354534974000055,
+          "meanControlAll": 8.213313020766224,
+          "meanControlMatched": 8.35606810222053,
+          "smdBefore": 0.3333846926368738,
+          "smdAfter": -0.003619277802435555
+        },
+        {
+          "covariate": "log population density",
+          "meanTreated": 6.315698711601996,
+          "meanControlAll": 6.548471695139253,
+          "meanControlMatched": 6.468486147481903,
+          "smdBefore": -0.10740806966147394,
+          "smdAfter": -0.07050046490365301
+        },
+        {
+          "covariate": "bachelor's degree or higher, 2012-16",
+          "meanTreated": 0.1523370962235069,
+          "meanControlAll": 0.1879743152865817,
+          "meanControlMatched": 0.15136408158144823,
+          "smdBefore": -0.3237663922566953,
+          "smdAfter": 0.008839899648586586
+        },
+        {
+          "covariate": "real change in home value, 2006-10 to 2012-16",
+          "meanTreated": -0.17876941879988983,
+          "meanControlAll": -0.17169500641371468,
+          "meanControlMatched": -0.18183856987290145,
+          "smdBefore": -0.029716735312931408,
+          "smdAfter": 0.012892258055286567
+        },
+        {
+          "covariate": "real change in rent, 2006-10 to 2012-16",
+          "meanTreated": 0.011793344585741813,
+          "meanControlAll": 0.011136003556825296,
+          "meanControlMatched": 0.009988124451143577,
+          "smdBefore": 0.004551041056716662,
+          "smdAfter": 0.012498278043757324
+        },
+        {
+          "covariate": "real change in household income, 2006-10 to 2012-16",
+          "meanTreated": -0.06824101712358938,
+          "meanControlAll": -0.06309609369788421,
+          "meanControlMatched": -0.07360170521030374,
+          "smdBefore": -0.028518874258312794,
+          "smdAfter": 0.02971488141479743
+        },
+        {
+          "covariate": "change in population, 2006-10 to 2012-16",
+          "meanTreated": 0.018782693765483093,
+          "meanControlAll": 0.021889539149183207,
+          "meanControlMatched": 0.015943858380495588,
+          "smdBefore": -0.023252712127984368,
+          "smdAfter": 0.021246832022015345
+        },
+        {
+          "covariate": "log jobs located in tract, 2015",
+          "meanTreated": 7.1686604744646205,
+          "meanControlAll": 6.594423805565086,
+          "meanControlMatched": 7.038648717949964,
+          "smdBefore": 0.5036890863622575,
+          "smdAfter": 0.1140392218085201
+        },
+        {
+          "covariate": "change in jobs, 2012 to 2015",
+          "meanTreated": 0.037214314338012706,
+          "meanControlAll": 0.04887075536916328,
+          "meanControlMatched": 0.03734871181948312,
+          "smdBefore": -0.043170596717192,
+          "smdAfter": -0.0004977522261606471
+        }
+      ],
+      "effects": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 3574,
+          "att": 0.013606804105157628,
+          "ciLow": 0.003190469028072457,
+          "ciHigh": 0.024529568649682292,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.31698537073587013,
+          "meanMatchedControls": 0.3033785666307137
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 2034,
+          "att": -0.00041268661914126115,
+          "ciLow": -0.0069750632989676,
+          "ciHigh": 0.005966524532824235,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.2868042410127826,
+          "meanMatchedControls": 0.287216927631924
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 1532,
+          "att": 0.008614772565165367,
+          "ciLow": -0.00007992401008090438,
+          "ciHigh": 0.017139201312971163,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3472486095039164,
+          "meanMatchedControls": 0.3386338369387508
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 3596,
+          "att": 0.0006392288813032928,
+          "ciLow": -0.006868960864239098,
+          "ciHigh": 0.007262028723886107,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.0767921643437154,
+          "meanMatchedControls": 0.07615293546241206
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 3623,
+          "att": -0.0026155960100285145,
+          "ciLow": -0.01135995955177491,
+          "ciHigh": 0.005798387108446393,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.15520450641457353,
+          "meanMatchedControls": 0.15782010242460112
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 3632,
+          "att": -0.004367005098201202,
+          "ciLow": -0.010353447754907256,
+          "ciHigh": 0.001640419070316763,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": -0.009060046153634418,
+          "meanMatchedControls": -0.004693041055433193
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 3632,
+          "att": 0.007301694121374827,
+          "ciLow": 0.0023600403822475837,
+          "ciHigh": 0.01192815618910613,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.031073081924559452,
+          "meanMatchedControls": 0.023771387803184735
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 3509,
+          "att": 0.023961694171083847,
+          "ciLow": 0.010299384549912236,
+          "ciHigh": 0.03672060062213587,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.03036616223995431,
+          "meanMatchedControls": 0.006404468068870527
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 3632,
+          "att": -0.0023561103845447916,
+          "ciLow": -0.005905791282956721,
+          "ciHigh": 0.0011392913134278166,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.05579499242841385,
+          "meanMatchedControls": -0.053438882043869276
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 3632,
+          "att": 0.0013184978824339224,
+          "ciLow": -0.0010142142816432947,
+          "ciHigh": 0.0035292678705289683,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.017202038466409674,
+          "meanMatchedControls": -0.01852053634884361
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 3632,
+          "att": -0.003001833536068281,
+          "ciLow": -0.006295001646629288,
+          "ciHigh": 0.0005292955170723814,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021900812020925038,
+          "meanMatchedControls": 0.02490264555699341
+        }
+      ],
+      "effectsBiasCorrected": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 3574,
+          "att": 0.013040076237715076,
+          "ciLow": 0.0027515842238322154,
+          "ciHigh": 0.02344366553878132,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.31698537073587013,
+          "meanMatchedControls": 0.3033785666307137
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 2034,
+          "att": -0.0030771422094571063,
+          "ciLow": -0.009476787238935237,
+          "ciHigh": 0.0031703436328943705,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.2868042410127826,
+          "meanMatchedControls": 0.287216927631924
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 1532,
+          "att": 0.005522690503037924,
+          "ciLow": -0.0029413202021653954,
+          "ciHigh": 0.014065968050107092,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3472486095039164,
+          "meanMatchedControls": 0.3386338369387508
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 3596,
+          "att": 0.003737879907931205,
+          "ciLow": -0.0031017133200367188,
+          "ciHigh": 0.009918826207804168,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.0767921643437154,
+          "meanMatchedControls": 0.07615293546241206
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 3623,
+          "att": -0.006128130430586607,
+          "ciLow": -0.014413288453601346,
+          "ciHigh": 0.002055885244937049,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.15520450641457353,
+          "meanMatchedControls": 0.15782010242460112
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 3632,
+          "att": -0.005851868087792308,
+          "ciLow": -0.011751180387911463,
+          "ciHigh": -0.00003130173403044491,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": -0.009060046153634418,
+          "meanMatchedControls": -0.004693041055433193
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 3632,
+          "att": 0.0054342182746371466,
+          "ciLow": 0.0006356821224544345,
+          "ciHigh": 0.01011652880246783,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.031073081924559452,
+          "meanMatchedControls": 0.023771387803184735
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 3509,
+          "att": 0.030224233708767534,
+          "ciLow": 0.01613116605166793,
+          "ciHigh": 0.04255189085951334,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.03036616223995431,
+          "meanMatchedControls": 0.006404468068870527
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 3632,
+          "att": 0.0012651355753931183,
+          "ciLow": -0.0020913229019369635,
+          "ciHigh": 0.004632230750814509,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.05579499242841385,
+          "meanMatchedControls": -0.053438882043869276
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 3632,
+          "att": 0.0013401298254269527,
+          "ciLow": -0.0008452564300481116,
+          "ciHigh": 0.003472985361187251,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.017202038466409674,
+          "meanMatchedControls": -0.01852053634884361
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 3632,
+          "att": -0.00326377573196769,
+          "ciLow": -0.006445503765720714,
+          "ciHigh": 0.00020022823017332985,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021900812020925038,
+          "meanMatchedControls": 0.02490264555699341
+        }
+      ]
+    },
+    {
+      "id": "no_home",
+      "title": "No home-value covariates",
+      "description": "Matched without the two home-value covariates, which keeps the renter-dominated tracts that have no median home value. Its home-value rows are shown for completeness but are not balanced on home value.",
+      "treated": 7657,
+      "controls": 23324,
+      "usableControls": 23023,
+      "matched": 7596,
+      "unmatched": {
+        "missing-covariates": 61
+      },
+      "maxAbsSmdAfter": 0.17426197193941068,
+      "balance": [
+        {
+          "covariate": "log median gross rent, 2012-16",
+          "meanTreated": 6.629491929251782,
+          "meanControlAll": 6.715199335774503,
+          "meanControlMatched": 6.650270265528612,
+          "smdBefore": -0.279358026333764,
+          "smdAfter": -0.06772571062753845
+        },
+        {
+          "covariate": "log median household income, 2012-16",
+          "meanTreated": 10.382301032755738,
+          "meanControlAll": 10.53884898956408,
+          "meanControlMatched": 10.43010143836957,
+          "smdBefore": -0.45728578520775465,
+          "smdAfter": -0.13962779495826577
+        },
+        {
+          "covariate": "poverty rate, 2012-16",
+          "meanTreated": 0.3034040265573984,
+          "meanControlAll": 0.2486723922182174,
+          "meanControlMatched": 0.2824294368993375,
+          "smdBefore": 0.4469022128346745,
+          "smdAfter": 0.1712645829904693
+        },
+        {
+          "covariate": "vacancy rate, 2012-16",
+          "meanTreated": 0.1521695609676142,
+          "meanControlAll": 0.13830253467271866,
+          "meanControlMatched": 0.14196165707986869,
+          "smdBefore": 0.138998289710892,
+          "smdAfter": 0.1023205085038371
+        },
+        {
+          "covariate": "owner-occupied share, 2012-16",
+          "meanTreated": 0.4410696447051079,
+          "meanControlAll": 0.5074516460600312,
+          "meanControlMatched": 0.4626346208175657,
+          "smdBefore": -0.3034278239633045,
+          "smdAfter": -0.09857210753014456
+        },
+        {
+          "covariate": "log population, 2012-16",
+          "meanTreated": 8.18104390701749,
+          "meanControlAll": 8.209380852155652,
+          "meanControlMatched": 8.230486006028665,
+          "smdBefore": -0.05745772525264876,
+          "smdAfter": -0.10025182767751761
+        },
+        {
+          "covariate": "log population density",
+          "meanTreated": 6.411361502076103,
+          "meanControlAll": 6.588406744151035,
+          "meanControlMatched": 6.619824377970985,
+          "smdBefore": -0.08025728462597632,
+          "smdAfter": -0.09449937297701605
+        },
+        {
+          "covariate": "bachelor's degree or higher, 2012-16",
+          "meanTreated": 0.16832866221432355,
+          "meanControlAll": 0.19050545053251072,
+          "meanControlMatched": 0.1631342014598183,
+          "smdBefore": -0.17796179691872555,
+          "smdAfter": 0.041683924499447925
+        },
+        {
+          "covariate": "real change in rent, 2006-10 to 2012-16",
+          "meanTreated": 0.01689191471958927,
+          "meanControlAll": 0.012204389916605092,
+          "meanControlMatched": 0.009801824762249292,
+          "smdBefore": 0.027740400668862495,
+          "smdAfter": 0.04195859103927882
+        },
+        {
+          "covariate": "real change in household income, 2006-10 to 2012-16",
+          "meanTreated": -0.06094015451553456,
+          "meanControlAll": -0.06150831707075543,
+          "meanControlMatched": -0.07188581026808048,
+          "smdBefore": 0.0026598138906785336,
+          "smdAfter": 0.05124133392051778
+        },
+        {
+          "covariate": "change in population, 2006-10 to 2012-16",
+          "meanTreated": 0.024529062170879364,
+          "meanControlAll": 0.02304696302740751,
+          "meanControlMatched": 0.016977155185634175,
+          "smdBefore": 0.008627619239338559,
+          "smdAfter": 0.04396128173110574
+        },
+        {
+          "covariate": "log jobs located in tract, 2015",
+          "meanTreated": 7.164802043264867,
+          "meanControlAll": 6.592578460889959,
+          "meanControlMatched": 6.941115884628953,
+          "smdBefore": 0.44578891453534614,
+          "smdAfter": 0.17426197193941068
+        },
+        {
+          "covariate": "change in jobs, 2012 to 2015",
+          "meanTreated": 0.04288186318193795,
+          "meanControlAll": 0.04998096718629172,
+          "meanControlMatched": 0.04273952193394033,
+          "smdBefore": -0.0208262178367173,
+          "smdAfter": 0.000417578026203108
+        }
+      ],
+      "effects": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7078,
+          "att": 0.016113936491122697,
+          "ciLow": 0.0037834897562911037,
+          "ciHigh": 0.028278820720708572,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.3101509255312226,
+          "meanMatchedControls": 0.2940369890401004
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3319,
+          "att": 0.0007727366561213237,
+          "ciLow": -0.005211173747062594,
+          "ciHigh": 0.007033442947883824,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.2843798579059958,
+          "meanMatchedControls": 0.28360712124987447
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2477,
+          "att": 0.0030932479558605816,
+          "ciLow": -0.00499420955819257,
+          "ciHigh": 0.011384393699791965,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3397056091602736,
+          "meanMatchedControls": 0.33661236120441373
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7506,
+          "att": 0.007458104301692009,
+          "ciLow": 0.0013333965630901452,
+          "ciHigh": 0.014780816072905961,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.08801031161204347,
+          "meanMatchedControls": 0.08055220731035193
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7532,
+          "att": 0.008910060670207106,
+          "ciLow": 0.000034772970494014855,
+          "ciHigh": 0.01726335256181716,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.17513359079261734,
+          "meanMatchedControls": 0.16622353012241103
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7595,
+          "att": 0.006685618969848571,
+          "ciLow": 0.0004016893887476175,
+          "ciHigh": 0.013275746439631914,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": 0.000954267590520081,
+          "meanMatchedControls": -0.005731351379328509
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7595,
+          "att": 0.01901443814107966,
+          "ciLow": 0.013862891898207797,
+          "ciHigh": 0.02433677399763884,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.04442680124028975,
+          "meanMatchedControls": 0.025412363099210012
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7294,
+          "att": 0.019656832387990156,
+          "ciLow": 0.009570351884320809,
+          "ciHigh": 0.028340395094468156,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.033876157570606004,
+          "meanMatchedControls": 0.014219325182615816
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7595,
+          "att": -0.0027009260365371893,
+          "ciLow": -0.00552356248347546,
+          "ciHigh": 0.00002113456014008445,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.06384547154838736,
+          "meanMatchedControls": -0.061144545511849946
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7595,
+          "att": 0.0013061273286372667,
+          "ciLow": -0.0007419926798737768,
+          "ciHigh": 0.0034218350401119947,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.02134756015009879,
+          "meanMatchedControls": -0.022653687478735904
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7595,
+          "att": -0.003473366583805105,
+          "ciLow": -0.006139277549214703,
+          "ciHigh": -0.0009526390589273395,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021502523597103355,
+          "meanMatchedControls": 0.02497589018090849
+        }
+      ],
+      "effectsBiasCorrected": [
+        {
+          "outcome": "out_dlog_home_value",
+          "n": 7078,
+          "att": 0.020892338231427755,
+          "ciLow": 0.008729191793538555,
+          "ciHigh": 0.03296577387284176,
+          "rawDifference": 0.011420839053904619,
+          "meanTreated": 0.3101509255312226,
+          "meanMatchedControls": 0.2940369890401004
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2022",
+          "n": 3319,
+          "att": -0.0017482887784266133,
+          "ciLow": -0.007251312506237958,
+          "ciHigh": 0.0037274408927458927,
+          "rawDifference": 0.005648666636110633,
+          "meanTreated": 0.2843798579059958,
+          "meanMatchedControls": 0.28360712124987447
+        },
+        {
+          "outcome": "out_hpi_real_dlog_2017_2024",
+          "n": 2477,
+          "att": 0.00008963392398784113,
+          "ciLow": -0.007733541496708991,
+          "ciHigh": 0.008089954949250694,
+          "rawDifference": 0.008408827330632918,
+          "meanTreated": 0.3397056091602736,
+          "meanMatchedControls": 0.33661236120441373
+        },
+        {
+          "outcome": "out_dlog_rent",
+          "n": 7506,
+          "att": 0.011763530971553953,
+          "ciLow": 0.005878922860158075,
+          "ciHigh": 0.01838469112285777,
+          "rawDifference": 0.0036953922614162277,
+          "meanTreated": 0.08801031161204347,
+          "meanMatchedControls": 0.08055220731035193
+        },
+        {
+          "outcome": "out_dlog_hh_income",
+          "n": 7532,
+          "att": 0.0040302503336126705,
+          "ciLow": -0.0049072674154531735,
+          "ciHigh": 0.012019685209358196,
+          "rawDifference": 0.023773982558574963,
+          "meanTreated": 0.17513359079261734,
+          "meanMatchedControls": 0.16622353012241103
+        },
+        {
+          "outcome": "out_dlog_pop",
+          "n": 7595,
+          "att": 0.004464675065509819,
+          "ciLow": -0.0015647422961073158,
+          "ciHigh": 0.010769950456856863,
+          "rawDifference": 0.0009223150368051551,
+          "meanTreated": 0.000954267590520081,
+          "meanMatchedControls": -0.005731351379328509
+        },
+        {
+          "outcome": "out_dlog_housing_units",
+          "n": 7595,
+          "att": 0.01515872199205245,
+          "ciLow": 0.010217239227292708,
+          "ciHigh": 0.02034989342584269,
+          "rawDifference": 0.015091018839764606,
+          "meanTreated": 0.04442680124028975,
+          "meanMatchedControls": 0.025412363099210012
+        },
+        {
+          "outcome": "out_dlog_jobs_2017_2023",
+          "n": 7294,
+          "att": 0.03538997767815789,
+          "ciLow": 0.026171163811152715,
+          "ciHigh": 0.04387075980720174,
+          "rawDifference": -0.0056004156328124804,
+          "meanTreated": 0.033876157570606004,
+          "meanMatchedControls": 0.014219325182615816
+        },
+        {
+          "outcome": "out_d_poverty",
+          "n": 7595,
+          "att": 0.0039963807522742055,
+          "ciLow": 0.0015111020323957027,
+          "ciHigh": 0.006610237668318114,
+          "rawDifference": -0.014739282077390371,
+          "meanTreated": -0.06384547154838736,
+          "meanMatchedControls": -0.061144545511849946
+        },
+        {
+          "outcome": "out_d_vacancy",
+          "n": 7595,
+          "att": 0.0014061388718037355,
+          "ciLow": -0.0006342743838402317,
+          "ciHigh": 0.0035000500938575153,
+          "rawDifference": -0.0014622254600526394,
+          "meanTreated": -0.02134756015009879,
+          "meanMatchedControls": -0.022653687478735904
+        },
+        {
+          "outcome": "out_d_owner_share",
+          "n": 7595,
+          "att": -0.0035833906950415383,
+          "ciLow": -0.006241292023771922,
+          "ciHigh": -0.0010746530451466907,
+          "rawDifference": -0.002929244906381013,
+          "meanTreated": 0.021502523597103355,
+          "meanMatchedControls": 0.02497589018090849
+        }
+      ]
+    }
+  ],
+  "outcomeModelSensitivity": {
+    "out_dlog_home_value": {
+      "linear": {
+        "outcome": "out_dlog_home_value",
+        "n": 7060,
+        "att": 0.024362392313423742,
+        "ciLow": 0.012316037283676742,
+        "ciHigh": 0.03617406950889593,
+        "rawDifference": 0.011420839053904619,
+        "meanTreated": 0.310186409266288,
+        "meanMatchedControls": 0.292579323136355
+      },
+      "state": {
+        "outcome": "out_dlog_home_value",
+        "n": 7060,
+        "att": 0.027347611315805067,
+        "ciLow": 0.015366592155183142,
+        "ciHigh": 0.03942378442463635,
+        "rawDifference": 0.011420839053904619,
+        "meanTreated": 0.310186409266288,
+        "meanMatchedControls": 0.292579323136355
+      },
+      "quadratic": {
+        "outcome": "out_dlog_home_value",
+        "n": 7060,
+        "att": 0.01997235764962008,
+        "ciLow": 0.007885941410833253,
+        "ciHigh": 0.03171138556981907,
+        "rawDifference": 0.011420839053904619,
+        "meanTreated": 0.310186409266288,
+        "meanMatchedControls": 0.292579323136355
+      },
+      "matched": {
+        "outcome": "out_dlog_home_value",
+        "n": 7060,
+        "att": 0.02384343061822561,
+        "ciLow": 0.011812719853990957,
+        "ciHigh": 0.03567553557161985,
+        "rawDifference": 0.011420839053904619,
+        "meanTreated": 0.310186409266288,
+        "meanMatchedControls": 0.292579323136355
+      }
+    },
+    "out_hpi_real_dlog_2017_2022": {
+      "linear": {
+        "outcome": "out_hpi_real_dlog_2017_2022",
+        "n": 3333,
+        "att": -0.0023680430637771483,
+        "ciLow": -0.007168326783209587,
+        "ciHigh": 0.0028719147560785072,
+        "rawDifference": 0.005648666636110633,
+        "meanTreated": 0.28442127065406553,
+        "meanMatchedControls": 0.28492194044779473
+      },
+      "state": {
+        "outcome": "out_hpi_real_dlog_2017_2022",
+        "n": 3333,
+        "att": 0.0012707858611954344,
+        "ciLow": -0.0036365396681139906,
+        "ciHigh": 0.006393698369376803,
+        "rawDifference": 0.005648666636110633,
+        "meanTreated": 0.28442127065406553,
+        "meanMatchedControls": 0.28492194044779473
+      },
+      "quadratic": {
+        "outcome": "out_hpi_real_dlog_2017_2022",
+        "n": 3333,
+        "att": -0.001915836954854301,
+        "ciLow": -0.006748950196378062,
+        "ciHigh": 0.0033828288568567427,
+        "rawDifference": 0.005648666636110633,
+        "meanTreated": 0.28442127065406553,
+        "meanMatchedControls": 0.28492194044779473
+      },
+      "matched": {
+        "outcome": "out_hpi_real_dlog_2017_2022",
+        "n": 3333,
+        "att": -0.0049464588403786616,
+        "ciLow": -0.009793564076961648,
+        "ciHigh": 0.0004642392153479071,
+        "rawDifference": 0.005648666636110633,
+        "meanTreated": 0.28442127065406553,
+        "meanMatchedControls": 0.28492194044779473
+      }
+    },
+    "out_hpi_real_dlog_2017_2024": {
+      "linear": {
+        "outcome": "out_hpi_real_dlog_2017_2024",
+        "n": 2487,
+        "att": 0.00046214075407318637,
+        "ciLow": -0.007422981026620563,
+        "ciHigh": 0.00822369625931999,
+        "rawDifference": 0.008408827330632918,
+        "meanTreated": 0.3402039368114187,
+        "meanMatchedControls": 0.33743630328441215
+      },
+      "state": {
+        "outcome": "out_hpi_real_dlog_2017_2024",
+        "n": 2487,
+        "att": 0.0037594259904836745,
+        "ciLow": -0.004073294939772958,
+        "ciHigh": 0.01169602933312398,
+        "rawDifference": 0.008408827330632918,
+        "meanTreated": 0.3402039368114187,
+        "meanMatchedControls": 0.33743630328441215
+      },
+      "quadratic": {
+        "outcome": "out_hpi_real_dlog_2017_2024",
+        "n": 2487,
+        "att": 0.0012818462270832896,
+        "ciLow": -0.006516935025632819,
+        "ciHigh": 0.009081949717154751,
+        "rawDifference": 0.008408827330632918,
+        "meanTreated": 0.3402039368114187,
+        "meanMatchedControls": 0.33743630328441215
+      },
+      "matched": {
+        "outcome": "out_hpi_real_dlog_2017_2024",
+        "n": 2487,
+        "att": -0.001767291476414212,
+        "ciLow": -0.009619432974525761,
+        "ciHigh": 0.006081737979421408,
+        "rawDifference": 0.008408827330632918,
+        "meanTreated": 0.3402039368114187,
+        "meanMatchedControls": 0.33743630328441215
+      }
+    },
+    "out_dlog_rent": {
+      "linear": {
+        "outcome": "out_dlog_rent",
+        "n": 7211,
+        "att": 0.010674163005060853,
+        "ciLow": 0.005171236139440955,
+        "ciHigh": 0.016785925972341055,
+        "rawDifference": 0.0036953922614162277,
+        "meanTreated": 0.08553596199556227,
+        "meanMatchedControls": 0.07844853469948708
+      },
+      "state": {
+        "outcome": "out_dlog_rent",
+        "n": 7211,
+        "att": 0.01131560729588295,
+        "ciLow": 0.0058894542438788595,
+        "ciHigh": 0.01717964462996446,
+        "rawDifference": 0.0036953922614162277,
+        "meanTreated": 0.08553596199556227,
+        "meanMatchedControls": 0.07844853469948708
+      },
+      "quadratic": {
+        "outcome": "out_dlog_rent",
+        "n": 7211,
+        "att": 0.004854526391972471,
+        "ciLow": -0.0005230960931946168,
+        "ciHigh": 0.010613619410518327,
+        "rawDifference": 0.0036953922614162277,
+        "meanTreated": 0.08553596199556227,
+        "meanMatchedControls": 0.07844853469948708
+      },
+      "matched": {
+        "outcome": "out_dlog_rent",
+        "n": 7211,
+        "att": 0.009204074820539759,
+        "ciLow": 0.0036885283660886762,
+        "ciHigh": 0.015297094733988227,
+        "rawDifference": 0.0036953922614162277,
+        "meanTreated": 0.08553596199556227,
+        "meanMatchedControls": 0.07844853469948708
+      }
+    },
+    "out_dlog_hh_income": {
+      "linear": {
+        "outcome": "out_dlog_hh_income",
+        "n": 7249,
+        "att": 0.0009802756799898562,
+        "ciLow": -0.006853143311421972,
+        "ciHigh": 0.008362619930186003,
+        "rawDifference": 0.023773982558574963,
+        "meanTreated": 0.1730626563498403,
+        "meanMatchedControls": 0.16397928445049922
+      },
+      "state": {
+        "outcome": "out_dlog_hh_income",
+        "n": 7249,
+        "att": 0.0006637041070345712,
+        "ciLow": -0.007009889759890273,
+        "ciHigh": 0.00803080807161012,
+        "rawDifference": 0.023773982558574963,
+        "meanTreated": 0.1730626563498403,
+        "meanMatchedControls": 0.16397928445049922
+      },
+      "quadratic": {
+        "outcome": "out_dlog_hh_income",
+        "n": 7249,
+        "att": 0.0001468253847280846,
+        "ciLow": -0.007751546251554366,
+        "ciHigh": 0.007653393590430624,
+        "rawDifference": 0.023773982558574963,
+        "meanTreated": 0.1730626563498403,
+        "meanMatchedControls": 0.16397928445049922
+      },
+      "matched": {
+        "outcome": "out_dlog_hh_income",
+        "n": 7249,
+        "att": 0.0017153369160892065,
+        "ciLow": -0.006224618706749274,
+        "ciHigh": 0.00918023503918738,
+        "rawDifference": 0.023773982558574963,
+        "meanTreated": 0.1730626563498403,
+        "meanMatchedControls": 0.16397928445049922
+      }
+    },
+    "out_dlog_pop": {
+      "linear": {
+        "outcome": "out_dlog_pop",
+        "n": 7298,
+        "att": 0.0029051057163034097,
+        "ciLow": -0.0031173465681191854,
+        "ciHigh": 0.008264276856028586,
+        "rawDifference": 0.0009223150368051551,
+        "meanTreated": -0.0007710508495478123,
+        "meanMatchedControls": -0.0052453850724856
+      },
+      "state": {
+        "outcome": "out_dlog_pop",
+        "n": 7298,
+        "att": 0.0030326009792386397,
+        "ciLow": -0.0030234551873706056,
+        "ciHigh": 0.008518671386668362,
+        "rawDifference": 0.0009223150368051551,
+        "meanTreated": -0.0007710508495478123,
+        "meanMatchedControls": -0.0052453850724856
+      },
+      "quadratic": {
+        "outcome": "out_dlog_pop",
+        "n": 7298,
+        "att": -0.003035299692239618,
+        "ciLow": -0.00878235996096556,
+        "ciHigh": 0.0022531232925026654,
+        "rawDifference": 0.0009223150368051551,
+        "meanTreated": -0.0007710508495478123,
+        "meanMatchedControls": -0.0052453850724856
+      },
+      "matched": {
+        "outcome": "out_dlog_pop",
+        "n": 7298,
+        "att": 0.003932642931504882,
+        "ciLow": -0.002072910187787368,
+        "ciHigh": 0.00929239151717414,
+        "rawDifference": 0.0009223150368051551,
+        "meanTreated": -0.0007710508495478123,
+        "meanMatchedControls": -0.0052453850724856
+      }
+    },
+    "out_dlog_housing_units": {
+      "linear": {
+        "outcome": "out_dlog_housing_units",
+        "n": 7298,
+        "att": 0.01550291941997809,
+        "ciLow": 0.010657933864634601,
+        "ciHigh": 0.020297390933844087,
+        "rawDifference": 0.015091018839764606,
+        "meanTreated": 0.04249717912852831,
+        "meanMatchedControls": 0.024081691451424966
+      },
+      "state": {
+        "outcome": "out_dlog_housing_units",
+        "n": 7298,
+        "att": 0.015796658275347358,
+        "ciLow": 0.01104722396654802,
+        "ciHigh": 0.020494574580910255,
+        "rawDifference": 0.015091018839764606,
+        "meanTreated": 0.04249717912852831,
+        "meanMatchedControls": 0.024081691451424966
+      },
+      "quadratic": {
+        "outcome": "out_dlog_housing_units",
+        "n": 7298,
+        "att": 0.010360265280052154,
+        "ciLow": 0.0056601893392736555,
+        "ciHigh": 0.014843574417974655,
+        "rawDifference": 0.015091018839764606,
+        "meanTreated": 0.04249717912852831,
+        "meanMatchedControls": 0.024081691451424966
+      },
+      "matched": {
+        "outcome": "out_dlog_housing_units",
+        "n": 7298,
+        "att": 0.016568288018484225,
+        "ciLow": 0.011671887369040734,
+        "ciHigh": 0.021405985764992506,
+        "rawDifference": 0.015091018839764606,
+        "meanTreated": 0.04249717912852831,
+        "meanMatchedControls": 0.024081691451424966
+      }
+    },
+    "out_dlog_jobs_2017_2023": {
+      "linear": {
+        "outcome": "out_dlog_jobs_2017_2023",
+        "n": 7010,
+        "att": 0.03580017174100931,
+        "ciLow": 0.025686018888094762,
+        "ciHigh": 0.04509029492211956,
+        "rawDifference": -0.0056004156328124804,
+        "meanTreated": 0.03113222417974324,
+        "meanMatchedControls": 0.01077989481027107
+      },
+      "state": {
+        "outcome": "out_dlog_jobs_2017_2023",
+        "n": 7010,
+        "att": 0.036861363742057625,
+        "ciLow": 0.026752611550888216,
+        "ciHigh": 0.04633749235814066,
+        "rawDifference": -0.0056004156328124804,
+        "meanTreated": 0.03113222417974324,
+        "meanMatchedControls": 0.01077989481027107
+      },
+      "quadratic": {
+        "outcome": "out_dlog_jobs_2017_2023",
+        "n": 7010,
+        "att": 0.024531410041527053,
+        "ciLow": 0.014679255817086824,
+        "ciHigh": 0.033676661458104114,
+        "rawDifference": -0.0056004156328124804,
+        "meanTreated": 0.03113222417974324,
+        "meanMatchedControls": 0.01077989481027107
+      },
+      "matched": {
+        "outcome": "out_dlog_jobs_2017_2023",
+        "n": 7010,
+        "att": 0.031113693692527193,
+        "ciLow": 0.020761414227274805,
+        "ciHigh": 0.04051996623659705,
+        "rawDifference": -0.0056004156328124804,
+        "meanTreated": 0.03113222417974324,
+        "meanMatchedControls": 0.01077989481027107
+      }
+    },
+    "out_d_poverty": {
+      "linear": {
+        "outcome": "out_d_poverty",
+        "n": 7298,
+        "att": 0.004018150342958047,
+        "ciLow": 0.0014471055379232816,
+        "ciHigh": 0.006581915090680643,
+        "rawDifference": -0.014739282077390371,
+        "meanTreated": -0.06309572398328338,
+        "meanMatchedControls": -0.059851408025143875
+      },
+      "state": {
+        "outcome": "out_d_poverty",
+        "n": 7298,
+        "att": 0.003920098838170122,
+        "ciLow": 0.001385948234806632,
+        "ciHigh": 0.006440637831367471,
+        "rawDifference": -0.014739282077390371,
+        "meanTreated": -0.06309572398328338,
+        "meanMatchedControls": -0.059851408025143875
+      },
+      "quadratic": {
+        "outcome": "out_d_poverty",
+        "n": 7298,
+        "att": 0.002642614475851607,
+        "ciLow": 0.00011190835424016555,
+        "ciHigh": 0.005151209131373066,
+        "rawDifference": -0.014739282077390371,
+        "meanTreated": -0.06309572398328338,
+        "meanMatchedControls": -0.059851408025143875
+      },
+      "matched": {
+        "outcome": "out_d_poverty",
+        "n": 7298,
+        "att": 0.004221211066084182,
+        "ciLow": 0.0016916629898622664,
+        "ciHigh": 0.006775209494888303,
+        "rawDifference": -0.014739282077390371,
+        "meanTreated": -0.06309572398328338,
+        "meanMatchedControls": -0.059851408025143875
+      }
+    },
+    "out_d_vacancy": {
+      "linear": {
+        "outcome": "out_d_vacancy",
+        "n": 7298,
+        "att": 0.0012517473636238917,
+        "ciLow": -0.0006949371764574778,
+        "ciHigh": 0.0032622028161237867,
+        "rawDifference": -0.0014622254600526394,
+        "meanTreated": -0.021916353935324772,
+        "meanMatchedControls": -0.022927079202863847
+      },
+      "state": {
+        "outcome": "out_d_vacancy",
+        "n": 7298,
+        "att": 0.0015496292389272457,
+        "ciLow": -0.00040540744851568563,
+        "ciHigh": 0.003578658564880607,
+        "rawDifference": -0.0014622254600526394,
+        "meanTreated": -0.021916353935324772,
+        "meanMatchedControls": -0.022927079202863847
+      },
+      "quadratic": {
+        "outcome": "out_d_vacancy",
+        "n": 7298,
+        "att": 0.001503920088081942,
+        "ciLow": -0.00047595153469307227,
+        "ciHigh": 0.00345057659636454,
+        "rawDifference": -0.0014622254600526394,
+        "meanTreated": -0.021916353935324772,
+        "meanMatchedControls": -0.022927079202863847
+      },
+      "matched": {
+        "outcome": "out_d_vacancy",
+        "n": 7298,
+        "att": 0.001657717390643218,
+        "ciLow": -0.000250643132871276,
+        "ciHigh": 0.0036291457490933198,
+        "rawDifference": -0.0014622254600526394,
+        "meanTreated": -0.021916353935324772,
+        "meanMatchedControls": -0.022927079202863847
+      }
+    },
+    "out_d_owner_share": {
+      "linear": {
+        "outcome": "out_d_owner_share",
+        "n": 7298,
+        "att": -0.003910174084892418,
+        "ciLow": -0.0065867267946362424,
+        "ciHigh": -0.001529077956727883,
+        "rawDifference": -0.002929244906381013,
+        "meanTreated": 0.021349256000274014,
+        "meanMatchedControls": 0.02546858468950407
+      },
+      "state": {
+        "outcome": "out_d_owner_share",
+        "n": 7298,
+        "att": -0.003774161162084569,
+        "ciLow": -0.006443851447281754,
+        "ciHigh": -0.0013918800794294193,
+        "rawDifference": -0.002929244906381013,
+        "meanTreated": 0.021349256000274014,
+        "meanMatchedControls": 0.02546858468950407
+      },
+      "quadratic": {
+        "outcome": "out_d_owner_share",
+        "n": 7298,
+        "att": -0.0037114768025665384,
+        "ciLow": -0.006325453199550141,
+        "ciHigh": -0.0013835022723915368,
+        "rawDifference": -0.002929244906381013,
+        "meanTreated": 0.021349256000274014,
+        "meanMatchedControls": 0.02546858468950407
+      },
+      "matched": {
+        "outcome": "out_d_owner_share",
+        "n": 7298,
+        "att": -0.0031426327311031184,
+        "ciLow": -0.005793066704586289,
+        "ciHigh": -0.0007764442569931251,
+        "rawDifference": -0.002929244906381013,
+        "meanTreated": 0.021349256000274014,
+        "meanMatchedControls": 0.02546858468950407
+      }
+    }
+  },
+  "sensitivity1317": [
+    {
+      "col": "sens1317_dlog_home_value",
+      "e": {
+        "outcome": "sens1317_dlog_home_value",
+        "n": 7012,
+        "att": 0.019554689892703276,
+        "ciLow": 0.008895728234232564,
+        "ciHigh": 0.030318697689651015,
+        "rawDifference": 0.011167286228058071,
+        "meanTreated": 0.29139285877210513,
+        "meanMatchedControls": 0.2776361933879769
+      }
+    },
+    {
+      "col": "sens1317_dlog_rent",
+      "e": {
+        "outcome": "sens1317_dlog_rent",
+        "n": 7203,
+        "att": 0.008710536031752744,
+        "ciLow": 0.002723322157310769,
+        "ciHigh": 0.014592515098364093,
+        "rawDifference": 0.0030744581662159876,
+        "meanTreated": 0.07315665598361798,
+        "meanMatchedControls": 0.06708293395962339
+      }
+    },
+    {
+      "col": "sens1317_dlog_hh_income",
+      "e": {
+        "outcome": "sens1317_dlog_hh_income",
+        "n": 7248,
+        "att": 0.001030046439983933,
+        "ciLow": -0.006434312022885676,
+        "ciHigh": 0.008668799466410216,
+        "rawDifference": 0.022056131067493934,
+        "meanTreated": 0.1463896168805189,
+        "meanMatchedControls": 0.1386675392999217
+      }
+    }
+  ],
+  "placebo": {
+    "hpi_2013_2017": {
+      "outcome": "placebo_2013_2017",
+      "n": 3588,
+      "att": 0.0035437814082591337,
+      "ciLow": -0.004185458897472934,
+      "ciHigh": 0.010790525396832486,
+      "rawDifference": -0.0057413748427228295,
+      "meanTreated": 0.18481394091415826,
+      "meanMatchedControls": 0.18428030497965497
+    },
+    "hpi_2012_2016": {
+      "outcome": "placebo_2012_2016",
+      "n": 3487,
+      "att": 0.008210782771398705,
+      "ciLow": 0.001312814127437395,
+      "ciHigh": 0.014598971746860789,
+      "rawDifference": -0.0055011408489629154,
+      "meanTreated": 0.17076713286205863,
+      "meanMatchedControls": 0.1643291673146447
+    }
+  },
+  "homeValueDecomposition": {
+    "commonAcs": {
+      "outcome": "common_acs",
+      "n": 3209,
+      "att": 0.008666035224037102,
+      "ciLow": -0.000541704209591761,
+      "ciHigh": 0.018251146051387793,
+      "rawDifference": 0.012937389422870538,
+      "meanTreated": 0.3528681851386736,
+      "meanMatchedControls": 0.34281927432746423
+    },
+    "commonFhfa": {
+      "outcome": "common_fhfa",
+      "n": 3209,
+      "att": -0.0003648343210127697,
+      "ciLow": -0.007849672032362868,
+      "ciHigh": 0.007753385476007029,
+      "rawDifference": -0.0017243996753603663,
+      "meanTreated": 0.42015360818323455,
+      "meanMatchedControls": 0.4215131797421322
+    },
+    "commonGap": {
+      "outcome": "common_acs_minus_fhfa",
+      "n": 3209,
+      "att": 0.009030869545053968,
+      "ciLow": 0.0006482341725810497,
+      "ciHigh": 0.01771882628255644,
+      "rawDifference": 0.014661789098226893,
+      "meanTreated": -0.06728542304456228,
+      "meanMatchedControls": -0.07869390541466698
+    },
+    "splitTreatedWith": {
+      "outcome": "acs_treated_with_index",
+      "n": 3385,
+      "att": 0.027598596568150068,
+      "ciLow": 0.018661005524057726,
+      "ciHigh": 0.03635674835881282,
+      "rawDifference": 0.0492263931443892,
+      "meanTreated": 0.34756117578434326,
+      "meanMatchedControls": 0.3238449489428859
+    },
+    "splitTreatedWithout": {
+      "outcome": "acs_treated_without_index",
+      "n": 3675,
+      "att": 0.021381561999886656,
+      "ciLow": 0.0028306464052719883,
+      "ciHigh": 0.040441550469559176,
+      "rawDifference": -0.02301248398928052,
+      "meanTreated": 0.27576094405170043,
+      "meanMatchedControls": 0.2637809167812248
+    },
+    "splitBothWith": {
+      "outcome": "acs_both_with_index",
+      "n": 3327,
+      "att": 0.00877143105494334,
+      "ciLow": -0.0009947266350370696,
+      "ciHigh": 0.018112325938594857,
+      "rawDifference": 0.012569115186584712,
+      "meanTreated": 0.3478685838623391,
+      "meanMatchedControls": 0.3377467654136865
+    },
+    "splitBothWithout": {
+      "outcome": "acs_both_without_index",
+      "n": 3500,
+      "att": 0.04029869584232125,
+      "ciLow": 0.020133163088453056,
+      "ciHigh": 0.0595005049195548,
+      "rawDifference": 0.024389429277525576,
+      "meanTreated": 0.2717195872628569,
+      "meanMatchedControls": 0.24166824929595257
+    },
+    "unitsTreatedWith": {
+      "outcome": "units_with_index",
+      "n": 3395,
+      "att": 0.01696742848389736,
+      "ciLow": 0.0125873272976418,
+      "ciHigh": 0.02138768174091955,
+      "rawDifference": 0.02520661800234524,
+      "meanTreated": 0.055074892842415284,
+      "meanMatchedControls": 0.033311858334167964
+    },
+    "unitsTreatedWithout": {
+      "outcome": "units_without_index",
+      "n": 3903,
+      "att": 0.014229025422538706,
+      "ciLow": 0.006742025771073725,
+      "ciHigh": 0.021596707267667638,
+      "rawDifference": 0.0069416780878602015,
+      "meanTreated": 0.03155653396874197,
+      "meanMatchedControls": 0.016052888846528293
+    }
+  },
+  "fhfaCoverageByYear": {
+    "2017": 59251,
+    "2021": 62743,
+    "2022": 56227,
+    "2023": 46375,
+    "2024": 46860
+  },
+  "urbanReproduction": [
+    {
+      "label": "Median household income",
+      "c": "median_hh_income_2016",
+      "t": 33345,
+      "k": 44446,
+      "money": true,
+      "oursT": 33380.143484288354,
+      "oursC": 44446.11541813156,
+      "okT": true,
+      "okC": true
+    },
+    {
+      "label": "Poverty rate",
+      "c": "poverty_rate_2016",
+      "t": 0.3175,
+      "k": 0.2112,
+      "money": false,
+      "oursT": 0.31749435136211823,
+      "oursC": 0.2111700861198188,
+      "okT": true,
+      "okC": true
+    },
+    {
+      "label": "Median home value",
+      "c": "median_home_value_2016",
+      "t": 145187,
+      "k": 170919,
+      "money": true,
+      "oursT": 145021.18755216408,
+      "oursC": 170927.05968733746,
+      "okT": true,
+      "okC": true
+    },
+    {
+      "label": "Median gross rent",
+      "c": "median_rent_2016",
+      "t": 768,
+      "k": 885,
+      "money": true,
+      "oursT": 767.9493964716806,
+      "oursC": 885.0141057327145,
+      "okT": true,
+      "okC": true
+    },
+    {
+      "label": "Owner-occupied share",
+      "c": "owner_share_2016",
+      "t": 0.4462,
+      "k": 0.5665,
+      "money": false,
+      "oursT": 0.4676953789157747,
+      "oursC": 0.5665230370748583,
+      "okT": false,
+      "okC": true
+    },
+    {
+      "label": "Vacancy rate",
+      "c": "vacancy_rate_2016",
+      "t": 0.1583,
+      "k": 0.1367,
+      "money": false,
+      "oursT": 0.15836666480069098,
+      "oursC": 0.1367524477184672,
+      "okT": true,
+      "okC": true
+    }
+  ]
+}
