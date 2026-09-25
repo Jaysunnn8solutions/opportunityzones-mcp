@@ -188,7 +188,12 @@ exercises every tool against a local `next dev`.
 Address search, map of eligible/designated tracts (MapLibre + PMTiles from
 `npm run tiles`), and a tract page that shows the same data as `get_tract`.
 
-## Step 5: CI and docs
+## Step 5: CI and docs (done)
+
+`.github/workflows/ci.yml` runs type-check, lint, test and build on every PR
+and push to main. README.md is written; its source table is generated from
+`pipeline/sources.ts` by `scripts/readme-sources.ts`, and `tests/readme.test.ts`
+fails if it drifts. The original brief follows.
 
 GitHub Actions: lint, type-check, test on every PR. README: what it is, the
 source table generated from `pipeline/sources.ts`, how to set `.env.local`, and
