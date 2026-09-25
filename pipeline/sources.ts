@@ -403,6 +403,24 @@ export const SOURCES = {
       "Hospitals are the other half of \"eds and meds\" anchors. CMS's register covers every hospital billing Medicare, which is nearly all of them; the product uses name, type and location only, never the quality ratings.",
     access: ["api-pipeline"],
   },
+  hudSafmr: {
+    id: "hudSafmr",
+    name: "HUD Small Area Fair Market Rents, FY2026",
+    publisher: "U.S. Department of Housing and Urban Development",
+    homepage: "https://hudgis-hud.opendata.arcgis.com/search?q=small%20area%20fair%20market%20rents",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Department of Housing and Urban Development, Small Area Fair Market Rents FY2026",
+    geography:
+      "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labelled as ZIP-derived.",
+    vintage: "FY2026 (service data of 2025-09-30)",
+    notes:
+      "From HUD's own ArcGIS table (no key). 51,895 rows for 38,601 ZIPs; a ZIP straddling HUD areas is listed per area with identical rents, which the stage asserts. Replaces the HUD USER API, which needs a token and whose host blocks scripts.",
+    purposes: ["feasibility"],
+    rationale:
+      "HUD's 40th-percentile rent benchmark by ZIP is the published reference for what a rental unit in a place rents for, per bedroom count. No federal rent benchmark exists at tract level; the ZIP figure is labelled as such.",
+    access: ["api-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",

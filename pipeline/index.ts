@@ -27,6 +27,7 @@ import { buildNmtc } from "./cdfi/nmtc";
 import { buildEpaSites } from "./epa/sites";
 import { buildHmda } from "./hmda/lar";
 import { buildHudQctDda } from "./hud/qctDda";
+import { buildSafmr } from "./hud/safmr";
 import { log } from "./lib/http";
 import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
@@ -52,6 +53,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["EPA Superfund and brownfield sites by tract", buildEpaSites],
   ["HMDA mortgage lending by tract", () => buildHmda()],
   ["Anchor institutions: colleges and hospitals", buildAnchors],
+  ["HUD Small Area Fair Market Rents", buildSafmr],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
