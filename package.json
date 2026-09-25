@@ -10,9 +10,7 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "pipeline": "tsx pipeline/index.ts",
-    "tiles": "tsx pipeline/tiles.ts",
-    "test:client": "tsx scripts/test-client.ts"
+    "pipeline": "tsx pipeline/index.ts"
   },
   "engines": {
     "node": ">=22"
