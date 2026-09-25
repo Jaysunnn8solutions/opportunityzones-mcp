@@ -318,6 +318,24 @@ export const SOURCES = {
       "Gives every tract a location without loading polygons: used to place tracts inside designation polygons (Puerto Rico's nonmetro DDA) and, later, to find what is near a tract.",
     access: ["file-pipeline"],
   },
+  nmtcLic: {
+    id: "nmtcLic",
+    name: "NMTC Low-Income Community eligibility, 2016-2020 ACS",
+    publisher: "U.S. Department of the Treasury, CDFI Fund",
+    homepage: "https://www.cdfifund.gov/news/537",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Department of the Treasury, CDFI Fund, NMTC 2016-2020 ACS Low-Income Community eligibility data",
+    geography:
+      "2020 census tract, 50 states, DC and Puerto Rico; Connecticut in 2020 county codes, mapped to planning regions. Island areas published separately and not included.",
+    vintage: "2016-2020 ACS; in effect from 2023-09-01",
+    notes:
+      "85,395 tracts; the LIC verdict is taken as published. A second sheet lists 62 high-migration rural tracts eligible at 85% of benchmark income. The MFI column is labelled a percent but holds a fraction.",
+    purposes: ["feasibility"],
+    rationale:
+      "NMTC is a federal credit commonly paired with OZ investment in the same places. The CDFI Fund's file is the authority on which tracts qualify.",
+    access: ["file-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
