@@ -201,6 +201,23 @@ export const SOURCES = {
       "Treasury's official list of tracts eligible for the 2027 designations, with the inputs it used. It is the authority the eligibility engine is validated against.",
     access: ["file-pipeline"],
   },
+  oz2Designated: {
+    id: "oz2Designated",
+    name: "Designated Qualified Opportunity Zones (2027 round)",
+    publisher: "U.S. Department of the Treasury",
+    homepage: "https://home.treasury.gov/policy-issues/tax-policy/data-transparency/qualified-opportunity-zones",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Department of the Treasury, Designated Qualified Opportunity Zones (2027 round)",
+    geography: "2020 census tract, Connecticut in 2022 planning-region GEOIDs (as the 2027 eligible list)",
+    vintage: "Not yet published: nominations close 2026-09-28 (2026-10-28 if extended); designations take effect 2027-01-01",
+    notes:
+      "Ingest stage built ahead of publication (pipeline/oz2/designated.ts). Checked against the eligible list and each jurisdiction's statutory cap; disagreements are flagged, never dropped.",
+    purposes: ["statutory"],
+    rationale:
+      "Whether a tract is a designated 2027-2036 zone is the central statutory fact the product reports. Only Treasury's certified list says so; eligibility alone does not.",
+    access: ["file-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
