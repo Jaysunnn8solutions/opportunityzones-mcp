@@ -50,8 +50,12 @@ export async function queryAllAttributes(q: ArcgisQuery): Promise<Attrs[]> {
   const total = parse(countBuf, q.cacheKey).count;
   if (total == null) throw new Error(`ArcGIS layer ${q.cacheKey} returned no count`);
 
+  // Advance by the rows actually returned: a layer may cap a page below the
+  // requested size (tables often at 1,000), and stepping by pageSize would
+  // silently skip the rest.
   const rows: Attrs[] = [];
-  for (let offset = 0; offset < total; offset += pageSize) {
+  let offset = 0;
+  while (offset < total) {
     const url = queryUrl(q, {
       outFields: q.outFields.join(","),
       returnGeometry: "false",
@@ -60,7 +64,10 @@ export async function queryAllAttributes(q: ArcgisQuery): Promise<Attrs[]> {
       resultRecordCount: String(pageSize),
     });
     const page = parse(await fetchCached(url, `${q.cacheKey}-${offset}.json`), q.cacheKey);
-    for (const f of page.features ?? []) rows.push(f.attributes);
+    const got = page.features?.length ?? 0;
+    if (got === 0) break;
+    for (const f of page.features!) rows.push(f.attributes);
+    offset += got;
   }
   if (rows.length !== total) {
     throw new Error(`ArcGIS layer ${q.cacheKey}: expected ${total} rows, got ${rows.length}`);
