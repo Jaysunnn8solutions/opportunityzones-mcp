@@ -4,8 +4,42 @@
  * shelling out to anything platform-specific.
  */
 
+import { createRequire } from "node:module";
 import { unzipSync } from "fflate";
-import * as XLSX from "xlsx";
+
+/**
+ * The slice of SheetJS used here, typed locally. `xlsx` installs from
+ * cdn.sheetjs.com as an optional dependency and only the pipeline reads
+ * spreadsheets, so the app, the tests and type-check must not need it.
+ */
+interface SheetJs {
+  read(data: Uint8Array, opts: { type: "buffer"; dense: boolean }): {
+    SheetNames: string[];
+    Sheets: Record<string, unknown>;
+  };
+  utils: {
+    sheet_to_json<T>(
+      sheet: unknown,
+      opts: { header: 1; raw: boolean; defval: null; blankrows: boolean }
+    ): T[];
+  };
+}
+
+let sheetJs: SheetJs | undefined;
+
+function loadSheetJs(): SheetJs {
+  if (sheetJs) return sheetJs;
+  try {
+    sheetJs = createRequire(import.meta.url)("xlsx") as SheetJs;
+    return sheetJs;
+  } catch (err) {
+    if ((err as { code?: string }).code !== "MODULE_NOT_FOUND") throw err;
+    throw new Error(
+      "Reading spreadsheets needs the optional `xlsx` package, which installs from " +
+        "cdn.sheetjs.com. Run `npm install` with that host reachable."
+    );
+  }
+}
 
 /** Every file in a zip whose name matches, decoded as UTF-8 text. */
 export function unzipText(buf: Uint8Array, match: RegExp): Array<{ name: string; text: string }> {
@@ -28,6 +62,7 @@ export interface Sheet {
 
 /** Every worksheet in an .xlsx or .xlsb workbook. */
 export function readWorkbook(buf: Uint8Array): Sheet[] {
+  const XLSX = loadSheetJs();
   const wb = XLSX.read(buf, { type: "buffer", dense: true });
   return wb.SheetNames.map((name) => ({
     name,
