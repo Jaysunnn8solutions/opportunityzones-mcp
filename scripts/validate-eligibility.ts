@@ -80,7 +80,7 @@ function splitCsv(line: string): string[] {
 }
 
 function load(): Row[] {
-  let text: string;
+  let text = "";
   try {
     text = readFileSync(csvPath, "utf8");
   } catch {

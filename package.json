@@ -10,9 +10,7 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "pipeline": "tsx pipeline/index.ts",
-    "tiles": "tsx pipeline/tiles.ts",
-    "test:client": "tsx scripts/test-client.ts"
+    "pipeline": "tsx pipeline/index.ts"
   },
   "engines": {
     "node": ">=22"
@@ -29,7 +27,8 @@
   },
   "optionalDependencies": {
     "@emnapi/core": "^1.11.3",
-    "@emnapi/runtime": "^1.11.3"
+    "@emnapi/runtime": "^1.11.3",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@modelcontextprotocol/client": "^2.0.0",
@@ -45,7 +44,6 @@
     "tsx": "^4.23.13",
     "typescript": "^5",
     "vitest": "^5.0.0",
-    "vt-pbf": "^3.1.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "vt-pbf": "^3.1.3"
   }
 }
