@@ -7,7 +7,8 @@ Paste everything below the line into a new Claude Code session on
 
 You are continuing work on `opportunityzones-mcp`, an Opportunity Zone
 **screening tool** for investors and funds: a TypeScript/Next.js 16 app plus an
-MCP server. Read `AGENTS.md`, `lib/oz/eligibility.ts`, `pipeline/sources.ts`,
+MCP server. Read `AGENTS.md`, `docs/ARCHITECTURE.md` (the agreed data-access,
+caching and privacy design), `lib/oz/eligibility.ts`, `pipeline/sources.ts`,
 `pipeline/lib/env.ts`, `pipeline/lib/http.ts` and `data/oz1/REPORT.md` before
 writing any code. This repo uses Next.js 16: read the relevant guide in
 `node_modules/next/dist/docs/` before touching app code.
@@ -25,7 +26,7 @@ writing any code. This repo uses Next.js 16: read the relevant guide in
   injected env vars). Never commit, print or log a key. `.env.example` lists
   every variable; keep it in sync with any new one.
 
-## Step 0: make the build green
+## Step 0: make the build green (done, PR #2)
 
 1. `npm ci` fails: `package-lock.json` is missing `@emnapi/core` and
    `@emnapi/runtime`. Regenerate the lockfile with `npm install`.
@@ -40,14 +41,12 @@ writing any code. This repo uses Next.js 16: read the relevant guide in
    which do not exist. Create them or remove the scripts.
 5. `npm run lint`, `npm run type-check`, `npm test` all pass. Commit.
 
-## Step 1: require a documented reason for every source
+## Step 1: require a documented reason for every source (done)
 
-Add a required `rationale` field to `Source` in `pipeline/sources.ts` and a
-check in `pipeline/sources.test.ts` that it is non-empty. Each rationale must
-name which of these it serves: **statutory** (OZ qualification rules),
-**feasibility** (can a project work here), or **impact baseline** (the
-before-investment measure). Backfill the existing entries. Also add an
-`access` field: `"api-runtime" | "api-pipeline" | "file-pipeline"`.
+`Source` in `pipeline/sources.ts` now requires `purposes` (**statutory**,
+**feasibility** or **impact-baseline**), a `rationale`, and `access` (one or
+more of `"api-runtime" | "api-pipeline" | "file-pipeline"`), and
+`pipeline/sources.test.ts` enforces them. Every new source must fill them in.
 
 A source is admissible only if it (1) serves one of those three purposes,
 (2) is tract-level or honestly allocable to tracts (otherwise label the
@@ -57,14 +56,17 @@ coarser geography in every output), (3) is authoritative and maintained,
 ## Step 2: API clients
 
 Prefer live APIs. Create one typed client per source under `lib/sources/<id>/`
-with: timeouts, retries with backoff, a small in-memory/disk cache, key
-redaction in every thrown or logged URL, and no logging of query arguments.
+with: timeouts, retries with backoff, key redaction in every thrown or logged
+URL, and no logging of query arguments. Caching follows the table in
+`docs/ARCHITECTURE.md`: shared caching only for results keyed by tract GEOID,
+never for exact searched coordinates or addresses.
 Reuse patterns from `pipeline/lib/http.ts` and `pipeline/lib/census.ts`.
 Each client gets unit tests with recorded fixtures (no network in `npm test`).
 
 Decide per source whether it is queried **at runtime** (per-site lookups from
 the MCP server/app) or **in the pipeline** (national tract tables rebuilt on a
-schedule), record it in `access`, and justify the choice in the PR.
+schedule) using the rule in `docs/ARCHITECTURE.md`, record it in `access`, and
+justify the choice in the PR.
 
 Sources to add, in priority order:
 
@@ -145,6 +147,16 @@ risk score.
 ## Step 3: MCP server at `/mcp`
 
 Using `mcp-handler` and `@modelcontextprotocol/server` (already dependencies):
+
+Reuse, by copying (never importing or calling), the patterns in the sibling
+project `C:\Projects\portfolio\atl-mcp`, which is **read-only** and whose
+`.env*` files must never be opened: `app/mcp/route.ts` (handler setup),
+`lib/tools/*` (config/handler split, `text`/`error` helpers),
+`scripts/test-client.ts`, `.github/workflows/ci.yml` and `refresh-data.yml`, and
+`next.config.ts` (`outputFileTracingIncludes` for `data/`). Do **not** copy its
+geocoder: it takes the address in a GET query string, marks responses
+`public, max-age=86400`, keeps an in-memory cache of addresses, and uses
+Nominatim. Tools that call live sources set `openWorldHint: true`.
 
 - `check_address` (Census Geocoder → tract → 2027 eligibility with the
   `eligibility.ts` explanation, 2018 designation, rural status, overlays)
