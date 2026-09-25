@@ -556,6 +556,23 @@ export const SOURCES = {
       "The current signal of whether anyone is building near a tract; the ACS 'built 2020 or later' share is tract-level but lags. BPS is the standard federal source; FRED only republishes it under stricter terms.",
     access: ["file-pipeline"],
   },
+  censusTigerweb: {
+    id: "censusTigerweb",
+    name: "TIGERweb map services (tracts, counties, roads, water, labels)",
+    publisher: "U.S. Census Bureau, Geography Division",
+    homepage: "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, TIGERweb",
+    geography: "2020 census tract and county boundaries (Current vintage; Connecticut by planning region), plus basemap layers",
+    vintage: "Current TIGER at query time",
+    notes:
+      "Tract and county outlines are fetched per map tile through /api/boundaries and cached at the CDN for 30 days (public data, identical for every viewer). Basemap images (water, roads, labels) load directly from TIGERweb in the browser. Chosen by the owner over hosting a tile file.",
+    purposes: ["statutory"],
+    rationale:
+      "Draws the tracts whose eligibility and designation the product reports, with the Census Bureau's own boundaries and cartography, at no cost and with no file to host.",
+    access: ["api-runtime"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",

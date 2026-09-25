@@ -97,18 +97,25 @@ personal is stored" rule; client data never goes in.
 
 ## The national map
 
-Tract boundaries come from the Census cartographic boundary file,
-`https://www2.census.gov/geo/tiger/GENZ2024/shp/cb_2024_us_tract_500k.zip`
-(55 MB, public domain). The pipeline turns it into one PMTiles file, which the
-browser reads piece by piece with HTTP range requests.
+**Decided 2026-09-25 by the owner: Census TIGERweb, no hosted tile file.**
 
-Hosting, in order of preference:
-1. **Vercel static files**: free, no new account. The file is too large for
-   plain git, so it needs Git LFS or a build step; test that first.
-2. **Census TIGERweb map service** as the fallback: no file to host, but slower
-   and cannot colour tracts by our data without extra work.
-3. **Cloudflare R2**: free tier, but the account needs a payment method, so it
-   needs the owner's approval.
+- Basemap: water, roads and state/county/place labels are TIGERweb map images
+  (`Hydro`, `Transportation`, `tigerWMS_Current`), loaded by the browser
+  directly (public, CORS-enabled).
+- Tract and county outlines: TIGERweb queries per web-mercator tile through
+  `/api/boundaries/{tracts|counties}/{z}/{x}/{y}`, cached at the CDN for 30
+  days, so the Census servers see each tile about once. Counties below zoom 8,
+  tracts from zoom 8. TIGERweb returns whole polygons, so the client merges
+  tiles and de-duplicates by GEOID.
+- Colours come from our data: `/api/status/{state}` (flag bits per tract) and
+  `/api/counties` (eligible share per county).
 
-GitHub Releases does not work: it sends no CORS headers, so browsers cannot
-read the file.
+Trade-offs accepted: the map depends on TIGERweb being up (the CDN cache softens
+this), new areas take 0.5-2 s to fill in, and there is no nationwide tract-level
+view. A hosted PMTiles file (Vercel static via Git LFS or a build step, or
+Cloudflare R2, which needs a payment method) remains the upgrade path without
+changing the map's design.
+
+MapLibre's web worker must be served from `public/maplibre/` and set with
+`setWorkerUrl`: the bundler does not emit it beside MapLibre's code, and the map
+then never loads, silently (`scripts/copy-maplibre-worker.ts`).

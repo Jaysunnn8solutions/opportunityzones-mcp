@@ -42,9 +42,9 @@ yarn-error.log*
 # cleaned per-source tables, rebuilt from the cache
 /pipeline/clean/
 
-# Boundary tiles are built by `npm run tiles` and served from public/.
-# Too large for git; the refresh-data workflow regenerates them.
-/public/tiles/
+# MapLibre's worker, copied from node_modules before dev and build
+# (scripts/copy-maplibre-worker.ts).
+/public/maplibre/
 
 # typescript
 *.tsbuildinfo

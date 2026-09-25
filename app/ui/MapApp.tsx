@@ -1,0 +1,367 @@
+"use client";
+
+/**
+ * The screening map. Census TIGERweb draws the basemap (water, roads, labels)
+ * and supplies tract and county outlines, fetched per tile through our cached
+ * /api/boundaries route. Colours come from the published data.
+ *
+ * Privacy: a searched address lives only in this component's state and is sent
+ * once, in a POST body, to /api/geocode. It is never put in the URL; the hash
+ * holds only the selected tract and the map view.
+ */
+
+import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource, type MapMouseEvent } from "maplibre-gl";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
+
+const TW = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb";
+const exportTiles = (service: string, layers?: string) =>
+  `${TW}/${service}/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true` +
+  `${layers ? `&layers=${encodeURIComponent(layers)}` : ""}&f=image`;
+
+const TRACT_MIN_ZOOM = 8;
+
+const FLAGS = {
+  eligible: { bit: 1, label: "2027 eligible", color: "#0b6e4f" },
+  rural: { bit: 2, label: "Rural (2027 rules)", color: "#8c6d1f" },
+  oz2018: { bit: 4, label: "2018 zone", color: "#6a3d9a" },
+  qct: { bit: 8, label: "HUD QCT", color: "#1f78b4" },
+  dda: { bit: 16, label: "HUD DDA", color: "#b15928" },
+  nmtc: { bit: 32, label: "NMTC", color: "#33a02c" },
+} as const;
+type FlagName = keyof typeof FLAGS;
+
+interface Feature {
+  type: "Feature";
+  properties: Record<string, string | number>;
+  geometry: unknown;
+}
+
+interface Profile {
+  geoid: string;
+  state: string | null;
+  county: string | null;
+  cbsa: string | null;
+  measures: Record<string, { value: number | null }>;
+  rural: { treasury: boolean | null; explanation: string };
+}
+
+function readHash(): { geoid?: string; view?: [number, number, number] } {
+  const h = new URLSearchParams(window.location.hash.slice(1));
+  const geoid = h.get("t") ?? undefined;
+  const v = h.get("v")?.split(",").map(Number);
+  return { geoid: geoid && /^\d{11}$/.test(geoid) ? geoid : undefined, view: v && v.length === 3 && v.every(Number.isFinite) ? (v as [number, number, number]) : undefined };
+}
+
+function writeHash(geoid: string | null, map: MapLibreMap) {
+  const c = map.getCenter();
+  const h = new URLSearchParams();
+  if (geoid) h.set("t", geoid);
+  h.set("v", `${c.lng.toFixed(4)},${c.lat.toFixed(4)},${map.getZoom().toFixed(2)}`);
+  window.history.replaceState(null, "", `#${h.toString()}`);
+}
+
+const pct = (v: number | null | undefined) => (v == null ? "n/a" : `${(v * 100).toFixed(1)}%`);
+const usd = (v: number | null | undefined) => (v == null ? "n/a" : `$${Math.round(v).toLocaleString("en-US")}`);
+
+export default function MapApp() {
+  const container = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapLibreMap | null>(null);
+  const tractFeatures = useRef(new Map<string, Feature>());
+  const countyFeatures = useRef(new Map<string, Feature>());
+  const loadedTiles = useRef(new Set<string>());
+  const stateStatus = useRef(new Map<string, Record<string, number>>());
+  const countySummary = useRef<Record<string, [number, number]> | null>(null);
+  const marker = useRef<Marker | null>(null);
+
+  const [flag, setFlag] = useState<FlagName>("eligible");
+  const [selected, setSelected] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [address, setAddress] = useState("");
+  const [candidates, setCandidates] = useState<Array<{ geoid: string; lon: number; lat: number; label: string | null }>>([]);
+  const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(0);
+
+  /** Re-attach status flags and push merged features to the map. */
+  const refreshSources = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const tracts = [...tractFeatures.current.values()].map((f) => {
+      const g = String(f.properties.GEOID);
+      const bits = stateStatus.current.get(g.slice(0, 2))?.[g];
+      const props: Record<string, string | number> = { GEOID: g };
+      for (const [name, { bit }] of Object.entries(FLAGS)) props[name] = bits == null ? -1 : bits & bit ? 1 : 0;
+      return { ...f, properties: props };
+    });
+    const counties = [...countyFeatures.current.values()].map((f) => {
+      const s = countySummary.current?.[String(f.properties.GEOID)];
+      return { ...f, properties: { ...f.properties, share: s ? s[1] / s[0] : -1 } };
+    });
+    (map.getSource("tracts") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: tracts } as never);
+    (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
+  }, []);
+
+  /** Fetch the boundary tiles covering the view that are not loaded yet. */
+  const loadVisible = useCallback(async () => {
+    const map = mapRef.current;
+    if (!map) return;
+    const z = map.getZoom();
+    const b = map.getBounds();
+    const bounds: Bounds = { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
+    const layer = z >= TRACT_MIN_ZOOM ? "tracts" : "counties";
+    const tz = layer === "tracts" ? Math.min(12, Math.max(TRACT_MIN_ZOOM, Math.floor(z))) : Math.min(7, Math.max(3, Math.floor(z)));
+    const tiles = tilesCovering(bounds, tz).filter((t) => !loadedTiles.current.has(`${layer}/${tz}/${t.x}/${t.y}`));
+    if (tiles.length === 0 || tiles.length > 40) return;
+    setLoading((n) => n + 1);
+    try {
+      await Promise.all(
+        tiles.map(async (t) => {
+          const key = `${layer}/${tz}/${t.x}/${t.y}`;
+          loadedTiles.current.add(key);
+          const res = await fetch(`/api/boundaries/${key}`);
+          if (!res.ok) {
+            loadedTiles.current.delete(key);
+            return;
+          }
+          const fc = (await res.json()) as { features: Feature[] };
+          const store = layer === "tracts" ? tractFeatures.current : countyFeatures.current;
+          for (const f of fc.features) if (!store.has(String(f.properties.GEOID))) store.set(String(f.properties.GEOID), f);
+          if (layer === "tracts") {
+            const states = new Set(fc.features.map((f) => String(f.properties.GEOID).slice(0, 2)));
+            await Promise.all(
+              [...states]
+                .filter((s) => !stateStatus.current.has(s))
+                .map(async (s) => {
+                  stateStatus.current.set(s, {});
+                  const r = await fetch(`/api/status/${s}`);
+                  if (r.ok) stateStatus.current.set(s, (await r.json()) as Record<string, number>);
+                })
+            );
+          }
+        })
+      );
+      if (layer === "counties" && !countySummary.current) {
+        const r = await fetch("/api/counties");
+        if (r.ok) countySummary.current = (await r.json()) as Record<string, [number, number]>;
+      }
+      refreshSources();
+    } finally {
+      setLoading((n) => n - 1);
+    }
+  }, [refreshSources]);
+
+  const selectTract = useCallback(async (geoid: string | null) => {
+    setSelected(geoid);
+    const map = mapRef.current;
+    if (map) {
+      map.setFilter("tract-selected", ["==", ["get", "GEOID"], geoid ?? ""]);
+      writeHash(geoid, map);
+    }
+    if (!geoid) {
+      setProfile(null);
+      return;
+    }
+    const r = await fetch(`/api/tract/${geoid}`);
+    setProfile(r.ok ? ((await r.json()) as Profile) : null);
+  }, []);
+
+  useEffect(() => {
+    if (!container.current || mapRef.current) return;
+    // The bundler does not emit MapLibre's worker next to its code; serve our
+    // copy (scripts/copy-maplibre-worker.ts) or the map never loads.
+    setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+    const initial = readHash();
+    const map = new MapLibreMap({
+      container: container.current,
+      center: initial.view ? [initial.view[0], initial.view[1]] : [-96, 38.5],
+      zoom: initial.view?.[2] ?? 3.6,
+      attributionControl: { compact: true, customAttribution: "U.S. Census Bureau TIGERweb" },
+      style: {
+        version: 8,
+        sources: {
+          hydro: { type: "raster", tiles: [exportTiles("Hydro", "show:1")], tileSize: 256 },
+          roads: { type: "raster", tiles: [exportTiles("Transportation")], tileSize: 256, minzoom: 6 },
+          labels: { type: "raster", tiles: [exportTiles("tigerWMS_Current", "show:81,83,29")], tileSize: 256 },
+          counties: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+          tracts: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+        },
+        layers: [
+          { id: "background", type: "background", paint: { "background-color": "#f4f3ef" } },
+          { id: "hydro", type: "raster", source: "hydro", paint: { "raster-opacity": 0.8 } },
+          {
+            id: "county-fill",
+            type: "fill",
+            source: "counties",
+            maxzoom: TRACT_MIN_ZOOM,
+            paint: {
+              "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
+              "fill-opacity": 0.65,
+            },
+          },
+          { id: "county-line", type: "line", source: "counties", maxzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#9aa3ad", "line-width": 0.4 } },
+          {
+            id: "tract-fill",
+            type: "fill",
+            source: "tracts",
+            minzoom: TRACT_MIN_ZOOM,
+            paint: { "fill-color": ["match", ["get", "eligible"], 1, FLAGS.eligible.color, 0, "#ffffff", "#dddddd"], "fill-opacity": 0.55 },
+          },
+          { id: "roads", type: "raster", source: "roads", paint: { "raster-opacity": 0.7 } },
+          { id: "tract-line", type: "line", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#6b7682", "line-width": 0.5 } },
+          { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
+          { id: "labels", type: "raster", source: "labels" },
+        ],
+      },
+    });
+    map.addControl(new NavigationControl({ showCompass: false }), "top-left");
+    mapRef.current = map;
+    // Map errors (a tile that failed, a bad style value) carry no user data.
+    map.on("error", (e) => console.warn("[map]", e.error?.message ?? "error"));
+    if (process.env.NODE_ENV !== "production") (window as unknown as { __ozMap?: MapLibreMap }).__ozMap = map;
+    map.on("load", () => {
+      void loadVisible();
+      if (initial.geoid) void selectTract(initial.geoid);
+    });
+    map.on("moveend", () => {
+      void loadVisible();
+      writeHash(readHash().geoid ?? null, map);
+    });
+    map.on("click", "tract-fill", (e: MapMouseEvent & { features?: Array<{ properties: Record<string, unknown> }> }) => {
+      const g = e.features?.[0]?.properties?.GEOID;
+      if (typeof g === "string") void selectTract(g);
+    });
+    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: TRACT_MIN_ZOOM + 1 }));
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [loadVisible, selectTract]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getLayer("tract-fill")) return;
+    map.setPaintProperty("tract-fill", "fill-color", ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"]);
+  }, [flag]);
+
+  async function search(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage(null);
+    setCandidates([]);
+    const res = await fetch("/api/geocode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address }),
+    });
+    if (!res.ok) {
+      setMessage(res.status === 400 ? "Enter a full U.S. street address (5-200 characters)." : "Address lookup is unavailable right now.");
+      return;
+    }
+    const { matches } = (await res.json()) as { matches: typeof candidates };
+    if (matches.length === 0) {
+      setMessage("No match found. Try the full street address with city, state and ZIP.");
+      return;
+    }
+    setCandidates(matches);
+    goTo(matches[0]);
+  }
+
+  function goTo(m: { geoid: string; lon: number; lat: number }) {
+    const map = mapRef.current;
+    if (!map) return;
+    marker.current?.remove();
+    marker.current = new Marker({ color: "#d7191c" }).setLngLat([m.lon, m.lat]).addTo(map);
+    map.flyTo({ center: [m.lon, m.lat], zoom: 13 });
+    void selectTract(m.geoid);
+  }
+
+  const m = profile?.measures;
+  return (
+    <div className="map-screen">
+      <aside className="panel">
+        <form className="search" onSubmit={search}>
+          <input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Street address, city, state ZIP"
+            aria-label="Address"
+            autoComplete="off"
+          />
+          <button type="submit">Find</button>
+        </form>
+        <p className="hint">Sent once to the U.S. Census Geocoder to find the tract. Not stored.</p>
+        {message && <p className="error">{message}</p>}
+        {candidates.length > 1 && (
+          <ul>
+            {candidates.map((c) => (
+              <li key={`${c.geoid}-${c.lon}`}>
+                <button type="button" className="link" onClick={() => goTo(c)}>
+                  {c.label ?? c.geoid}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="layer-picker" role="group" aria-label="Colour tracts by">
+          {(Object.keys(FLAGS) as FlagName[]).map((f) => (
+            <button key={f} type="button" aria-pressed={flag === f} onClick={() => setFlag(f)}>
+              {FLAGS[f].label}
+            </button>
+          ))}
+        </div>
+        <div className="legend">
+          <span>
+            <span className="swatch" style={{ background: FLAGS[flag].color }} /> yes
+          </span>
+          <span>
+            <span className="swatch" style={{ background: "#ffffff" }} /> no
+          </span>
+          <span>
+            <span className="swatch" style={{ background: "#dddddd" }} /> no data
+          </span>
+        </div>
+        <p className="hint">Zoomed out, counties show the share of their tracts eligible in 2027. Zoom in to see tracts; click one.</p>
+
+        {selected && !profile && <p className="hint">Loading tract {selected}...</p>}
+        {profile && m && (
+          <section>
+            <h2>
+              Tract {profile.geoid}
+              <br />
+              <span className="hint">
+                {profile.county}, {profile.state}
+              </span>
+            </h2>
+            <ul>
+              <li>
+                2027 eligibility: <strong>{m.eligible_2027.value === 1 ? "eligible" : m.eligible_2027.value === 0 ? "not eligible" : "n/a"}</strong>{" "}
+                (eligibility is not designation)
+              </li>
+              <li>
+                Income {m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(0)}%`} of area MFI; poverty {pct(m.poverty_rate.value)}
+              </li>
+              <li>Rural: {profile.rural.treasury == null ? "n/a" : profile.rural.treasury ? "yes" : "no"}. {profile.rural.explanation}</li>
+              <li>2018 zone: {m.oz2018_population_share.value == null ? "n/a" : m.oz2018_population_share.value >= 0.5 ? "yes" : m.oz2018_population_share.value > 0 ? "partly" : "no"}</li>
+              <li>
+                QCT {m.qct_2026.value === 1 ? "yes" : "no"}; DDA {m.dda_2026.value === 2 ? "yes" : m.dda_2026.value === 1 ? "partly" : "no"}; NMTC{" "}
+                {m.nmtc_lic.value === 1 ? "yes" : m.nmtc_lic.value === 0 ? "no" : "n/a"}
+              </li>
+              <li>
+                Population {m.population.value?.toLocaleString("en-US") ?? "n/a"}; median household income {usd(m.median_household_income.value)}
+              </li>
+            </ul>
+            <p>
+              <Link href={`/tract/${profile.geoid}`}>Full tract profile and sources</Link>
+            </p>
+          </section>
+        )}
+        <p className="note">Informational only, not investment, tax or legal advice.</p>
+      </aside>
+      <div className="map">
+        <div ref={container} className="map-canvas" />
+        {loading > 0 && <div className="map-status">Loading boundaries...</div>}
+      </div>
+    </div>
+  );
+}
