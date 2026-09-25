@@ -30,7 +30,8 @@ export const SOURCE_ID = "fhwaHpms";
 const LAYER = "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/HPMS_National_Current/FeatureServer/0";
 const ROUNDING_PAD_MILES = 0.5;
 export const MAX_RADIUS_MILES = 2;
-const TOP_ROADS = 10;
+/** Roads kept from the statistics query; also the number returned. */
+const TOP_ROADS = 5;
 
 export const ROAD_CLASS: Record<number, string> = {
   1: "Interstate",
@@ -167,8 +168,11 @@ export async function busiestRoadsNear(lon: number, lat: number, radiusMiles = 0
   );
   segs.searchParams.set("returnGeometry", "true");
   segs.searchParams.set("outSR", "4326");
-  segs.searchParams.set("maxAllowableOffset", "0.0002");
-  segs.searchParams.set("resultRecordCount", "1000");
+  // ~50 m generalisation and 5 decimals are ample for distances reported to
+  // 0.01 mile, and cut this query from ~6 s to ~2 s in a dense city.
+  segs.searchParams.set("maxAllowableOffset", "0.0005");
+  segs.searchParams.set("geometryPrecision", "5");
+  segs.searchParams.set("resultRecordCount", "200");
   const segments = (await query(segs)).features!
     .map((f) => toSegment(f, lon, lat))
     .filter((s): s is RoadSegment => s != null && s.distanceMiles <= radiusMiles);
@@ -180,5 +184,5 @@ export async function busiestRoadsNear(lon: number, lat: number, radiusMiles = 0
     const prev = byRoad.get(key);
     if (!prev || s.aadt > prev.aadt || (s.aadt === prev.aadt && s.distanceMiles < prev.distanceMiles)) byRoad.set(key, s);
   }
-  return [...byRoad.values()].sort((a, b) => b.aadt - a.aadt).slice(0, 5);
+  return [...byRoad.values()].sort((a, b) => b.aadt - a.aadt).slice(0, TOP_ROADS);
 }

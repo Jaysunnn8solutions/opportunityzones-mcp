@@ -148,7 +148,14 @@ risk score.
   city open-data permit portals (site-level, but city by city with differing
   licenses; only for markets the user picks).
 
-## Step 3: MCP server at `/mcp`
+## Step 3: MCP server at `/mcp` (done)
+
+**Built:** `pipeline/publish.ts` writes `data/` (tracts.bin + lookups, SAFMR by
+ZIP, anchor points, manifest); `lib/data/tracts.ts` reads it; `app/mcp/route.ts`
+serves six tools from `lib/tools/`: `check_address`, `get_tract`,
+`list_tracts`, `compare_tract`, `oz1_findings`, `nearby`. `npm run
+test:client` exercises all of them against a running server; `nearby` answers
+in ~1.5-2 s warm. The original brief follows.
 
 Using `mcp-handler` and `@modelcontextprotocol/server` (already dependencies):
 
