@@ -1,0 +1,92 @@
+/**
+ * Shared pieces for the MCP tools.
+ *
+ * Rules every tool follows (AGENTS.md, docs/ARCHITECTURE.md):
+ *  - Describes places; never recommends an allocation, fund or deal, and never
+ *    computes anyone's tax outcome.
+ *  - Every description and every response carries the disclaimer.
+ *  - Every response lists the sources used, with vintage and geography.
+ *  - Tool arguments (addresses, coordinates) are never logged or stored.
+ */
+
+import { z } from "zod";
+import { SOURCES, type SourceId } from "../../pipeline/sources";
+import type { ManifestSource, TractProfile } from "../data/tracts";
+import { SourceError } from "../sources/http";
+
+export const DISCLAIMER = "Informational only, not investment, tax or legal advice.";
+
+/** Appended to every tool description. */
+export const DESCRIPTION_SUFFIX =
+  ` Describes places, not investments: it does not recommend any tract, fund or transaction. ${DISCLAIMER}`;
+
+export const readOnly = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
+/** For tools that call live government sources. */
+export const readOnlyLive = { ...readOnly, openWorldHint: true };
+
+export const geoidSchema = z
+  .string()
+  .regex(/^\d{11}$/)
+  .describe("11-digit 2020 census tract GEOID (state 2 + county 3 + tract 6; Connecticut by planning region).");
+
+/** Attribution for the sources a response used, from the source registry (live and offline alike). */
+export function sourcesUsed(ids: readonly string[]): ManifestSource[] {
+  return [...new Set(ids)].flatMap((id) => {
+    const s = SOURCES[id as SourceId];
+    return s ? [{ id: s.id, name: s.name, publisher: s.publisher, vintage: s.vintage, geography: s.geography, attribution: s.attribution }] : [];
+  });
+}
+
+export function footer(sourceIds: readonly string[]): string {
+  const lines = sourcesUsed(sourceIds).map((s) => `- ${s.attribution} (${s.vintage}; ${s.geography})`);
+  return ["", "Sources:", ...lines, "", DISCLAIMER].join("\n");
+}
+
+export function text(body: string, sourceIds: readonly string[]) {
+  return { content: [{ type: "text" as const, text: body + "\n" + footer(sourceIds) }] };
+}
+
+export function error(message: string) {
+  return { content: [{ type: "text" as const, text: `${message}\n\n${DISCLAIMER}` }], isError: true };
+}
+
+/** A source failure as a line in a report, never as a thrown error. */
+export function unavailable(label: string, err: unknown): string {
+  if (err instanceof SourceError) {
+    if (err.kind === "missing-key") return `${label}: not available (this server has no key configured for it).`;
+    if (err.kind === "unavailable") return `${label}: not available right now (the source did not answer in time).`;
+    return `${label}: not available (${err.kind}).`;
+  }
+  return `${label}: not available.`;
+}
+
+export const fmt = {
+  int: (v: number | null) => (v == null ? "n/a" : Math.round(v).toLocaleString("en-US")),
+  usd: (v: number | null) => (v == null ? "n/a" : `$${Math.round(v).toLocaleString("en-US")}`),
+  pct: (v: number | null, digits = 1) => (v == null ? "n/a" : `${(v * 100).toFixed(digits)}%`),
+  miles: (v: number | null) => (v == null ? "n/a" : `${v.toFixed(2)} mi`),
+  yesNo: (v: number | null) => (v == null ? "n/a" : v === 1 ? "yes" : "no"),
+};
+
+export function placeLine(t: TractProfile): string {
+  return `Census tract ${t.geoid}, ${t.county ?? "unknown county"}, ${t.state ?? "unknown state"}${t.cbsa ? ` (${t.cbsa})` : ""}`;
+}
+
+/** The statutory summary shared by check_address and get_tract. */
+export function statusLines(t: TractProfile): string[] {
+  const m = t.measures;
+  const eligible = m.eligible_2027.value;
+  const oz2018 = m.oz2018_population_share.value;
+  const dda = m.dda_2026.value;
+  return [
+    `- 2027 designation eligibility (Treasury): ${eligible === 1 ? "ELIGIBLE low-income community" : eligible === 0 ? "not eligible" : "n/a"}. ` +
+      "Actual 2027 designations are not yet published; eligibility is not designation.",
+    `- Tract median family income ${fmt.usd(m.median_family_income.value)} = ${m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(1)}%`} of the applicable area MFI ${fmt.usd(m.area_median_family_income.value)}; poverty rate ${fmt.pct(m.poverty_rate.value)}.`,
+    `- Rural (Treasury, for the 2027 rules): ${t.rural.treasury == null ? "n/a" : t.rural.treasury ? "yes" : "no"}. ${t.rural.explanation}`,
+    `- 2018 Opportunity Zone: ${oz2018 == null ? "n/a" : oz2018 >= 0.999 ? "the tract lies in a 2018 zone" : oz2018 > 0 ? `${fmt.pct(oz2018, 0)} of its 2020 population lives in a 2018 zone` : "no"} (2018 zones run through 2028).`,
+    `- HUD Qualified Census Tract 2026: ${fmt.yesNo(m.qct_2026.value)}; Difficult Development Area 2026: ${dda == null ? "n/a" : dda === 2 ? "yes" : dda === 1 ? `partly (${fmt.pct(m.dda_zcta_land_share.value, 0)} of land, ZIP-based)` : "no"}.`,
+    `- NMTC low-income community: ${fmt.yesNo(m.nmtc_lic.value)}${m.nmtc_high_migration.value === 1 ? " (via the high-migration rural rule)" : ""}.`,
+  ];
+}
+
+export const STATUS_SOURCES = ["oz2Eligible", "urbanAreas2020", "oz1Designated", "hudQct", "hudDda", "nmtcLic"];

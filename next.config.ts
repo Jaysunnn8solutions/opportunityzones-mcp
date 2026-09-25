@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   // payload is a columnar binary (.bin) plus small JSON sidecars, so both
   // extensions have to be listed.
   outputFileTracingIncludes: {
-    "/api/**": ["./data/*.json", "./data/*.bin"],
-    "/mcp": ["./data/*.json", "./data/*.bin"],
+    "/api/**": ["./data/*.json", "./data/*.bin", "./data/oz1/REPORT.md"],
+    "/mcp": ["./data/*.json", "./data/*.bin", "./data/oz1/REPORT.md"],
   },
 };
 
