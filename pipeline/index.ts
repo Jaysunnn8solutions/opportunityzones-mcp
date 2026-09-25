@@ -17,6 +17,7 @@
  */
 
 import { buildHousingAge } from "./acs/housingAge";
+import { buildAnchors } from "./anchors/anchors";
 import { buildAcsVintages } from "./acs/vintages";
 import { buildCpi } from "./cpi";
 import { buildCrosswalk } from "./crosswalk/blocks";
@@ -50,6 +51,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["Housing age (ACS B25034)", buildHousingAge],
   ["EPA Superfund and brownfield sites by tract", buildEpaSites],
   ["HMDA mortgage lending by tract", () => buildHmda()],
+  ["Anchor institutions: colleges and hospitals", buildAnchors],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
