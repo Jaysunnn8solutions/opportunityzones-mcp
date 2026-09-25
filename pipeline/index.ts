@@ -28,6 +28,7 @@ import { compare } from "./oz1/compare";
 import { buildOz1Lists } from "./oz1/lists";
 import { buildOz2Designated } from "./oz2/designated";
 import { buildOz2Eligible } from "./oz2/eligible";
+import { buildOz2Rural } from "./oz2/rural";
 
 const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["crosswalk (blocks, 2020 P.L. counts, LODES)", buildCrosswalk],
@@ -38,6 +39,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["OZ 2.0 designations (pending Treasury)", buildOz2Designated],
   ["FHFA tract house price index", buildFhfaHpi],
   ["Connecticut GEOID harmonisation", buildCtTracts],
+  ["OZ 2.0 rural status, reproduced and explained", buildOz2Rural],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],

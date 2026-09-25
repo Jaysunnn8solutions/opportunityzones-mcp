@@ -90,10 +90,10 @@ export const SOURCES = {
     geography: "2020 census block",
     vintage: "2020",
     notes:
-      "Total population (P1_001N) and housing units (H1_001N) per block weight the 2010-to-2020 tract crosswalk. One API call per state returns every block.",
-    purposes: ["impact-baseline"],
+      "Total population (P1_001N) and housing units (H1_001N) per block weight the 2010-to-2020 tract crosswalk. One API call per state returns every block. Place-level P1_001N gives the city populations for the rural test.",
+    purposes: ["statutory", "impact-baseline"],
     rationale:
-      "The 2018 zones are frozen on 2010 tracts while current data is on 2020 tracts. Block population and housing counts weight the crosswalk between them by people rather than land, and are the only complete count at block level.",
+      "The 2018 zones are frozen on 2010 tracts while current data is on 2020 tracts. Block population and housing counts weight the crosswalk between them by people rather than land, and are the only complete count at block level. Statutory: the 2020 Census population of a place decides whether it is a city over 50,000 in the rural test.",
     access: ["api-pipeline"],
   },
   blockRelationship: {
@@ -216,6 +216,39 @@ export const SOURCES = {
     purposes: ["statutory"],
     rationale:
       "Whether a tract is a designated 2027-2036 zone is the central statutory fact the product reports. Only Treasury's certified list says so; eligibility alone does not.",
+    access: ["file-pipeline"],
+  },
+  urbanAreas2020: {
+    id: "urbanAreas2020",
+    name: "2020 Census Urban Areas, block list (2020_UA_BLOCKS)",
+    publisher: "U.S. Census Bureau, Geography Division",
+    homepage: "https://www.census.gov/programs-surveys/geography/guidance/geo-areas/urban-rural.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, 2020 Census Urban Areas",
+    geography: "2020 census block to 2020 urban area",
+    vintage: "2020 Census (file of 2023-04-14)",
+    notes: "282 MB pipe-delimited text; streamed, never loaded as one string.",
+    purposes: ["statutory"],
+    rationale:
+      "IRS Notice 2025-50 reads the statute's \"urbanized area\" as any 2020 Census urban area, so this is the authoritative input to the rural test of § 1400Z-2(b)(2)(C)(ii).",
+    access: ["file-pipeline"],
+  },
+  places2020: {
+    id: "places2020",
+    name: "2020 Census places: national place codes and block assignment files (INCPLACE_CDP)",
+    publisher: "U.S. Census Bureau, Geography Division",
+    homepage: "https://www.census.gov/geographies/reference-files/time-series/geo/block-assignment-files.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, 2020 Census place codes and Block Assignment Files",
+    geography: "2020 census block to incorporated place or CDP",
+    vintage: "2020 Census",
+    notes:
+      "national_place2020.txt says whether a place is incorporated or a CDP; the per-state block assignment zips map blocks to places. Place populations come from the 2020 P.L. 94-171 API (decennialPl).",
+    purposes: ["statutory"],
+    rationale:
+      "Identifies the \"city or town that has a population of greater than 50,000\" in the rural test, block by block, so a tract's rural status can be explained by naming the city that excludes it.",
     access: ["file-pipeline"],
   },
   fhfaTractHpi: {
