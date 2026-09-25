@@ -488,6 +488,23 @@ export const SOURCES = {
       "Flood zone bears directly on insurance, construction and financing of a project at a site. FEMA's effective flood maps are the authoritative record; the FEMA National Risk Index was rejected by the owner as too broad.",
     access: ["api-runtime"],
   },
+  censusQwi: {
+    id: "censusQwi",
+    name: "Quarterly Workforce Indicators (QWI)",
+    publisher: "U.S. Census Bureau, Center for Economic Studies (LEHD)",
+    homepage: "https://www.census.gov/data/developers/data-sets/qwi.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, LEHD Quarterly Workforce Indicators",
+    geography: "County, labelled as such in every output",
+    vintage: "Newest quarter available per county at query time (about a year behind)",
+    notes:
+      "Employment, hires and average monthly earnings, all ownership. Newest quarters are often partly released, so each measure reports its own quarter. Year-over-year change compares the same quarter. Earnings nominal. Uses CENSUS_API_KEY.",
+    purposes: ["impact-baseline"],
+    rationale:
+      "A current picture of the county labor market around a tract, which LODES (tract-level but two to three years behind) cannot give. QWI is the Census Bureau's own quarterly series.",
+    access: ["api-runtime"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
