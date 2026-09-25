@@ -1,0 +1,50 @@
+import { describe, expect, it } from "vitest";
+import { getTract, loadTractData } from "./tracts";
+
+// Integration test against the committed data/ (vitest sets OZ_DATA_DIR).
+describe("published tract data", () => {
+  const data = loadTractData();
+
+  it("covers Treasury's full 2027 tract universe", () => {
+    expect(data.payload.count).toBe(85_529);
+    expect(data.manifest.tracts).toBe(85_529);
+  });
+
+  it("describes every column and names a registered source for it", () => {
+    for (const c of data.manifest.columns) {
+      expect(data.payload.columns.has(c.name)).toBe(true);
+      expect(c.description?.length).toBeGreaterThan(10);
+      expect(data.manifest.sources.some((s) => s.id === c.source)).toBe(true);
+    }
+  });
+
+  it("carries the disclaimer", () => {
+    expect(data.manifest.disclaimer).toMatch(/not investment, tax or legal advice/);
+  });
+});
+
+describe("getTract", () => {
+  it("returns a named, explained profile for a real tract (downtown Atlanta)", () => {
+    const t = getTract("13121003500")!;
+    expect(t).toMatchObject({ state: "Georgia", countyFips: "13121" });
+    expect(t.county).toMatch(/Fulton/);
+    expect(t.measures.qct_2026.value).toBe(1);
+    expect(t.measures.population.unit).toBe("count");
+    expect(t.rural.treasury).toBe(false);
+    expect(t.rural.explanation).toMatch(/Atlanta/);
+    expect(t.countyPermits?.units).toBeGreaterThan(0);
+  });
+
+  it("finds Connecticut by planning-region GEOID", () => {
+    expect(getTract("09110504500")?.state).toBe("Connecticut");
+  });
+
+  it("keeps missing data missing (LODES has no Puerto Rico)", () => {
+    expect(getTract("72127000400")!.measures.jobs_2023.value).toBeNull();
+  });
+
+  it("returns null for malformed or unknown GEOIDs", () => {
+    expect(getTract("123")).toBeNull();
+    expect(getTract("99999999999")).toBeNull();
+  });
+});

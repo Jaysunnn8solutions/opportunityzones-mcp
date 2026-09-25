@@ -46,6 +46,7 @@
 
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { ruralExplanation, type ExplanationStatus } from "../../lib/oz/ruralExplanation";
 import { CLEAN_DIR, STATES } from "../config";
 import { unzipText } from "../lib/archive";
 import { censusApiKey } from "../lib/env";
@@ -153,55 +154,20 @@ export function classifyTracts(
   return verdicts;
 }
 
-export type ExplanationStatus = "verified" | "unverified" | "not-computed";
-
-/**
- * Plain-language reason for Treasury's rural flag on one tract. Verified when
- * the block test agrees with Treasury; otherwise the likely cause, marked
- * unverified.
- */
-export function explain(
-  verdict: RuralVerdict | null,
-  treasuryRural: boolean
-): { status: ExplanationStatus; text: string } {
-  if (verdict == null) {
-    return {
-      status: "not-computed",
-      text: treasuryRural
-        ? "Treasury classifies this tract as rural. No block data covers this island area, so the reason is not reproduced."
-        : "Treasury does not classify this tract as rural. No block data covers this island area, so the reason is not reproduced.",
-    };
-  }
-  const where = (v: Exclusion) =>
-    v.reason === "city"
-      ? `it contains part of ${v.city.name} (${v.city.population.toLocaleString("en-US")} people in 2020)`
-      : `it contains part of the ${v.urbanArea} urban area, which touches ${v.city.name} (${v.city.population.toLocaleString("en-US")} people in 2020)`;
-  if (verdict.rural && treasuryRural) {
-    return {
-      status: "verified",
-      text: "Rural: no part of the tract lies in a city over 50,000 or in an urban area touching one.",
-    };
-  }
-  if (!verdict.rural && !treasuryRural) {
-    return { status: "verified", text: `Not rural: ${where(verdict)}.` };
-  }
-  if (treasuryRural && !verdict.rural) {
-    return {
-      status: "unverified",
-      text:
-        `Treasury classifies this tract as rural. By blocks alone ${where(verdict)}; ` +
-        "Treasury's method excludes detached parts of an urban area that do not themselves touch the city, which is the likely reason.",
-    };
-  }
-  return {
-    status: "unverified",
-    text:
-      "Treasury does not classify this tract as rural. No block of it lies in a city over 50,000 or in an urban area sharing a block with one; " +
-      "the likely reason is an urban area that touches such a city only along a boundary.",
-  };
+/** Plain-language reason for Treasury's rural flag; wording lives in lib/oz/ruralExplanation.ts. */
+export function explain(verdict: RuralVerdict | null, treasuryRural: boolean): { status: ExplanationStatus; text: string } {
+  if (verdict == null) return ruralExplanation(treasuryRural, null);
+  if (verdict.rural) return ruralExplanation(treasuryRural, { rural: true });
+  return ruralExplanation(treasuryRural, {
+    rural: false,
+    reason: verdict.reason,
+    cityName: verdict.city.name,
+    cityPopulation: verdict.city.population,
+    urbanArea: verdict.reason === "urban-area" ? verdict.urbanArea : null,
+  });
 }
 
-type Exclusion = Exclude<RuralVerdict, { rural: true }>;
+export type { ExplanationStatus };
 
 /** Lines of a large text buffer without materialising it as one string. */
 export function* lines(buf: Buffer): Generator<string> {
