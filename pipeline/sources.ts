@@ -539,6 +539,23 @@ export const SOURCES = {
       "The most current reading of the local labor market (monthly), which QCEW and QWI, both quarterly and lagged, cannot give.",
     access: ["api-runtime"],
   },
+  censusBps: {
+    id: "censusBps",
+    name: "Building Permits Survey, annual county files",
+    publisher: "U.S. Census Bureau",
+    homepage: "https://www.census.gov/construction/bps/",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, Building Permits Survey",
+    geography: "County (Connecticut by planning region), labelled as such in every output",
+    vintage: "Newest annual file at pipeline run (2025 when first built), with the prior year for change",
+    notes:
+      "Housing units authorized by permit, by building size, using the estimates that include imputation. Permits are authorizations, not starts or completions. Place-level permits are a possible follow-up.",
+    purposes: ["feasibility"],
+    rationale:
+      "The current signal of whether anyone is building near a tract; the ACS 'built 2020 or later' share is tract-level but lags. BPS is the standard federal source; FRED only republishes it under stricter terms.",
+    access: ["file-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",

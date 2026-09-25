@@ -86,7 +86,7 @@ Sources to add, in priority order:
 | 12 | Natural hazards | feasibility | runtime | See below. |
 | 13 | Census Quarterly Workforce Indicators (QWI) | impact baseline | runtime (Census API, `CENSUS_API_KEY`) | **Done, `lib/sources/census/qwi.ts`** (county, all industries). By-industry breakdown is a possible follow-up. |
 | 14 | BLS jobs and unemployment: QCEW + LAUS | impact baseline | runtime | **Done:** `lib/sources/bls/qcew.ts` (live, keyless) and `lib/sources/bls/laus.ts` (parsing verified on real data; live calls wait for `BLS_API_KEY`). |
-| 15 | Census Building Permits Survey (BPS) | feasibility | pipeline | County and permit-issuing place, monthly/annual, permitted units by building size. File downloads, no key. **Not tract-level**: label it in every output. See below. |
+| 15 | Census Building Permits Survey (BPS) | feasibility | pipeline | **Done (county), `pipeline/permits/bps.ts`.** Place-level permits are a possible follow-up. **Not tract-level**: label it in every output. |
 
 ### Foursquare Open Source Places (https://opensource.foursquare.com/os-places/)
 
