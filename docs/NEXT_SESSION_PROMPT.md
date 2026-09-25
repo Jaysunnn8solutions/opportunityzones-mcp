@@ -88,10 +88,12 @@ Sources to add, in priority order:
 - **Never bulk-download it.** Query it remotely (e.g. DuckDB `@duckdb/node-api`
   with `httpfs` reading the published Parquet/Iceberg with bounding-box and
   column pruning), fetching only the rows for the tract or site being looked up.
-- First confirm the current access method and license on that page. It has
-  moved between a gated Hugging Face dataset and Foursquare's Places Portal
-  (Iceberg catalog). Use `HF_TOKEN` or `FSQ_PORTAL_TOKEN` accordingly. Confirm
-  the license is still Apache-2.0 before registering it.
+- Access is through the Foursquare Places Portal (https://places.foursquare.com/),
+  which since Oct 2025 serves OS Places from an Iceberg REST catalog
+  authenticated with a bearer token (`FSQ_PORTAL_TOKEN`). The portal's
+  "OS Places → Code" page has DuckDB/Spark/PyIceberg snippets; use its exact
+  endpoint, namespace and table names. Re-confirm the license is Apache-2.0
+  before registering the source.
 - Exclude closed places (`date_closed`) and report data freshness
   (`date_refreshed`). Aggregate by Foursquare category into tract-level measures
   (counts and nearest distance for grocery, pharmacy, bank, restaurants/retail).
