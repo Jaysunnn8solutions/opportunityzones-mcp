@@ -353,6 +353,23 @@ export const SOURCES = {
       "Contamination history bears on whether and how a site can be developed, and brownfield cleanup is a common part of OZ projects. EPA's registries are the authoritative record; no other national source lists these sites.",
     access: ["api-runtime", "api-pipeline"],
   },
+  hmdaLar: {
+    id: "hmdaLar",
+    name: "HMDA Snapshot National Loan-Level Dataset (public LAR)",
+    publisher: "Consumer Financial Protection Bureau / FFIEC",
+    homepage: "https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "Consumer Financial Protection Bureau and FFIEC, HMDA Snapshot National Loan-Level Dataset",
+    geography: "Loan record, reported by 2020 census tract (HMDA uses 2020 tracts from 2022)",
+    vintage: "2024 activity year (snapshot as of 2025-05-19)",
+    notes:
+      "~660 MB zip streamed and tallied per tract; never held whole. Purchased loans are excluded; the denial rate uses decided applications only. Covers most but not all mortgage lenders.",
+    purposes: ["impact-baseline"],
+    rationale:
+      "Mortgage applications, originations and denial rates describe credit access in a tract before investment arrives, and HMDA is the only national source of them at tract level. The Data Browser API cannot aggregate below the county, hence the national file.",
+    access: ["file-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
