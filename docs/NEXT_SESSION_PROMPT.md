@@ -81,7 +81,7 @@ Sources to add, in priority order:
 | 7 | HMDA (CFPB Data Browser API) | impact baseline | pipeline | **Done, `pipeline/hmda/lar.ts`.** The Data Browser API cannot aggregate below the county, so the national 2024 loan-level file is streamed (ZIP64, 4.6 GB CSV) via `pipeline/lib/zipStream.ts`. |
 | 8 | Anchor institutions: IPEDS postsecondary (NCES) + CMS hospitals | feasibility | pipeline | **Done, `pipeline/anchors/anchors.ts`.** Colleges from NCES EDGE coordinates; hospitals via the Census batch geocoder. Writes a small `anchor_points.csv` so "nearby" needs no live call. |
 | 9 | HUD Small Area Fair Market Rents | feasibility | pipeline | **Done, `pipeline/hud/safmr.ts`.** From HUD's keyless ArcGIS table, so no `HUD_USER_API_TOKEN` is needed. ZIP-level, carried to tracts as a land-weighted average and labelled so. |
-| 10 | FHWA HPMS traffic counts via NTAD ArcGIS REST | feasibility | runtime | Max AADT on segments touching the tract/site, truck share, distance to nearest interstate. **No level-of-service**: no national source exists. |
+| 10 | FHWA HPMS traffic counts via NTAD ArcGIS REST | feasibility | runtime | **Done:** `lib/sources/hpms/client.ts` (busiest roads near a site, live) and `pipeline/roads/interstate.ts` (distance to nearest Interstate per tract, offline from TIGER, because live queries took 2-17 s). **No level-of-service**: no national source exists. |
 | 11 | Foursquare OS Places | feasibility | runtime | See below. |
 | 12 | Natural hazards | feasibility | runtime | See below. |
 | 13 | Census Quarterly Workforce Indicators (QWI) | impact baseline | runtime (Census API, `CENSUS_API_KEY`) | County and metro. Hiring, turnover and earnings by industry, about 1 year behind. Label the geography. |
