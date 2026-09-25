@@ -471,6 +471,23 @@ export const SOURCES = {
       "Everyday amenities near a site (grocery, pharmacy, bank, restaurants, retail) bear on residential and commercial feasibility. OS Places is the only openly licensed national place dataset with commercial rights.",
     access: ["api-runtime"],
   },
+  femaNfhl: {
+    id: "femaNfhl",
+    name: "FEMA National Flood Hazard Layer (NFHL)",
+    publisher: "Federal Emergency Management Agency",
+    homepage: "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "Federal Emergency Management Agency, National Flood Hazard Layer",
+    geography: "Effective flood zone polygons, looked up at a site (no areal aggregation)",
+    vintage: "Effective FIRMs at query time",
+    notes:
+      "FEMA is sent only a ~1.3 km box around a ~1 km-rounded point; the exact point is tested against the returned polygons locally. Where there is no digital FIRM the answer says so, never 'no risk'. Levee-protected zone X is described as reduced, not removed, risk. Not an official flood determination.",
+    purposes: ["feasibility"],
+    rationale:
+      "Flood zone bears directly on insurance, construction and financing of a project at a site. FEMA's effective flood maps are the authoritative record; the FEMA National Risk Index was rejected by the owner as too broad.",
+    access: ["api-runtime"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",

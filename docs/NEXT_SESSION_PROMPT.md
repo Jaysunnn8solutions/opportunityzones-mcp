@@ -119,6 +119,10 @@ the user before building beyond flood):
 - **Flood:** FEMA National Flood Hazard Layer ArcGIS REST: share of the tract
   in a Special Flood Hazard Area (A/V zones) and a point lookup for a site.
   Report "no digital FIRM" areas explicitly rather than as "no risk".
+  **Point lookup done** (`lib/sources/fema/client.ts`). **Follow-up:** the
+  tract SFHA share needs tract polygons intersected with FEMA's detailed zone
+  polygons; large rural tracts make that heavy live, so it wants its own design
+  (offline per state, or on demand with caching by GEOID).
 - **Seismic:** USGS Seismic Design Maps web service at a point.
 - **Wildfire:** USFS Wildfire Risk to Communities (public domain).
 - **Coastal / sea level rise:** NOAA, optional.
