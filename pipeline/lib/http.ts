@@ -1,26 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { redact } from "../../lib/sources/redact";
 import { CACHE_DIR } from "../config";
 
 const USER_AGENT =
   "opportunityzones-mcp-pipeline/0.1 (+https://github.com/Jaysunnn8solutions/opportunityzones-mcp)";
 
-/**
- * Strip credential query parameters before a URL reaches a log, an error, or a
- * cache filename. The Census API authenticates by query string, so a raw URL is
- * a secret and must never be printed.
- */
-export function redact(url: string): string {
-  try {
-    const u = new URL(url);
-    for (const k of ["key", "api_key", "apikey", "token", "access_token"]) {
-      if (u.searchParams.has(k)) u.searchParams.set(k, "REDACTED");
-    }
-    return u.toString();
-  } catch {
-    return url;
-  }
-}
+export { redact };
 
 export function log(msg: string): void {
   console.log(`[pipeline] ${msg}`);

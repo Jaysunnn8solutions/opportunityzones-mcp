@@ -1,8 +1,9 @@
 /**
- * Every external input the pipeline fetches, and the terms it is used under.
+ * Every external input the product fetches, offline in the pipeline or live
+ * in `lib/sources/`, and the terms it is used under.
  *
- * This file is the licence boundary of the product. A stage may only fetch a URL
- * that is built from an entry here, and `sources.test.ts` fails the build if an
+ * This file is the licence boundary of the product. A stage or client may only
+ * fetch a URL that is built from an entry here, and `sources.test.ts` fails the build if an
  * entry lacks a licence, a commercial-use verdict, or an attribution string. The
  * README's data table is generated from the same list, so what the product says
  * about its inputs cannot drift from what it actually uses.
@@ -251,6 +252,24 @@ export const SOURCES = {
     rationale:
       "Puts dollar changes across ACS vintages into real terms, so income and rent growth are not inflation.",
     access: ["api-pipeline"],
+  },
+  censusGeocoder: {
+    id: "censusGeocoder",
+    name: "Census Geocoder (geographies)",
+    publisher: "U.S. Census Bureau",
+    homepage: "https://geocoding.geo.census.gov/geocoder/",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, Census Geocoder",
+    geography:
+      "Address or point to 2020 census tract (Current vintage; Connecticut in 2022 planning-region GEOIDs)",
+    vintage: "Current benchmark and vintage at query time",
+    notes:
+      "Keyless. The searched address goes to the Census Bureau and nowhere else: only the GEOID and coordinates are kept, and the address is never logged, cached or put in an error.",
+    purposes: ["statutory"],
+    rationale:
+      "Turns an address into the tract whose 2027 eligibility and 2018 designation decide OZ status, and is the entry point of every per-site lookup. Chosen over Nominatim, whose public server's policy rules out commercial use, and because it returns the tract directly.",
+    access: ["api-runtime"],
   },
 } as const satisfies Record<string, Source>;
 
