@@ -18,6 +18,19 @@ describe("source registry", () => {
     expect(s.homepage).toMatch(/^https:\/\//);
   });
 
+  it.each(all.map((s) => [s.id, s] as const))("%s says why it is in the product and how it is reached", (_id, s) => {
+    // docs/ARCHITECTURE.md: a source is admitted only if it serves a named
+    // purpose, and every source declares whether it is queried live or built
+    // offline, since that decides caching, key handling and failure modes.
+    expect(s.purposes.length).toBeGreaterThan(0);
+    for (const p of s.purposes) expect(["statutory", "feasibility", "impact-baseline"]).toContain(p);
+    expect(new Set(s.purposes).size).toBe(s.purposes.length);
+    expect(s.rationale.trim().length).toBeGreaterThan(40);
+    expect(s.access.length).toBeGreaterThan(0);
+    for (const a of s.access) expect(["api-runtime", "api-pipeline", "file-pipeline"]).toContain(a);
+    expect(new Set(s.access).size).toBe(s.access.length);
+  });
+
   it("keys every entry by its own id", () => {
     for (const [key, s] of Object.entries(SOURCES)) expect(s.id).toBe(key);
   });
