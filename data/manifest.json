@@ -1,0 +1,456 @@
+{
+ "generated": "2026-09-25",
+ "tracts": 85529,
+ "disclaimer": "Informational only, not investment, tax or legal advice.",
+ "columns": [
+  {
+   "name": "eligible_2027",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if Treasury lists the tract as an eligible low-income community for the 2027 designations.",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "rural_2027",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if Treasury classifies the tract as comprised entirely of a rural area.",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "poverty_rate",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Poverty rate, 2020-2024 ACS, as Treasury used it.",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "median_family_income",
+   "type": "u32",
+   "unit": "USD",
+   "description": "Median family income, 2020-2024 ACS (Treasury's input).",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "area_median_family_income",
+   "type": "u32",
+   "unit": "USD",
+   "description": "The comparison MFI Treasury applied: the CBSA's if in one, else the state's.",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "mfi_ratio",
+   "type": "f32",
+   "unit": "ratio",
+   "description": "Tract MFI divided by the applicable area MFI.",
+   "source": "oz2Eligible"
+  },
+  {
+   "name": "oz2018_population_share",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Share of the tract's 2020 population living in a 2018 Opportunity Zone (2010 tract), via the block crosswalk.",
+   "source": "oz1Designated"
+  },
+  {
+   "name": "rural_by_blocks",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if the block-based reproduction finds the tract rural, 0 if not; null where not computed.",
+   "source": "urbanAreas2020"
+  },
+  {
+   "name": "rural_reason",
+   "type": "u8",
+   "unit": "code",
+   "description": "Why not rural, by blocks: 1 city over 50,000, 2 urban area touching one; null if rural or not computed.",
+   "source": "urbanAreas2020"
+  },
+  {
+   "name": "rural_city",
+   "type": "u16",
+   "unit": "index",
+   "description": "Index into lookups.ruralNames of the excluding city.",
+   "source": "places2020"
+  },
+  {
+   "name": "rural_urban_area",
+   "type": "u16",
+   "unit": "index",
+   "description": "Index into lookups.ruralNames of the excluding urban area.",
+   "source": "urbanAreas2020"
+  },
+  {
+   "name": "rural_explanation",
+   "type": "u8",
+   "unit": "code",
+   "description": "0 verified (block test agrees with Treasury), 1 unverified (they differ), 2 not computed.",
+   "source": "urbanAreas2020"
+  },
+  {
+   "name": "qct_2026",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if a 2026 HUD Qualified Census Tract.",
+   "source": "hudQct"
+  },
+  {
+   "name": "dda_2026",
+   "type": "u8",
+   "unit": "code",
+   "description": "Difficult Development Area 2026: 0 none, 1 part of the tract, 2 all of it.",
+   "source": "hudDda"
+  },
+  {
+   "name": "dda_zcta_land_share",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Share of the tract's land in small-area (ZIP-based) DDAs.",
+   "source": "hudDda"
+  },
+  {
+   "name": "nmtc_lic",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if an NMTC low-income community (2016-2020 ACS); null in island areas (not covered).",
+   "source": "nmtcLic"
+  },
+  {
+   "name": "nmtc_high_migration",
+   "type": "u8",
+   "unit": "code",
+   "description": "1 if NMTC-eligible only through the high-migration rural rule.",
+   "source": "nmtcLic"
+  },
+  {
+   "name": "population",
+   "type": "u32",
+   "unit": "count",
+   "description": "Population, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "housing_units",
+   "type": "u32",
+   "unit": "count",
+   "description": "Housing units, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "median_household_income",
+   "type": "u32",
+   "unit": "USD",
+   "description": "Median household income, 2020-2024 ACS (2024 dollars).",
+   "source": "acs5"
+  },
+  {
+   "name": "median_home_value",
+   "type": "u32",
+   "unit": "USD",
+   "description": "Median value of owner-occupied homes, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "median_gross_rent",
+   "type": "u32",
+   "unit": "USD",
+   "description": "Median gross rent, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "vacancy_rate",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Vacant share of housing units, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "owner_occupied_share",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Owner-occupied share of occupied units, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "bachelors_or_higher_share",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Adults 25+ with a bachelor's degree or higher, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "unemployment_rate",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Unemployed share of the civilian labor force, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "built_2020_or_later",
+   "type": "u32",
+   "unit": "count",
+   "description": "Housing units built 2020 or later, 2020-2024 ACS.",
+   "source": "acs5"
+  },
+  {
+   "name": "built_2020_or_later_moe",
+   "type": "u32",
+   "unit": "count",
+   "description": "Margin of error (90%) of built_2020_or_later.",
+   "source": "acs5"
+  },
+  {
+   "name": "share_built_2010_or_later",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Share of housing units built 2010 or later.",
+   "source": "acs5"
+  },
+  {
+   "name": "share_built_before_1980",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Share of housing units built before 1980.",
+   "source": "acs5"
+  },
+  {
+   "name": "jobs_2023",
+   "type": "u32",
+   "unit": "count",
+   "description": "Jobs located in the tract, 2023 (LODES); null where LODES has no data for the state and year.",
+   "source": "lodesWac"
+  },
+  {
+   "name": "jobs_2017",
+   "type": "u32",
+   "unit": "count",
+   "description": "Jobs located in the tract, 2017 (LODES); null where LODES has no data for the state and year.",
+   "source": "lodesWac"
+  },
+  {
+   "name": "mortgage_applications",
+   "type": "u32",
+   "unit": "count",
+   "description": "Mortgage applications, 2024 (HMDA), excluding purchased loans.",
+   "source": "hmdaLar"
+  },
+  {
+   "name": "mortgage_originations",
+   "type": "u32",
+   "unit": "count",
+   "description": "Mortgage originations, 2024 (HMDA).",
+   "source": "hmdaLar"
+  },
+  {
+   "name": "mortgage_denial_rate",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Denials over decided applications, 2024 (HMDA); null with no decided applications.",
+   "source": "hmdaLar"
+  },
+  {
+   "name": "home_purchase_originations",
+   "type": "u32",
+   "unit": "count",
+   "description": "Home-purchase originations, 2024 (HMDA).",
+   "source": "hmdaLar"
+  },
+  {
+   "name": "originated_dollars",
+   "type": "f32",
+   "unit": "USD",
+   "description": "Dollars originated, 2024 (HMDA).",
+   "source": "hmdaLar"
+  },
+  {
+   "name": "npl_sites",
+   "type": "u16",
+   "unit": "count",
+   "description": "EPA Superfund NPL sites recorded in or at the edge of the tract.",
+   "source": "epaSites"
+  },
+  {
+   "name": "brownfield_sites",
+   "type": "u16",
+   "unit": "count",
+   "description": "EPA brownfield (ACRES) sites recorded in or at the edge of the tract.",
+   "source": "epaSites"
+  },
+  {
+   "name": "colleges",
+   "type": "u16",
+   "unit": "count",
+   "description": "Postsecondary institutions in the tract (NCES).",
+   "source": "ncesPostsecondary"
+  },
+  {
+   "name": "hospitals",
+   "type": "u16",
+   "unit": "count",
+   "description": "Hospitals placed in the tract (CMS; a floor, as ~14% could not be geocoded).",
+   "source": "cmsHospitals"
+  },
+  {
+   "name": "safmr_2br_land_weighted",
+   "type": "u32",
+   "unit": "USD",
+   "description": "HUD FY2026 two-bedroom Small Area FMR, land-weighted over the ZIPs overlapping the tract.",
+   "source": "hudSafmr"
+  },
+  {
+   "name": "safmr_land_covered",
+   "type": "u16",
+   "scale": 0.0001,
+   "unit": "share",
+   "description": "Share of the tract's land in ZIPs with a Small Area FMR.",
+   "source": "hudSafmr"
+  },
+  {
+   "name": "miles_to_interstate",
+   "type": "f32",
+   "unit": "miles",
+   "description": "Miles from the tract's interior point to the nearest Interstate (TIGER 2024); null if none within 150 miles (e.g. Puerto Rico) or not computed.",
+   "source": "tigerPrimaryRoads"
+  }
+ ],
+ "sources": [
+  {
+   "id": "oz2Eligible",
+   "name": "OZ 2.0 Eligible Low-Income Community Tracts (data transparency file)",
+   "publisher": "U.S. Department of the Treasury, Office of Tax Analysis",
+   "vintage": "2026-03-23, from 2020-2024 ACS and 2020 DECIA",
+   "geography": "2020 census tract, all 56 jurisdictions",
+   "attribution": "U.S. Department of the Treasury, OZ 2.0 Eligible LIC Tracts data transparency file (March 2026)"
+  },
+  {
+   "id": "oz1Designated",
+   "name": "Designated Qualified Opportunity Zones (2018 round)",
+   "publisher": "U.S. Department of the Treasury, CDFI Fund",
+   "vintage": "Final list of 2018-12-14",
+   "geography": "2010 census tract. Frozen by statute at 2010 boundaries for the life of the designation (IRS Announcement 2021-10).",
+   "attribution": "U.S. Department of the Treasury, CDFI Fund, Designated Qualified Opportunity Zones"
+  },
+  {
+   "id": "urbanAreas2020",
+   "name": "2020 Census Urban Areas, block list (2020_UA_BLOCKS)",
+   "publisher": "U.S. Census Bureau, Geography Division",
+   "vintage": "2020 Census (file of 2023-04-14)",
+   "geography": "2020 census block to 2020 urban area",
+   "attribution": "U.S. Census Bureau, 2020 Census Urban Areas"
+  },
+  {
+   "id": "places2020",
+   "name": "2020 Census places: national place codes and block assignment files (INCPLACE_CDP)",
+   "publisher": "U.S. Census Bureau, Geography Division",
+   "vintage": "2020 Census",
+   "geography": "2020 census block to incorporated place or CDP",
+   "attribution": "U.S. Census Bureau, 2020 Census place codes and Block Assignment Files"
+  },
+  {
+   "id": "hudQct",
+   "name": "LIHTC Qualified Census Tracts, 2026",
+   "publisher": "U.S. Department of Housing and Urban Development",
+   "vintage": "2026 designation (service data of 2025-09-22)",
+   "geography": "2020 census tract (Connecticut in 2022 planning-region GEOIDs)",
+   "attribution": "U.S. Department of Housing and Urban Development, Qualified Census Tracts 2026"
+  },
+  {
+   "id": "hudDda",
+   "name": "LIHTC Difficult Development Areas, 2026",
+   "publisher": "U.S. Department of Housing and Urban Development",
+   "vintage": "2026 designation (service data of 2025-09-22)",
+   "geography": "ZIP Code Tabulation Area in metro areas; county (or territory, or Puerto Rico's nonmetro area) outside them. Carried to 2020 tracts as a land share, labelled as ZCTA-derived.",
+   "attribution": "U.S. Department of Housing and Urban Development, Difficult Development Areas 2026"
+  },
+  {
+   "id": "nmtcLic",
+   "name": "NMTC Low-Income Community eligibility, 2016-2020 ACS",
+   "publisher": "U.S. Department of the Treasury, CDFI Fund",
+   "vintage": "2016-2020 ACS; in effect from 2023-09-01",
+   "geography": "2020 census tract, 50 states, DC and Puerto Rico; Connecticut in 2020 county codes, mapped to planning regions. Island areas published separately and not included.",
+   "attribution": "U.S. Department of the Treasury, CDFI Fund, NMTC 2016-2020 ACS Low-Income Community eligibility data"
+  },
+  {
+   "id": "acs5",
+   "name": "American Community Survey 5-year estimates",
+   "publisher": "U.S. Census Bureau",
+   "vintage": "2006-2010, 2012-2016, 2013-2017, 2020-2024",
+   "geography": "Census tract. Vintages 2010-2019 are tabulated on 2010 tracts; 2020 onward on 2020 tracts (verified: Delaware has 218 tracts in 2010-2019, 262 from 2020).",
+   "attribution": "U.S. Census Bureau, American Community Survey 5-year estimates"
+  },
+  {
+   "id": "lodesWac",
+   "name": "LEHD Origin-Destination Employment Statistics v8, Workplace Area Characteristics",
+   "publisher": "U.S. Census Bureau, Center for Economic Studies",
+   "vintage": "2002-2023",
+   "geography": "2020 census block (LODES 8 re-tabulates its whole history on 2020 blocks)",
+   "attribution": "U.S. Census Bureau, LEHD Origin-Destination Employment Statistics (LODES 8)"
+  },
+  {
+   "id": "hmdaLar",
+   "name": "HMDA Snapshot National Loan-Level Dataset (public LAR)",
+   "publisher": "Consumer Financial Protection Bureau / FFIEC",
+   "vintage": "2024 activity year (snapshot as of 2025-05-19)",
+   "geography": "Loan record, reported by 2020 census tract (HMDA uses 2020 tracts from 2022)",
+   "attribution": "Consumer Financial Protection Bureau and FFIEC, HMDA Snapshot National Loan-Level Dataset"
+  },
+  {
+   "id": "epaSites",
+   "name": "EPA Superfund (National Priorities List) and Brownfields (ACRES) site locations",
+   "publisher": "U.S. Environmental Protection Agency",
+   "vintage": "Live at query time (runtime); snapshot at pipeline run (tract counts)",
+   "geography": "Site points; counted by 2020 census tract using 1:500,000 boundaries",
+   "attribution": "U.S. Environmental Protection Agency, Envirofacts: Superfund (NPL) and Brownfields (ACRES) sites"
+  },
+  {
+   "id": "ncesPostsecondary",
+   "name": "NCES EDGE Postsecondary School Locations (current, IPEDS institutions)",
+   "publisher": "U.S. Department of Education, National Center for Education Statistics",
+   "vintage": "2024-2025 school year",
+   "geography": "Institution point; placed in 2020 census tracts with 1:500,000 boundaries",
+   "attribution": "U.S. Department of Education, NCES, EDGE Postsecondary School Locations"
+  },
+  {
+   "id": "cmsHospitals",
+   "name": "CMS Hospital General Information",
+   "publisher": "Centers for Medicare & Medicaid Services",
+   "vintage": "Current CMS release at pipeline run",
+   "geography": "Hospital street address; placed in 2020 census tracts by the Census batch geocoder",
+   "attribution": "Centers for Medicare & Medicaid Services, Hospital General Information"
+  },
+  {
+   "id": "hudSafmr",
+   "name": "HUD Small Area Fair Market Rents, FY2026",
+   "publisher": "U.S. Department of Housing and Urban Development",
+   "vintage": "FY2026 (service data of 2025-09-30)",
+   "geography": "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labelled as ZIP-derived.",
+   "attribution": "U.S. Department of Housing and Urban Development, Small Area Fair Market Rents FY2026"
+  },
+  {
+   "id": "tigerPrimaryRoads",
+   "name": "TIGER/Line 2024 Primary Roads",
+   "publisher": "U.S. Census Bureau, Geography Division",
+   "vintage": "2024",
+   "geography": "Road centerlines; distance measured from each 2020 census tract's Gazetteer internal point",
+   "attribution": "U.S. Census Bureau, TIGER/Line Shapefiles 2024, Primary Roads"
+  },
+  {
+   "id": "censusBps",
+   "name": "Building Permits Survey, annual county files",
+   "publisher": "U.S. Census Bureau",
+   "vintage": "Newest annual file at pipeline run (2025 when first built), with the prior year for change",
+   "geography": "County (Connecticut by planning region), labelled as such in every output",
+   "attribution": "U.S. Census Bureau, Building Permits Survey"
+  }
+ ]
+}
