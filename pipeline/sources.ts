@@ -370,6 +370,39 @@ export const SOURCES = {
       "Mortgage applications, originations and denial rates describe credit access in a tract before investment arrives, and HMDA is the only national source of them at tract level. The Data Browser API cannot aggregate below the county, hence the national file.",
     access: ["file-pipeline"],
   },
+  ncesPostsecondary: {
+    id: "ncesPostsecondary",
+    name: "NCES EDGE Postsecondary School Locations (current, IPEDS institutions)",
+    publisher: "U.S. Department of Education, National Center for Education Statistics",
+    homepage: "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Department of Education, NCES, EDGE Postsecondary School Locations",
+    geography: "Institution point; placed in 2020 census tracts with 1:500,000 boundaries",
+    vintage: "2024-2025 school year",
+    notes: "6,605 institutions, from research universities to small certificate schools; NCES's own coordinates.",
+    purposes: ["feasibility"],
+    rationale:
+      "Colleges are stable anchor institutions that draw employment and activity around them. NCES is the authoritative register of every IPEDS institution and its location.",
+    access: ["api-pipeline"],
+  },
+  cmsHospitals: {
+    id: "cmsHospitals",
+    name: "CMS Hospital General Information",
+    publisher: "Centers for Medicare & Medicaid Services",
+    homepage: "https://data.cms.gov/provider-data/dataset/xubh-q36u",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "Centers for Medicare & Medicaid Services, Hospital General Information",
+    geography: "Hospital street address; placed in 2020 census tracts by the Census batch geocoder",
+    vintage: "Current CMS release at pipeline run",
+    notes:
+      "~5,400 Medicare-registered hospitals with type and ownership. CMS gives addresses only; 4,672 of 5,419 geocode to a tract (first run). The rest, mostly rural-route and highway addresses, are listed as unplaced rather than guessed, so hospital counts are a floor.",
+    purposes: ["feasibility"],
+    rationale:
+      "Hospitals are the other half of \"eds and meds\" anchors. CMS's register covers every hospital billing Medicare, which is nearly all of them; the product uses name, type and location only, never the quality ratings.",
+    access: ["api-pipeline"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",
@@ -434,11 +467,11 @@ export const SOURCES = {
       "Address or point to 2020 census tract (Current vintage; Connecticut in 2022 planning-region GEOIDs)",
     vintage: "Current benchmark and vintage at query time",
     notes:
-      "Keyless. The searched address goes to the Census Bureau and nowhere else: only the GEOID and coordinates are kept, and the address is never logged, cached or put in an error.",
-    purposes: ["statutory"],
+      "Keyless. The searched address goes to the Census Bureau and nowhere else: only the GEOID and coordinates are kept, and the address is never logged, cached or put in an error. The pipeline also uses its batch endpoint for public facility addresses (CMS hospitals).",
+    purposes: ["statutory", "feasibility"],
     rationale:
-      "Turns an address into the tract whose 2027 eligibility and 2018 designation decide OZ status, and is the entry point of every per-site lookup. Chosen over Nominatim, whose public server's policy rules out commercial use, and because it returns the tract directly.",
-    access: ["api-runtime"],
+      "Turns an address into the tract whose 2027 eligibility and 2018 designation decide OZ status, and is the entry point of every per-site lookup. Chosen over Nominatim, whose public server's policy rules out commercial use, and because it returns the tract directly. Feasibility: places hospitals, which CMS publishes by address only.",
+    access: ["api-runtime", "api-pipeline"],
   },
 } as const satisfies Record<string, Source>;
 
