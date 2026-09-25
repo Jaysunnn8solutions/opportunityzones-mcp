@@ -74,7 +74,7 @@ Sources to add, in priority order:
 | 2 | Census urban areas (2020) + places > 50,000 via TIGERweb REST | statutory | pipeline | Reproduce the OBBBA "rural" definition for qualified rural opportunity funds and show *why* a tract is rural. Verify the definition against the statute (P.L. 119-21 § 70421) and check it against Treasury's rural flag already in `pipeline/oz2/eligible.ts`; report disagreements, do not hide them. |
 | 3 | HUD Qualified Census Tracts + Difficult Development Areas | feasibility | pipeline | LIHTC 30% basis boost; common OZ stacking. |
 | 4 | CDFI Fund NMTC eligible tracts | feasibility | pipeline | Same publisher as the OZ lists. Mind the tract vintage. |
-| 5 | ACS year structure built (B25034) | statutory | pipeline (Census API) | Relevant to the substantial-improvement test on existing buildings. Add to the existing ACS stage. |
+| 5 | ACS year structure built (B25034) | statutory | pipeline (Census API) | Relevant to the substantial-improvement test on existing buildings. Add to the existing ACS stage. Its "built 2020 or later" share is also the only **tract-level** new-construction signal (lags a few years); pair it with #15. |
 | 6 | EPA brownfields (ACRES) + Superfund NPL (SEMS) | feasibility | runtime and pipeline | Per-tract counts/flags; point lookup near a site. |
 | 7 | HMDA (CFPB Data Browser API) | impact baseline | pipeline | Loan volume and denial rates by tract. Check tract vintage per year. |
 | 8 | Anchor institutions: IPEDS postsecondary (NCES) + CMS hospitals | feasibility | pipeline | Authoritative "eds and meds" anchors. CMS gives addresses only; geocode with the Census Geocoder in the pipeline. |
@@ -82,6 +82,9 @@ Sources to add, in priority order:
 | 10 | FHWA HPMS traffic counts via NTAD ArcGIS REST | feasibility | runtime | Max AADT on segments touching the tract/site, truck share, distance to nearest interstate. **No level-of-service**: no national source exists. |
 | 11 | Foursquare OS Places | feasibility | runtime | See below. |
 | 12 | Natural hazards | feasibility | runtime | See below. |
+| 13 | Census Quarterly Workforce Indicators (QWI) | impact baseline | runtime (Census API, `CENSUS_API_KEY`) | County and metro. Hiring, turnover and earnings by industry, about 1 year behind. Label the geography. |
+| 14 | BLS jobs and unemployment: QCEW + LAUS | impact baseline | runtime | QCEW: county jobs and wages by industry, quarterly, about 6 months behind, open data files with no key. LAUS: county/metro unemployment, monthly, via BLS API v2 (`BLS_API_KEY`; the keyless v1 allows only 25 requests/day). Label the geography. See below. |
+| 15 | Census Building Permits Survey (BPS) | feasibility | pipeline | County and permit-issuing place, monthly/annual, permitted units by building size. File downloads, no key. **Not tract-level**: label it in every output. See below. |
 
 ### Foursquare Open Source Places (https://opensource.foursquare.com/os-places/)
 
@@ -94,6 +97,10 @@ Sources to add, in priority order:
   "OS Places → Code" page has DuckDB/Spark/PyIceberg snippets; use its exact
   endpoint, namespace and table names. Re-confirm the license is Apache-2.0
   before registering the source.
+- The portal account is free and OS Places stays free under Apache-2.0 with
+  attribution (confirmed from Foursquare's docs and announcement, Sep 2026).
+  Do not confuse it with Foursquare's separate **paid Places API**, and never
+  add a payment method or use a paid endpoint. Hugging Face is not used.
 - Exclude closed places (`date_closed`) and report data freshness
   (`date_refreshed`). Aggregate by Foursquare category into tract-level measures
   (counts and nearest distance for grocery, pharmacy, bank, restaurants/retail).
@@ -116,6 +123,24 @@ the user before building beyond flood):
 
 Present each hazard as its own measure. Do not combine them into a composite
 risk score.
+
+### Jobs and building activity
+
+- **Jobs:** LODES (already in the pipeline) stays the tract-level core, as the
+  impact baseline of jobs located in the tract. QWI (#13) and QCEW/LAUS (#14)
+  add a current county/metro picture around it. They never stand in for tract
+  values, and every output names their geography and period.
+- **Building activity:** no public source tracks new construction at tract
+  level. Use BPS (#15) at county/place level for current permits, and ACS
+  "built 2020 or later" (#5) as the lagging tract-level signal. Show them side
+  by side, each labelled.
+- **Rejected:** job postings (Lightcast, Indeed) and Dodge/ConstructConnect,
+  which are proprietary and not license-clean. FRED is also rejected: it only
+  republishes BPS (a weaker duplicate) and its terms are stricter than the
+  public-domain original.
+- **Deferred; ask the user first:** BEA regional data (`BEA_API_KEY`), and
+  city open-data permit portals (site-level, but city by city with differing
+  licenses; only for markets the user picks).
 
 ## Step 3: MCP server at `/mcp`
 
