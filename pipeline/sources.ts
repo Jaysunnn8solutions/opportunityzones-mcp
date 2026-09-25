@@ -505,6 +505,40 @@ export const SOURCES = {
       "A current picture of the county labor market around a tract, which LODES (tract-level but two to three years behind) cannot give. QWI is the Census Bureau's own quarterly series.",
     access: ["api-runtime"],
   },
+  blsQcew: {
+    id: "blsQcew",
+    name: "Quarterly Census of Employment and Wages (QCEW), open data files",
+    publisher: "U.S. Bureau of Labor Statistics",
+    homepage: "https://www.bls.gov/cew/additional-resources/open-data/",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wages",
+    geography: "County, labelled as such in every output",
+    vintage: "Newest published quarter at query time (about six months behind)",
+    notes:
+      "Keyless CSV per county and quarter. County total plus top private supersectors. Suppressed cells (disclosure N) are missing, never zero.",
+    purposes: ["impact-baseline"],
+    rationale:
+      "The most complete count of jobs and wages covered by unemployment insurance, by county and industry, and more current than LODES. BLS is the authority.",
+    access: ["api-runtime"],
+  },
+  blsLaus: {
+    id: "blsLaus",
+    name: "Local Area Unemployment Statistics (LAUS), BLS Public Data API v2",
+    publisher: "U.S. Bureau of Labor Statistics",
+    homepage: "https://www.bls.gov/lau/",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics",
+    geography: "County, labelled as such in every output",
+    vintage: "Newest month at query time; the newest is usually preliminary",
+    notes:
+      "Needs BLS_API_KEY (not yet set): parsing verified on a real series from the keyless v1 API. Not seasonally adjusted; compared year over year. Key sent in the POST body.",
+    purposes: ["impact-baseline"],
+    rationale:
+      "The most current reading of the local labor market (monthly), which QCEW and QWI, both quarterly and lagged, cannot give.",
+    access: ["api-runtime"],
+  },
   fhfaTractHpi: {
     id: "fhfaTractHpi",
     name: "FHFA Annual House Price Index, census tract (developmental)",

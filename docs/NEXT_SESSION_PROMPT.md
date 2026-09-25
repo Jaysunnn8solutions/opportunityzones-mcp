@@ -85,7 +85,7 @@ Sources to add, in priority order:
 | 11 | Foursquare OS Places | feasibility | runtime | **Built, not yet live:** `lib/sources/foursquare/places.ts` (query, categories, summary, tested). To finish: the owner sets `FSQ_PORTAL_TOKEN`, copies the endpoint/warehouse/table from the Portal's code page into `CATALOG`, then add `@duckdb/node-api` and a runner, and check the Vercel bundle size. See below. |
 | 12 | Natural hazards | feasibility | runtime | See below. |
 | 13 | Census Quarterly Workforce Indicators (QWI) | impact baseline | runtime (Census API, `CENSUS_API_KEY`) | **Done, `lib/sources/census/qwi.ts`** (county, all industries). By-industry breakdown is a possible follow-up. |
-| 14 | BLS jobs and unemployment: QCEW + LAUS | impact baseline | runtime | QCEW: county jobs and wages by industry, quarterly, about 6 months behind, open data files with no key. LAUS: county/metro unemployment, monthly, via BLS API v2 (`BLS_API_KEY`; the keyless v1 allows only 25 requests/day). Label the geography. See below. |
+| 14 | BLS jobs and unemployment: QCEW + LAUS | impact baseline | runtime | **Done:** `lib/sources/bls/qcew.ts` (live, keyless) and `lib/sources/bls/laus.ts` (parsing verified on real data; live calls wait for `BLS_API_KEY`). |
 | 15 | Census Building Permits Survey (BPS) | feasibility | pipeline | County and permit-issuing place, monthly/annual, permitted units by building size. File downloads, no key. **Not tract-level**: label it in every output. See below. |
 
 ### Foursquare Open Source Places (https://opensource.foursquare.com/os-places/)
