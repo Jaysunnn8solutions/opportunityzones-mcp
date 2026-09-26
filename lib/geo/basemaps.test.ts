@@ -48,6 +48,16 @@ describe("basemaps", () => {
     expect(layers[0].type).toBe("fill");
   });
 
+  it("adds the map's own sprite next to the basemap's, whatever form that takes", () => {
+    const oz = { id: "oz", url: "https://example.test/sprites/oz" };
+    const withSprite = (sprite: StyleSpecification["sprite"]) => withOverlay({ ...vector, sprite }, { ...overlay, sprite: oz }).sprite;
+    expect(withSprite("https://tiles.test/sprites/positron")).toEqual([{ id: "default", url: "https://tiles.test/sprites/positron" }, oz]);
+    expect(withSprite([{ id: "a", url: "https://x.test/a" }, { id: "oz", url: "stale" }])).toEqual([{ id: "a", url: "https://x.test/a" }, oz]);
+    expect(withSprite(undefined)).toEqual([oz]);
+    // Without an overlay sprite the basemap's is untouched.
+    expect(withOverlay({ ...vector, sprite: "s" }, overlay).sprite).toBe("s");
+  });
+
   it("registers every basemap's source and needs no key", () => {
     for (const b of Object.values(BASEMAPS)) {
       expect(SOURCES).toHaveProperty(b.sourceId);

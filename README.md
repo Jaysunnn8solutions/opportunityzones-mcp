@@ -11,11 +11,13 @@ properties sits.
 |---|---|
 | `/` Start | The gain, the fund and the zone; nine starting points in three groups; where the 2027 round stands |
 | `/for/{individual,corporate,builder,business,landowner,sponsor,adviser,lender,community}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
+| `/guide` | Guided check: who you are, where the money comes from (with the 180-day date), a place or a state, the fund route, then a printable checklist and questions for an adviser |
 | `/how-it-works` | The statutory mechanics in general terms, eligible vs designated, timeline, sources |
-| `/map` | Address search and state-wide tract map, coloured by 2027 eligibility, rural, 2018 zone, HUD QCT/DDA or NMTC |
+| `/map` | Address search and state-wide tract map, coloured by 2027 eligibility (rural tracts hatched), 2027 zone, 2018 zone, HUD QCT/DDA or NMTC; counties in one blue where they have zones |
 | `/tract/{geoid}` | One tract's full profile, its place in the 2027 round, and its sources |
 | `/funds` | Where funds can be found and what to ask one (no fund is named, by rule) |
 | `/check` | Paste up to 25 addresses or tract numbers; get each one's zone status, and a CSV |
+| `/use-with-claude` | How to connect the MCP server to Claude Code or Claude Desktop, with example questions |
 
 > **Informational only, not investment, tax or legal advice.** It describes
 > places. It does not recommend any tract, fund or transaction, and it does not

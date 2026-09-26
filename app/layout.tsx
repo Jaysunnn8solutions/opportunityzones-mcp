@@ -12,10 +12,12 @@ export const metadata: Metadata = {
 
 const NAV: Array<[string, string]> = [
   ["/", "Start"],
+  ["/guide", "Guided check"],
   ["/how-it-works", "How it works"],
   ["/map", "Map"],
   ["/funds", "Funds"],
   ["/check", "Check properties"],
+  ["/use-with-claude", "Use with Claude"],
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

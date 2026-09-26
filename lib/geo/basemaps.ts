@@ -77,6 +77,8 @@ export function isBasemapId(v: unknown): v is BasemapId {
 export interface Overlay {
   sources: Record<string, SourceSpecification>;
   layers: LayerSpecification[];
+  /** The map's own sprite (patterns), added alongside the basemap's; its images are referenced as "{id}:{name}". */
+  sprite?: { id: string; url: string };
 }
 
 /**
@@ -90,8 +92,15 @@ export function withOverlay(base: StyleSpecification, overlay: Overlay): StyleSp
   const baseLayers = base.layers.filter((l) => !ours.has(l.id));
   const firstSymbol = baseLayers.findIndex((l) => l.type === "symbol");
   const at = firstSymbol < 0 ? baseLayers.length : firstSymbol;
+  const sprite = overlay.sprite
+    ? [
+        ...(typeof base.sprite === "string" ? [{ id: "default", url: base.sprite }] : (base.sprite ?? [])).filter((s) => s.id !== overlay.sprite!.id),
+        overlay.sprite,
+      ]
+    : base.sprite;
   return {
     ...base,
+    ...(sprite ? { sprite } : {}),
     sources: { ...base.sources, ...overlay.sources },
     layers: [...baseLayers.slice(0, at), ...overlay.layers, ...baseLayers.slice(at)],
   };

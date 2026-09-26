@@ -59,9 +59,13 @@ describe("/api/status and /api/counties", () => {
     expect(Object.values(body).some((b) => (b & 1) === 1)).toBe(true);
   });
 
-  it("returns tract and eligible counts per county", async () => {
-    const body = (await (await counties()).json()) as Record<string, [number, number]>;
-    expect(body["13121"][0]).toBeGreaterThan(body["13121"][1]);
+  it("returns tract, eligible, designated and pending counts per county", async () => {
+    const body = (await (await counties()).json()) as Record<string, [number, number, number, number]>;
+    const [tracts, eligible, designated, pending] = body["13121"];
+    expect(tracts).toBeGreaterThan(eligible);
+    // Nothing is published yet, so every eligible tract is pending.
+    expect(designated).toBe(0);
+    expect(pending).toBe(eligible);
   });
 });
 

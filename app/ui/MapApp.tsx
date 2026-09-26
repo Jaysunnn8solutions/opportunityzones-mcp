@@ -18,15 +18,19 @@ import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJS
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
+import { countyHasZones, type CountyCounts } from "@/lib/data/countyZones";
 import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
+/** Counties with zones, zoomed out. */
+const COUNTY_ZONE_COLOR = "#2563eb";
 const tractMinZoomFor = (index: BoundaryIndex | null | undefined) => (index ? STATE_TRACT_MIN_ZOOM : TILE_TRACT_MIN_ZOOM);
 
 const FLAGS = {
   eligible: { bit: 1, label: "2027 eligible", color: "#0b6e4f" },
+  // Not a colour choice of its own: shown as hatching over eligible and 2027-zone tracts.
   rural: { bit: 2, label: "Rural (2027 rules)", color: "#8c6d1f" },
   oz2018: { bit: 4, label: "2018 zone", color: "#6a3d9a" },
   qct: { bit: 8, label: "HUD QCT", color: "#1f78b4" },
@@ -37,6 +41,22 @@ const FLAGS = {
 /** Set with zone2027 unknown: eligible, its state's list not yet published. */
 const ZONE_2027_PENDING = 128;
 type FlagName = keyof typeof FLAGS;
+/** The colour-by choices offered; rural status is drawn as hatching on the two views where it matters. */
+const PICKER: FlagName[] = ["eligible", "zone2027", "oz2018", "qct", "dda", "nmtc"];
+const HATCHES_RURAL = new Set<FlagName>(["eligible", "zone2027"]);
+/** Pattern from public/sprites/oz (scripts/make-sprite.ts), merged into every basemap's sprites. */
+const RURAL_HATCH = "oz:rural-hatch";
+/** Matches the sprite's ink (scripts/make-sprite.ts), for the legend swatch. */
+const HATCH_INK = "rgba(6, 40, 29, 0.85)";
+
+/** Legend wording per view: [yes, yes and rural, no, no data]. */
+const LEGEND: Partial<Record<FlagName, [string, string, string, string]>> = {
+  eligible: ["Eligible for 2027", "Eligible, rural", "Not eligible", "No data"],
+  zone2027: ["Designated 2027 zone", "Designated, rural", "Not designated", "Pending (list not published)"],
+};
+
+const ruralHatchFilter = (flag: FlagName) =>
+  (HATCHES_RURAL.has(flag) ? ["all", ["==", ["get", flag], 1], ["==", ["get", "rural"], 1]] : ["==", ["get", "GEOID"], "__none__"]) as never;
 
 const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"] as never;
 
@@ -45,6 +65,7 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
   const empty = (): GeoJSONSourceSpecification => ({ type: "geojson", data: { type: "FeatureCollection", features: [] } });
   return {
     sources: { counties: empty(), tracts: empty() },
+    sprite: { id: "oz", url: `${window.location.origin}/sprites/oz` },
     layers: [
       {
         id: "county-fill",
@@ -52,12 +73,14 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
         source: "counties",
         maxzoom: tractMinZoom,
         paint: {
-          "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
+          // One colour: blue where the county has zones (designated, or eligible while its state's list is unpublished).
+          "fill-color": ["case", ["==", ["get", "zones"], 1], COUNTY_ZONE_COLOR, "rgba(0, 0, 0, 0)"],
           "fill-opacity": fillOpacity + 0.1,
         },
       },
       { id: "county-line", type: "line", source: "counties", maxzoom: tractMinZoom, paint: { "line-color": "#6b7682", "line-width": 0.4 } },
       { id: "tract-fill", type: "fill", source: "tracts", minzoom: tractMinZoom, paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity } },
+      { id: "tract-rural-hatch", type: "fill", source: "tracts", minzoom: tractMinZoom, filter: ruralHatchFilter(flag), paint: { "fill-pattern": RURAL_HATCH } },
       { id: "tract-line", type: "line", source: "tracts", minzoom: tractMinZoom, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
       { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], selected ?? ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
     ],
@@ -111,10 +134,11 @@ export default function MapApp() {
   const countyFeatures = useRef(new Map<string, Feature>());
   const loadedTiles = useRef(new Set<string>());
   const stateStatus = useRef(new Map<string, Record<string, number>>());
-  const countySummary = useRef<Record<string, [number, number]> | null>(null);
+  const countySummary = useRef<Record<string, CountyCounts> | null>(null);
   const marker = useRef<Marker | null>(null);
 
   const [flag, setFlag] = useState<FlagName>("eligible");
+  const [zoom, setZoom] = useState(0);
   const [basemap, setBasemap] = useState<BasemapId>(DEFAULT_BASEMAP);
   const [selected, setSelected] = useState<string | null>(null);
   // Read when a basemap switch rebuilds the style, so it keeps what is shown.
@@ -145,7 +169,7 @@ export default function MapApp() {
     });
     const counties = [...countyFeatures.current.values()].map((f) => {
       const s = countySummary.current?.[String(f.properties.GEOID)];
-      return { ...f, properties: { ...f.properties, share: s ? s[1] / s[0] : -1 } };
+      return { ...f, properties: { ...f.properties, zones: s ? (countyHasZones(s) ? 1 : 0) : -1 } };
     });
     (map.getSource("tracts") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: tracts } as never);
     (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
@@ -167,7 +191,7 @@ export default function MapApp() {
   const loadCountySummary = useCallback(async () => {
     if (countySummary.current) return;
     const r = await fetch("/api/counties");
-    if (r.ok) countySummary.current = (await r.json()) as Record<string, [number, number]>;
+    if (r.ok) countySummary.current = (await r.json()) as Record<string, CountyCounts>;
   }, []);
 
   /**
@@ -191,7 +215,7 @@ export default function MapApp() {
     if (map) {
       const z = tractMinZoomFor(boundaryIndex.current);
       for (const id of ["county-fill", "county-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, 0, z);
-      for (const id of ["tract-fill", "tract-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
+      for (const id of ["tract-fill", "tract-rural-hatch", "tract-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
     }
     return boundaryIndex.current;
   }, []);
@@ -299,7 +323,7 @@ export default function MapApp() {
       container: container.current,
       center: initial.view ? [initial.view[0], initial.view[1]] : [-96, 38.5],
       zoom: initial.view?.[2] ?? 3.6,
-      attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau TIGERweb" },
+      attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau" },
       // Replaced at once by applyBasemap, which merges in the overlay layers.
       style: { version: 8, sources: {}, layers: [] },
     });
@@ -312,10 +336,12 @@ export default function MapApp() {
     map.on("error", (e) => console.warn("[map]", e.error?.message ?? "error"));
     if (process.env.NODE_ENV !== "production") (window as unknown as { __ozMap?: MapLibreMap }).__ozMap = map;
     map.on("load", () => {
+      setZoom(map.getZoom());
       void loadVisible();
       if (initial.geoid) void selectTract(initial.geoid);
     });
     map.on("moveend", () => {
+      setZoom(map.getZoom());
       void loadVisible();
       writeHash(readHash().geoid ?? null, map, basemapRef.current);
     });
@@ -335,6 +361,7 @@ export default function MapApp() {
     const map = mapRef.current;
     if (!map || !map.getLayer("tract-fill")) return;
     map.setPaintProperty("tract-fill", "fill-color", tractFillColor(flag));
+    if (map.getLayer("tract-rural-hatch")) map.setFilter("tract-rural-hatch", ruralHatchFilter(flag));
   }, [flag]);
 
   function chooseBasemap(id: BasemapId) {
@@ -403,22 +430,11 @@ export default function MapApp() {
         )}
 
         <div className="layer-picker" role="group" aria-label="Colour tracts by">
-          {(Object.keys(FLAGS) as FlagName[]).map((f) => (
+          {PICKER.map((f) => (
             <button key={f} type="button" aria-pressed={flag === f} onClick={() => setFlag(f)}>
               {FLAGS[f].label}
             </button>
           ))}
-        </div>
-        <div className="legend">
-          <span>
-            <span className="swatch" style={{ background: FLAGS[flag].color }} /> yes
-          </span>
-          <span>
-            <span className="swatch" style={{ background: "#ffffff" }} /> no
-          </span>
-          <span>
-            <span className="swatch" style={{ background: "#dddddd" }} /> {flag === "zone2027" ? "pending (list not published)" : "no data"}
-          </span>
         </div>
         <div className="layer-picker" role="group" aria-label="Basemap">
           {(Object.keys(BASEMAPS) as BasemapId[]).map((b) => (
@@ -427,7 +443,7 @@ export default function MapApp() {
             </button>
           ))}
         </div>
-        <p className="hint">Zoomed out, counties show the share of their tracts eligible in 2027. Zoom in to see tracts; click one.</p>
+        <p className="hint">Zoomed out, counties show where zones are; zoom in to a state to see its tracts, and click one.</p>
 
         {selected && !profile && <p className="hint">Loading tract {selected}...</p>}
         {profile && m && (
@@ -474,7 +490,47 @@ export default function MapApp() {
       <div className="map">
         <div ref={container} className="map-canvas" />
         {loading > 0 && <div className="map-status">Loading boundaries...</div>}
+        <MapLegend flag={flag} showTracts={zoom >= tractMinZoomFor(boundaryIndex.current)} />
       </div>
+    </div>
+  );
+}
+
+/** On-map key: counties when zoomed out, the chosen tract view when zoomed in. */
+function MapLegend({ flag, showTracts }: { flag: FlagName; showTracts: boolean }) {
+  const hatch = `repeating-linear-gradient(135deg, ${HATCH_INK} 0 1.5px, transparent 1.5px 5px)`;
+  if (!showTracts) {
+    return (
+      <div className="map-legend" aria-label="Map legend">
+        <strong>Counties</strong>
+        <span>
+          <span className="swatch" style={{ background: COUNTY_ZONE_COLOR }} /> Has 2027-eligible tracts
+        </span>
+        <span>
+          <span className="swatch" /> None
+        </span>
+        <span className="legend-note">Where a state&apos;s designations are published: has designated tracts. Zoom in for tracts.</span>
+      </div>
+    );
+  }
+  const [yes, yesRural, no, none] = LEGEND[flag] ?? [FLAGS[flag].label, "", "No", "No data"];
+  return (
+    <div className="map-legend" aria-label="Map legend">
+      <strong>{FLAGS[flag].label}</strong>
+      <span>
+        <span className="swatch" style={{ background: FLAGS[flag].color }} /> {yes}
+      </span>
+      {HATCHES_RURAL.has(flag) && (
+        <span>
+          <span className="swatch" style={{ background: `${hatch}, ${FLAGS[flag].color}` }} /> {yesRural}
+        </span>
+      )}
+      <span>
+        <span className="swatch" style={{ background: "#ffffff" }} /> {no}
+      </span>
+      <span>
+        <span className="swatch" style={{ background: "#dddddd" }} /> {none}
+      </span>
     </div>
   );
 }
