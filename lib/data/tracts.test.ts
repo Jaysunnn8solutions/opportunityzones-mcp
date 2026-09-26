@@ -48,3 +48,18 @@ describe("getTract", () => {
     expect(getTract("99999999999")).toBeNull();
   });
 });
+
+describe("2027 designation status in the published data", () => {
+  it("shows eligible tracts as pending until Treasury's list is published, and says so", async () => {
+    const { stateStatus, FLAGS } = await import("./status");
+    const { designationNote, designationPublication } = await import("./tracts");
+    const ga = stateStatus("13");
+    // Appling County tract 9501: eligible, so pending; never marked designated before publication.
+    expect(ga["13001950100"] & FLAGS.eligible).toBeTruthy();
+    expect(ga["13001950100"] & FLAGS.zone2027Pending).toBeTruthy();
+    expect(ga["13001950100"] & FLAGS.zone2027).toBe(0);
+    // An ineligible tract is not pending: it cannot be designated at all.
+    expect(ga["13121003500"] & (FLAGS.zone2027Pending | FLAGS.zone2027)).toBe(0);
+    if (designationPublication().certified === 0) expect(designationNote()).toMatch(/not yet published/);
+  });
+});

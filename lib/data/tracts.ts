@@ -42,6 +42,8 @@ interface Lookups {
   cbsas: string[];
   ruralNames: string[];
   permits: Record<string, { year: number; units: number; units5plus: number; change: number | null }>;
+  /** States whose 2027 designations Treasury has certified, and when. Absent in data published before the list. */
+  designation?: { certified: Record<string, string> };
 }
 
 export interface TractData {
@@ -89,6 +91,23 @@ export interface TractProfile {
 }
 
 const eligibleByState = new WeakMap<TractData, Map<string, number>>();
+
+/** How far Treasury's 2027 designations have been published. */
+export function designationPublication(data: TractData = loadTractData()): { certified: number; jurisdictions: number; latest: string | null } {
+  const certified = Object.values(data.lookups.designation?.certified ?? {});
+  const jurisdictions = Object.keys(data.lookups.states).filter((f) => stateEligibleCount(f, data) > 0).length;
+  return { certified: certified.length, jurisdictions, latest: certified.length ? certified.sort().at(-1)! : null };
+}
+
+/** One sentence on the state of publication, for banners and summaries. */
+export function designationNote(data: TractData = loadTractData()): string {
+  const p = designationPublication(data);
+  if (p.certified === 0) return "The 2027 designations are not yet published.";
+  if (p.certified < p.jurisdictions) {
+    return `Treasury has certified 2027 designations for ${p.certified} of ${p.jurisdictions} states and territories; the rest are pending.`;
+  }
+  return "Treasury has certified the 2027 designations for every state and territory.";
+}
 
 /** Nationally: eligible tracts, and the most all states together may designate. */
 export function designationRoundTotals(data: TractData = loadTractData()): { eligible: number; maxDesignated: number; jurisdictions: number } {
@@ -170,6 +189,12 @@ export function getTract(geoid: string, data: TractData = loadTractData()): Trac
       explanationStatus: explanation.status,
     },
     countyPermits: data.lookups.permits[county] ?? null,
-    designation2027: designationOutlook(v("eligible_2027"), data.lookups.states[geoid.slice(0, 2)] ?? null, stateEligibleCount(geoid.slice(0, 2), data)),
+    designation2027: designationOutlook(
+      v("eligible_2027"),
+      data.lookups.states[geoid.slice(0, 2)] ?? null,
+      stateEligibleCount(geoid.slice(0, 2), data),
+      v("designated_2027"),
+      data.lookups.designation?.certified[geoid.slice(0, 2)] ?? null
+    ),
   };
 }

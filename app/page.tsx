@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
-import { designationRoundTotals } from "@/lib/data/tracts";
+import { designationNote, designationPublication, designationRoundTotals } from "@/lib/data/tracts";
 
 /** Start: what the program is, where things stand, and where to go next. */
 export default function StartPage() {
   const totals = designationRoundTotals();
+  const published = designationPublication();
   const n = (v: number) => v.toLocaleString("en-US");
   return (
     <main className="page">
@@ -96,8 +97,13 @@ export default function StartPage() {
         </div>
         <ol className="timeline">
           <li>
-            <strong>2026:</strong> governors nominate tracts from their state&apos;s eligible list; Treasury certifies them. The
-            list has not been published yet, so this tool shows every eligible tract as <em>pending</em>.
+            <strong>2026:</strong> governors nominate tracts from their state&apos;s eligible list; Treasury certifies them.{" "}
+            {designationNote()}{" "}
+            {published.certified < published.jurisdictions && (
+              <>
+                Until a state&apos;s list is out, this tool shows its eligible tracts as <em>pending</em>.
+              </>
+            )}
           </li>
           <li>
             <strong>December 31, 2026:</strong> gains deferred under the original rules become taxable.

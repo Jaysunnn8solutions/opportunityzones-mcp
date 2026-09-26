@@ -21,7 +21,7 @@ interface Profile {
   county: string | null;
   measures: Record<string, { value: number | null }>;
   rural: { treasury: boolean | null };
-  designation2027: { status: "pending" | "not-eligible" | "unknown"; stateEligible: number; stateCap: number };
+  designation2027: { status: "designated" | "not-designated" | "pending" | "not-eligible" | "unknown"; stateEligible: number; stateCap: number };
 }
 
 interface Row {
@@ -43,6 +43,8 @@ function zone2018(p: Profile): string {
 
 function round2027(p: Profile): string {
   const d = p.designation2027;
+  if (d.status === "designated") return "Designated 2027 zone";
+  if (d.status === "not-designated") return "Eligible, not designated";
   if (d.status === "pending") return `Eligible, pending (state may pick ${d.stateCap.toLocaleString("en-US")} of ${d.stateEligible.toLocaleString("en-US")})`;
   if (d.status === "not-eligible") return "Not eligible";
   return "Unknown";
@@ -204,8 +206,8 @@ export default function PropertyChecker() {
       )}
       {rows.length > 0 && !busy && (
         <p className="hint">
-          &quot;Pending&quot; means eligible for 2027 but not yet designated: the list is not published. A 2018 zone remains in effect
-          through 2028.
+          &quot;Pending&quot; means eligible for 2027, with the state&apos;s list of designations not yet published. A 2018 zone
+          remains in effect through 2028.
         </p>
       )}
     </div>

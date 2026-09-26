@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Sheet } from "../lib/archive";
-import { parseOz2Designated, SOURCE } from "./designated";
+import { designationCode, parseOz2Designated, RELEASES } from "./designated";
 
 // Shaped like the 2018 list: a title block, then a header naming the tract
 // column, with GEOIDs stored as numbers (so Alabama's leading zero is lost).
@@ -73,10 +73,31 @@ describe("parseOz2Designated", () => {
   });
 });
 
-describe("source", () => {
-  it("is marked unpublished until Treasury releases the list", () => {
-    // When this fails, the list has been wired in: add its expected count too.
-    if (SOURCE.url) expect(SOURCE.expected).not.toBeNull();
-    else expect(SOURCE.expected).toBeNull();
+describe("designationCode", () => {
+  const designated = new Set(["13121003500"]);
+  const certified = new Map([["13", "2026-11-15"]]);
+
+  it("is 1 for a designated tract", () => {
+    expect(designationCode("13121003500", designated, certified)).toBe(1);
+  });
+
+  it("is 0 only once the tract's state is certified", () => {
+    expect(designationCode("13121001100", designated, certified)).toBe(0);
+  });
+
+  it("stays pending (null) while the state's list is not out", () => {
+    expect(designationCode("01001020100", designated, certified)).toBeNull();
+    expect(designationCode("01001020100", new Set(), new Map())).toBeNull();
+  });
+});
+
+describe("releases", () => {
+  it("each carries a date, its states, and Treasury's count", () => {
+    // Empty until Treasury publishes; when a release is added it must be complete.
+    for (const r of RELEASES) {
+      expect(r.published).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(r.states === "all" || r.states.length > 0).toBe(true);
+      expect(r.expected?.designated).toBeGreaterThan(0);
+    }
   });
 });

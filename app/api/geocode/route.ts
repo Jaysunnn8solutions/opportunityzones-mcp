@@ -1,5 +1,4 @@
 import { geocodeAddress } from "@/lib/sources/censusGeocoder/client";
-import { SourceError } from "@/lib/sources/http";
 
 /**
  * Address to candidate tracts, via the Census Geocoder.
@@ -25,8 +24,9 @@ export async function POST(req: Request) {
       { matches: matches.map((m) => ({ geoid: m.geoid, lon: m.lon, lat: m.lat, label: m.matchedAddress ?? null })) },
       { headers: noStore }
     );
-  } catch (err) {
-    const status = err instanceof SourceError && err.kind === "rejected" ? 400 : 502;
-    return Response.json({ error: "address lookup failed" }, { status, headers: noStore });
+  } catch {
+    // The address was validated above, so any failure here is the Census Geocoder's
+    // (down, or refusing requests), not the user's input: 502, never 400.
+    return Response.json({ error: "address lookup failed" }, { status: 502, headers: noStore });
   }
 }

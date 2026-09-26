@@ -32,7 +32,10 @@ const FLAGS = {
   qct: { bit: 8, label: "HUD QCT", color: "#1f78b4" },
   dda: { bit: 16, label: "HUD DDA", color: "#b15928" },
   nmtc: { bit: 32, label: "NMTC", color: "#33a02c" },
+  zone2027: { bit: 64, label: "2027 zone", color: "#c2410c" },
 } as const;
+/** Set with zone2027 unknown: eligible, its state's list not yet published. */
+const ZONE_2027_PENDING = 128;
 type FlagName = keyof typeof FLAGS;
 
 const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"] as never;
@@ -135,7 +138,9 @@ export default function MapApp() {
       const g = String(f.properties.GEOID);
       const bits = stateStatus.current.get(g.slice(0, 2))?.[g];
       const props: Record<string, string | number> = { GEOID: g };
-      for (const [name, { bit }] of Object.entries(FLAGS)) props[name] = bits == null ? -1 : bits & bit ? 1 : 0;
+      for (const [name, { bit }] of Object.entries(FLAGS)) {
+        props[name] = bits == null || (name === "zone2027" && bits & ZONE_2027_PENDING) ? -1 : bits & bit ? 1 : 0;
+      }
       return { ...f, properties: props };
     });
     const counties = [...countyFeatures.current.values()].map((f) => {
@@ -412,7 +417,7 @@ export default function MapApp() {
             <span className="swatch" style={{ background: "#ffffff" }} /> no
           </span>
           <span>
-            <span className="swatch" style={{ background: "#dddddd" }} /> no data
+            <span className="swatch" style={{ background: "#dddddd" }} /> {flag === "zone2027" ? "pending (list not published)" : "no data"}
           </span>
         </div>
         <div className="layer-picker" role="group" aria-label="Basemap">

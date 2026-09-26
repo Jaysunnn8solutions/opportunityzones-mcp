@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { designationNote } from "@/lib/data/tracts";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
@@ -23,8 +24,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="disclaimer" role="note">
           <strong>Informational only, not investment, tax or legal advice.</strong> This tool describes places and explains the
-          rules in general terms. It does not recommend any tract, fund or transaction. Eligibility is not designation: the 2027
-          designations are not yet published.
+          rules in general terms. It does not recommend any tract, fund or transaction. Eligibility is not designation.{" "}
+          {designationNote()}
         </div>
         <header className="site-header">
           <h1>
