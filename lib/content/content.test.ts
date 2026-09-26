@@ -1,12 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { PERSONAS, personaBySlug } from "./personas";
+import { PERSONA_GROUPS, PERSONAS, personaBySlug } from "./personas";
 
 /** The same test the MCP tools face: none of this may read as a recommendation. */
 const ADVICE = /\b(you should|we recommend|recommended|best (tract|investment|fund)|invest here|good investment|guaranteed)\b/i;
 
 describe("persona content", () => {
-  it("covers the four starting points with unique slugs", () => {
-    expect(PERSONAS.map((p) => p.slug)).toEqual(["individual", "builder", "corporate", "business"]);
+  it("covers every starting point, each in a group, with unique slugs", () => {
+    expect(PERSONAS.map((p) => p.slug)).toEqual([
+      "individual",
+      "builder",
+      "corporate",
+      "business",
+      "landowner",
+      "sponsor",
+      "adviser",
+      "lender",
+      "community",
+    ]);
+    expect(new Set(PERSONAS.map((p) => p.slug)).size).toBe(PERSONAS.length);
+    for (const g of PERSONA_GROUPS) expect(PERSONAS.some((p) => p.group === g.id)).toBe(true);
     expect(personaBySlug("builder")?.who).toBe("Home builder");
     expect(personaBySlug("nope")).toBeUndefined();
   });

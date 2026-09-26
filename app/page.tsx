@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PERSONAS } from "@/lib/content/personas";
+import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
 import { designationRoundTotals } from "@/lib/data/tracts";
 
 /** Start: what the program is, where things stand, and where to go next. */
@@ -36,15 +36,20 @@ export default function StartPage() {
 
       <section>
         <h2>Which describes you?</h2>
-        <div className="cards personas">
-          {PERSONAS.map((p) => (
-            <Link key={p.slug} className="card" href={`/for/${p.slug}`}>
-              <span className="card-kicker">{p.who}</span>
-              <strong>{p.title}</strong>
-              <span>{p.summary}</span>
-            </Link>
-          ))}
-        </div>
+        {PERSONA_GROUPS.map((g) => (
+          <div key={g.id} className="persona-group">
+            <h3>{g.title}</h3>
+            <div className="cards personas">
+              {PERSONAS.filter((p) => p.group === g.id).map((p) => (
+                <Link key={p.slug} className="card" href={`/for/${p.slug}`}>
+                  <span className="card-kicker">{p.who}</span>
+                  <strong>{p.title}</strong>
+                  <span>{p.summary}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
 
       <section>

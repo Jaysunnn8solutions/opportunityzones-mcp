@@ -5,8 +5,17 @@
  * IRC §§ 1400Z-1 and 1400Z-2 as amended by P.L. 119-21 § 70421.
  */
 
+export type PersonaGroup = "invest" | "build" | "support";
+
+export const PERSONA_GROUPS: Array<{ id: PersonaGroup; title: string }> = [
+  { id: "invest", title: "Investing a gain" },
+  { id: "build", title: "Building, owning and operating" },
+  { id: "support", title: "Working with investors and places" },
+];
+
 export interface Persona {
   slug: string;
+  group: PersonaGroup;
   who: string;
   title: string;
   summary: string;
@@ -14,8 +23,9 @@ export interface Persona {
   fit: string[];
   /** The rules that matter most here. */
   rules: string[];
-  /** Questions to take to a tax adviser or attorney. */
+  /** Questions to take further (a tax adviser or attorney unless askLabel says otherwise). */
   ask: string[];
+  askLabel?: string;
   /** Where on this site the next question is answered. */
   tools: Array<{ href: string; label: string; why: string }>;
   example?: { title: string; steps: string[]; weigh: string[] };
@@ -24,6 +34,7 @@ export interface Persona {
 export const PERSONAS: Persona[] = [
   {
     slug: "individual",
+    group: "invest",
     who: "Individual investor",
     title: "An individual with a gain, looking at property",
     summary: "You sold stock or another asset at a gain and are looking at owning property in a zone.",
@@ -66,6 +77,7 @@ export const PERSONAS: Persona[] = [
   },
   {
     slug: "builder",
+    group: "build",
     who: "Home builder",
     title: "A builder or developer",
     summary: "You build or renovate homes and want to know how zones fit a project.",
@@ -107,6 +119,7 @@ export const PERSONAS: Persona[] = [
   },
   {
     slug: "corporate",
+    group: "invest",
     who: "Corporate investor",
     title: "A corporation or institutional investor",
     summary: "You are screening regions or states for where to deploy capital.",
@@ -132,6 +145,7 @@ export const PERSONAS: Persona[] = [
   },
   {
     slug: "business",
+    group: "build",
     who: "Business operator",
     title: "A business looking for a location",
     summary: "You run a business and are considering a location in a zone, possibly with investment from a fund.",
@@ -167,6 +181,132 @@ export const PERSONAS: Persona[] = [
         "Whether operations at the new site would meet the property and income tests year after year.",
       ],
     },
+  },
+  {
+    slug: "landowner",
+    group: "build",
+    who: "Landowner",
+    title: "An owner of land or a building in a zone",
+    summary: "You own property in or near a zone and are considering selling to, or partnering with, a fund.",
+    fit: [
+      "A fund generally has to buy its property, after the zone is designated, from someone unrelated to it. So an owner typically takes part by selling to a fund, or by partnering on a project the fund buys into.",
+      "If the sale produces a capital gain, the owner can invest that gain in a fund of their own choosing, generally within 180 days, like any other investor.",
+    ],
+    rules: [
+      "A purchase from a related party does not count: roughly, where the same people own more than 20% of both the seller and the fund.",
+      "Property contributed to a fund in exchange for an interest, rather than sold to it, is generally not qualifying property for the fund, because the fund did not buy it.",
+      "Land does not need to be improved, but it has to be used in an active business; holding land for its appreciation does not qualify.",
+      "An existing building bought by a fund must be substantially improved within 30 months unless it counts as original use (for example, after a long vacancy under the specific rules).",
+    ],
+    ask: [
+      "Would a sale or a partnership suit the property, and how would each be taxed?",
+      "Are the owner and the fund related parties under the rules?",
+      "Is the gain on the sale a capital gain, and when does its 180-day window start?",
+    ],
+    tools: [
+      { href: "/check", label: "Check properties", why: "See whether each parcel's tract is in a 2018 zone or eligible for 2027." },
+      { href: "/map", label: "Map", why: "See the surrounding tracts and what the data says about the place." },
+      { href: "/how-it-works#zone", label: "How it works: the zone", why: "What a fund needs from the property it buys." },
+    ],
+  },
+  {
+    slug: "sponsor",
+    group: "support",
+    who: "Fund sponsor",
+    title: "A fund sponsor or manager",
+    summary: "You are forming or running a fund and screening a pipeline of sites.",
+    fit: [
+      "A fund lives or dies on its assets being in designated zones and staying qualified. Screening means confirming each site's tract, its designation, its rural status, and what the place is like.",
+      "For 2027, sites in tracts that are only eligible carry designation risk until Treasury publishes the list.",
+    ],
+    rules: [
+      "At least 90% of the fund's assets must be qualified opportunity zone property, tested twice a year, with penalties for shortfalls.",
+      "Businesses a fund invests in can hold cash for development under a written plan (the working-capital safe harbor), within time limits.",
+      "Under the 2027 rules, a qualified rural opportunity fund gives its investors a 30% step-up after five years instead of 10%, and rural zones have a lower substantial-improvement bar.",
+      "Funds have reporting requirements, expanded by the 2025 law.",
+    ],
+    ask: [
+      "Can the fund qualify as a rural opportunity fund with the planned assets?",
+      "How will the 90% test, the working-capital plans and the reporting be met?",
+    ],
+    tools: [
+      { href: "/check", label: "Check properties", why: "Screen a pipeline of up to 25 sites at a time and download the results as CSV." },
+      { href: "/map", label: "Map", why: "Colour a state by rural status, 2018 zones or 2027 eligibility." },
+      { href: "/", label: "Start: use it from Claude", why: "The MCP server compares tracts and reports flood, earthquake, wildfire and more around a site." },
+    ],
+  },
+  {
+    slug: "adviser",
+    group: "support",
+    who: "Tax or financial adviser",
+    title: "A CPA, attorney or financial adviser",
+    summary: "You help clients with gains and want to check places and explain the rules.",
+    fit: [
+      "The questions clients bring usually come down to three: is the gain eligible, is the fund or structure sound, and is the property really in a designated zone. This tool answers the third, with sources, and explains the rules in general terms for the first two.",
+    ],
+    rules: [
+      "Eligible gains are capital gains (including net section 1231 gains); ordinary income, including inventory sales, does not qualify.",
+      "Generally 180 days to invest; the fund must be a partnership or corporation certified on Form 8996, holding 90% of its assets in zones.",
+      "For gains invested under the 2027 rules: deferral up to five years, a 10% step-up after five years (30% for rural funds), and exclusion of appreciation after ten years, limited at thirty.",
+      "Gains deferred under the original rules are recognised on December 31, 2026.",
+    ],
+    askLabel: "Points to confirm in the primary sources",
+    ask: [
+      "The statute (26 U.S.C. §§ 1400Z-1 and 1400Z-2 as amended by Public Law 119-21), the final regulations, and current IRS notices, including Notice 2025-50 on rural areas.",
+      "Treasury's final list of 2027 designations, once published, for each property's tract.",
+    ],
+    tools: [
+      { href: "/check", label: "Check properties", why: "Check a client's or a fund's addresses and keep the CSV with your file." },
+      { href: "/how-it-works", label: "How it works", why: "A plain-language summary to share, with statute and IRS links." },
+      { href: "/map", label: "Map", why: "Tract pages cite the source and vintage behind every figure." },
+    ],
+  },
+  {
+    slug: "lender",
+    group: "support",
+    who: "Lender",
+    title: "A bank, CDFI or other lender",
+    summary: "You finance projects and want to know where zones overlap other programs.",
+    fit: [
+      "Funds and the businesses they own can borrow: gains supply the equity, and loans can supply the rest. Only the equity from gains carries Opportunity Zone benefits.",
+      "Zones often overlap other place-based programs, which matters for how a project is financed.",
+    ],
+    rules: [
+      "A fund must invest in an opportunity zone business through equity (stock or a partnership interest), not a loan; the business itself can borrow from lenders.",
+      "HUD Qualified Census Tracts and Difficult Development Areas raise the housing credit (LIHTC) available to a project; New Markets Tax Credit low-income communities are a separate program. Each has its own rules.",
+    ],
+    ask: ["How would the fund's equity and the loan sit together, and what happens to the structure if the fund fails a test?"],
+    tools: [
+      { href: "/map", label: "Map", why: "Colour tracts by HUD QCT, DDA or NMTC status alongside 2027 eligibility." },
+      { href: "/check", label: "Check properties", why: "Check a loan pipeline's addresses in one pass." },
+      { href: "/map", label: "Tract pages", why: "Mortgage applications, originations and denial rates (HMDA) for each tract." },
+    ],
+  },
+  {
+    slug: "community",
+    group: "support",
+    who: "Local government",
+    title: "A local government or economic development office",
+    summary: "You want to understand your area's tracts and attract investment to them.",
+    fit: [
+      "Governors nominate the 2027 zones from each state's eligible tracts, and many states seek local input. After designation, local offices often publish project lists or prospectuses for investors.",
+      "What helps is knowing which local tracts are eligible, how many the state can designate, and what the data says about each place.",
+    ],
+    rules: [
+      "Only tracts on Treasury's eligible list can be designated; the exception for tracts next to a zone was repealed.",
+      "Each state may designate up to 25% of its eligible tracts (up to 25 in a state with fewer than 100). Zones last ten years, with new rounds every ten years.",
+      "Rural zones carry extra benefits under the 2027 rules, so rural status is worth knowing tract by tract.",
+    ],
+    askLabel: "Questions for your state's Opportunity Zone office",
+    ask: [
+      "How and when does the state take local input on nominations, and has its list been submitted?",
+      "How will the state publicise designated zones and projects?",
+    ],
+    tools: [
+      { href: "/map", label: "Map", why: "See every tract in your state coloured by eligibility, rural status and 2018 zones." },
+      { href: "/how-it-works#designation", label: "Eligible vs designated", why: "How nomination and the state cap work." },
+      { href: "/", label: "Start: use it from Claude", why: "The MCP server lists and compares your tracts, and summarises how the 2018 zones fared." },
+    ],
   },
 ];
 

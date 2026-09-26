@@ -9,8 +9,8 @@ properties sits.
 
 | Page | What it is for |
 |---|---|
-| `/` Start | The gain, the fund and the zone; four starting points (individual investor, home builder, corporate investor, business operator); where the 2027 round stands |
-| `/for/{individual,builder,corporate,business}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
+| `/` Start | The gain, the fund and the zone; nine starting points in three groups; where the 2027 round stands |
+| `/for/{individual,corporate,builder,business,landowner,sponsor,adviser,lender,community}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
 | `/how-it-works` | The statutory mechanics in general terms, eligible vs designated, timeline, sources |
 | `/map` | Address search and state-wide tract map, coloured by 2027 eligibility, rural, 2018 zone, HUD QCT/DDA or NMTC |
 | `/tract/{geoid}` | One tract's full profile, its place in the 2027 round, and its sources |

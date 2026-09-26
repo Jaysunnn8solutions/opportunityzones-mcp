@@ -71,7 +71,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
       </section>
 
       <section>
-        <h2>Questions for a tax adviser or attorney</h2>
+        <h2>{p.askLabel ?? "Questions for a tax adviser or attorney"}</h2>
         <ul>
           {p.ask.map((l) => (
             <li key={l}>{l}</li>
