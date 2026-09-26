@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
     "/tract/**": ["./data/*.json", "./data/*.bin"],
     // The site snapshot finds a tract's interior point in the boundary files.
     "/api/site": ["./public/boundaries/tracts/*.json"],
+    // The Find areas panel works out neighbouring tracts from the boundary files.
+    "/api/explore/**": ["./public/boundaries/tracts/*.json"],
     // Rules and sources reads each saved source's retrieval date.
     "/rules": ["./legal/text/*.txt"],
   },

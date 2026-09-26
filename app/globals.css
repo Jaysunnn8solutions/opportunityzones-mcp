@@ -1652,3 +1652,71 @@ main [id] {
 .rule h4 {
   margin-top: 0;
 }
+
+/* Find areas panel */
+.find-areas {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 13px;
+}
+
+.find-areas summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.find-count {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.find-areas fieldset {
+  margin: 8px 0;
+  padding: 0;
+  border: 0;
+}
+
+.find-areas legend {
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.find-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 8px;
+}
+
+.find-mode {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.find-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+}
+
+.find-select select {
+  flex: none;
+  max-width: 50%;
+  font: inherit;
+  padding: 2px 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.find-status {
+  margin: 6px 0;
+  font-weight: 600;
+}

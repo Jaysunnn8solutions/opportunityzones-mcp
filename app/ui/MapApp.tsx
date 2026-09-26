@@ -24,6 +24,9 @@ import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 import { versionLabel } from "@/lib/version";
 import type { MapLayerId } from "@/lib/content/mapLayers";
 import { LayerInfoCard } from "./LayerInfo";
+import { FindAreas } from "./FindAreas";
+import { filtersActive, matchingTracts, NO_FILTERS, type Filters } from "@/lib/explore/filter";
+import type { ExploreState } from "@/lib/explore/measures";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
@@ -82,9 +85,17 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
         },
       },
       { id: "county-line", type: "line", source: "counties", maxzoom: tractMinZoom, paint: { "line-color": "#6b7682", "line-width": 0.4 } },
-      { id: "tract-fill", type: "fill", source: "tracts", minzoom: tractMinZoom, paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity } },
-      { id: "tract-rural-hatch", type: "fill", source: "tracts", minzoom: tractMinZoom, filter: ruralHatchFilter(flag), paint: { "fill-pattern": RURAL_HATCH } },
+      {
+        id: "tract-fill",
+        type: "fill",
+        source: "tracts",
+        minzoom: tractMinZoom,
+        // With Find areas filters on, tracts that do not match are faded (match 0); -1 means no filter.
+        paint: { "fill-color": tractFillColor(flag), "fill-opacity": ["case", ["==", ["get", "match"], 0], fillOpacity * 0.2, fillOpacity] as never },
+      },
+      { id: "tract-rural-hatch", type: "fill", source: "tracts", minzoom: tractMinZoom, filter: ruralHatchFilter(flag), paint: { "fill-pattern": RURAL_HATCH, "fill-opacity": ["case", ["==", ["get", "match"], 0], 0.2, 1] as never } },
       { id: "tract-line", type: "line", source: "tracts", minzoom: tractMinZoom, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
+      { id: "tract-match", type: "line", source: "tracts", minzoom: tractMinZoom, filter: ["==", ["get", "match"], 1], paint: { "line-color": "#f59e0b", "line-width": 2.2 } },
       { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], selected ?? ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
     ],
   };
@@ -159,6 +170,13 @@ export default function MapApp() {
   const [candidates, setCandidates] = useState<Array<{ geoid: string; lon: number; lat: number; label: string | null }>>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(0);
+  // Find areas: the filters, each state's data for them, and the matching tracts (null when no filter is on).
+  const [filters, setFilters] = useState<Filters>(NO_FILTERS);
+  const filtersRef = useRef(filters);
+  const exploreData = useRef(new Map<string, ExploreState | null>());
+  const matchRef = useRef<Set<string> | null>(null);
+  const [matchCount, setMatchCount] = useState<number | null>(null);
+  const [finding, setFinding] = useState(false);
 
   /** Re-attach status flags and push merged features to the map. */
   const refreshSources = useCallback(() => {
@@ -167,7 +185,7 @@ export default function MapApp() {
     const tracts = [...tractFeatures.current.values()].map((f) => {
       const g = String(f.properties.GEOID);
       const bits = stateStatus.current.get(g.slice(0, 2))?.[g];
-      const props: Record<string, string | number> = { GEOID: g };
+      const props: Record<string, string | number> = { GEOID: g, match: matchRef.current == null ? -1 : matchRef.current.has(g) ? 1 : 0 };
       for (const [name, { bit }] of Object.entries(FLAGS)) {
         props[name] = bits == null || (name === "zone2027" && bits & ZONE_2027_PENDING) ? -1 : bits & bit ? 1 : 0;
       }
@@ -180,6 +198,46 @@ export default function MapApp() {
     (map.getSource("tracts") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: tracts } as never);
     (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
   }, []);
+
+  /** Work out which tracts in the loaded states pass the Find areas filters, then redraw. */
+  const recomputeMatches = useCallback(async () => {
+    const f = filtersRef.current;
+    if (!filtersActive(f)) {
+      matchRef.current = null;
+      setMatchCount(null);
+      refreshSources();
+      return;
+    }
+    const states = [...stateStatus.current.keys()];
+    if (states.length === 0) {
+      matchRef.current = new Set();
+      setMatchCount(null);
+      refreshSources();
+      return;
+    }
+    setFinding(true);
+    try {
+      await Promise.all(
+        states
+          .filter((s) => !exploreData.current.has(s))
+          .map(async (s) => {
+            const r = await fetch(`/api/explore/${s}`);
+            exploreData.current.set(s, r.ok ? ((await r.json()) as ExploreState) : null);
+          })
+      );
+      if (filtersRef.current !== f) return; // changed while loading; the newer call wins
+      const all = new Set<string>();
+      for (const s of states) {
+        const d = exploreData.current.get(s);
+        if (d) for (const g of matchingTracts(d, f)) all.add(g);
+      }
+      matchRef.current = all;
+      setMatchCount(all.size);
+      refreshSources();
+    } finally {
+      setFinding(false);
+    }
+  }, [refreshSources]);
 
   /** Status flags for each state not yet fetched, for colouring its tracts. */
   const loadStatus = useCallback(async (states: Iterable<string>) => {
@@ -221,7 +279,7 @@ export default function MapApp() {
     if (map) {
       const z = tractMinZoomFor(boundaryIndex.current);
       for (const id of ["county-fill", "county-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, 0, z);
-      for (const id of ["tract-fill", "tract-rural-hatch", "tract-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
+      for (const id of ["tract-fill", "tract-rural-hatch", "tract-line", "tract-match"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
     }
     return boundaryIndex.current;
   }, []);
@@ -253,6 +311,7 @@ export default function MapApp() {
             })
           );
           await loadStatus(states);
+          if (states.length > 0 && filtersActive(filtersRef.current)) await recomputeMatches();
         }
         refreshSources();
         return;
@@ -283,7 +342,7 @@ export default function MapApp() {
     } finally {
       setLoading((n) => n - 1);
     }
-  }, [checkBoundaryFiles, loadCountySummary, loadStatus, refreshSources]);
+  }, [checkBoundaryFiles, loadCountySummary, loadStatus, recomputeMatches, refreshSources]);
 
   /** Swap the basemap, carrying the map's own layers and data across. */
   const applyBasemap = useCallback(
@@ -369,6 +428,12 @@ export default function MapApp() {
     map.setPaintProperty("tract-fill", "fill-color", tractFillColor(flag));
     if (map.getLayer("tract-rural-hatch")) map.setFilter("tract-rural-hatch", ruralHatchFilter(flag));
   }, [flag]);
+
+  function changeFilters(f: Filters) {
+    filtersRef.current = f;
+    setFilters(f);
+    void recomputeMatches();
+  }
 
   function chooseBasemap(id: BasemapId) {
     if (id === basemapRef.current) return;
@@ -457,6 +522,7 @@ export default function MapApp() {
           </div>
           {(hoverInfo ?? pinnedInfo) && <LayerInfoCard id={(hoverInfo ?? pinnedInfo)!} onClose={pinnedInfo ? () => setPinnedInfo(null) : undefined} />}
         </div>
+        <FindAreas filters={filters} onChange={changeFilters} matches={matchCount} busy={finding} />
         <div className="layer-picker" role="group" aria-label="Basemap">
           {(Object.keys(BASEMAPS) as BasemapId[]).map((b) => (
             <button key={b} type="button" aria-pressed={basemap === b} onClick={() => chooseBasemap(b)}>
@@ -511,7 +577,7 @@ export default function MapApp() {
       <div className="map">
         <div ref={container} className="map-canvas" />
         {loading > 0 && <div className="map-status">Loading boundaries...</div>}
-        <MapLegend flag={flag} showTracts={zoom >= tractMinZoomFor(boundaryIndex.current)} />
+        <MapLegend flag={flag} showTracts={zoom >= tractMinZoomFor(boundaryIndex.current)} filtering={matchCount != null} />
         <div className="map-version" title="Release · commit · build date">
           {versionLabel()}
         </div>
@@ -521,7 +587,7 @@ export default function MapApp() {
 }
 
 /** On-map key: counties when zoomed out, the chosen tract view when zoomed in. */
-function MapLegend({ flag, showTracts }: { flag: FlagName; showTracts: boolean }) {
+function MapLegend({ flag, showTracts, filtering }: { flag: FlagName; showTracts: boolean; filtering: boolean }) {
   const hatch = `repeating-linear-gradient(135deg, ${HATCH_INK} 0 1.5px, transparent 1.5px 5px)`;
   if (!showTracts) {
     return (
@@ -555,6 +621,11 @@ function MapLegend({ flag, showTracts }: { flag: FlagName; showTracts: boolean }
       <span>
         <span className="swatch" style={{ background: "#dddddd" }} /> {none}
       </span>
+      {filtering && (
+        <span>
+          <span className="swatch" style={{ background: "transparent", outline: "2px solid #f59e0b", outlineOffset: "-2px" }} /> Matches Find areas (others faded)
+        </span>
+      )}
     </div>
   );
 }
