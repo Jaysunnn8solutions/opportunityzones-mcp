@@ -52,9 +52,20 @@ export function htmlToText(html: string): string {
 }
 
 async function get(url: string): Promise<Buffer> {
-  const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml,application/xml,application/pdf;q=0.9,*/*;q=0.8" }, signal: AbortSignal.timeout(60_000) });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return Buffer.from(await res.arrayBuffer());
+  let last: unknown;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml,application/xml,application/pdf;q=0.9,*/*;q=0.8" }, signal: AbortSignal.timeout(60_000) });
+      if (res.status === 404) throw new Error("HTTP 404");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return Buffer.from(await res.arrayBuffer());
+    } catch (err) {
+      last = err;
+      if ((err as Error).message === "HTTP 404") break;
+      await new Promise((r) => setTimeout(r, 2000 * 2 ** attempt));
+    }
+  }
+  throw last;
 }
 
 function pdfToText(bytes: Buffer): string {
@@ -113,7 +124,8 @@ async function main() {
     }
     if (!text) {
       failed++;
-      report.push(`FAIL ${s.id}`);
+      // The workflow restores the last good copy first, so a failed read keeps it (with its own Retrieved date).
+      report.push(`FAIL ${s.id} (kept the previously saved copy, if any)`);
       continue;
     }
     const header = `Source: ${s.title}\nPublisher: ${s.publisher}\nURL: ${s.url}\nRead from: ${from}\nRetrieved: ${new Date().toISOString().slice(0, 10)}\n---\n`;
