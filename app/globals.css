@@ -1,0 +1,224 @@
+:root {
+  --ink: #1d232a;
+  --muted: #5b6570;
+  --line: #d9dde2;
+  --paper: #ffffff;
+  --wash: #f4f3ef;
+  --accent: #0b6e4f;
+  --warn-bg: #fff6df;
+  --warn-line: #e8cf8a;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  color: var(--accent);
+}
+
+.disclaimer {
+  background: var(--warn-bg);
+  border-bottom: 1px solid var(--warn-line);
+  font-size: 13px;
+  padding: 6px 16px;
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.site-header h1 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+}
+
+/* Map screen */
+.map-screen {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100vh - 110px);
+}
+
+.panel {
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.panel h2 {
+  font-size: 16px;
+  margin: 16px 0 6px;
+}
+
+.panel ul {
+  padding-left: 18px;
+  margin: 6px 0;
+}
+
+.panel li {
+  margin: 4px 0;
+}
+
+.search {
+  display: flex;
+  gap: 6px;
+}
+
+.search input {
+  flex: 1;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search button,
+.layer-picker button {
+  padding: 7px 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.layer-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.layer-picker button {
+  background: white;
+  color: var(--accent);
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.layer-picker button[aria-pressed="true"] {
+  background: var(--accent);
+  color: white;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+button.link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.hint,
+.note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.error {
+  color: #9b1c1c;
+}
+
+.map {
+  position: relative;
+}
+
+.map-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.map-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* Tract page */
+.tract-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.tract-page table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+
+.tract-page th,
+.tract-page td {
+  border-bottom: 1px solid var(--line);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tract-page td.value {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 800px) {
+  .map-screen {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 60vh;
+    height: auto;
+  }
+  .panel {
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+}

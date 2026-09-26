@@ -183,7 +183,12 @@ their vintage and geography. Present raw measures and within-state percentiles;
 **no composite "investability" score**. Add `scripts/test-client.ts` that
 exercises every tool against a local `next dev`.
 
-## Step 4: web app
+## Step 4: web app (built; see docs/ARCHITECTURE.md "The national map")
+
+Address search (`/api/geocode`, POST, never cached), a TIGERweb-based map of
+counties and tracts coloured by 2027 eligibility, rural, 2018 zone, QCT, DDA or
+NMTC, and `/tract/{geoid}` with the same data as `get_tract`. The owner chose
+TIGERweb over hosting a PMTiles file. The original brief follows.
 
 Address search, map of eligible/designated tracts (MapLibre + PMTiles from
 `npm run tiles`), and a tract page that shows the same data as `get_tract`.

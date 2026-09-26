@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "tsx scripts/copy-maplibre-worker.ts",
     "dev": "next dev",
+    "prebuild": "tsx scripts/copy-maplibre-worker.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
