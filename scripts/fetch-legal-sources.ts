@@ -9,7 +9,9 @@
  * government works (public domain).
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 interface LegalSource {
@@ -19,6 +21,8 @@ interface LegalSource {
   url: string;
   /** A machine endpoint for the same text, tried first when the page itself is a script shell. */
   api?: string;
+  /** A PDF, converted with pdftotext (poppler-utils). */
+  pdf?: boolean;
 }
 
 const ROOT = path.resolve(import.meta.dirname, "..", "legal");
@@ -47,15 +51,41 @@ export function htmlToText(html: string): string {
     .trim();
 }
 
-async function get(url: string): Promise<string> {
-  const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" }, signal: AbortSignal.timeout(60_000) });
+async function get(url: string): Promise<Buffer> {
+  const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml,application/xml,application/pdf;q=0.9,*/*;q=0.8" }, signal: AbortSignal.timeout(60_000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.text();
+  return Buffer.from(await res.arrayBuffer());
+}
+
+function pdfToText(bytes: Buffer): string {
+  const dir = mkdtempSync(path.join(tmpdir(), "legal-"));
+  const file = path.join(dir, "doc.pdf");
+  writeFileSync(file, bytes);
+  return execFileSync("pdftotext", ["-enc", "UTF-8", file, "-"], { maxBuffer: 64 * 1024 * 1024 })
+    .toString("utf8")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\s*\n\s*/g, "\n")
+    .trim();
+}
+
+/** Every link on a page as "anchor text <tab> absolute URL", so cited documents can be found by their real address. */
+export function linksOf(html: string, base: string): string[] {
+  const out = new Set<string>();
+  for (const m of html.matchAll(/<a\b[^>]*href="([^"#]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    const text = htmlToText(m[2]).replace(/\s+/g, " ");
+    try {
+      if (text) out.add(`${text}\t${new URL(m[1].replace(/&amp;/g, "&"), base).toString()}`);
+    } catch {
+      // not a URL
+    }
+  }
+  return [...out];
 }
 
 async function main() {
   const sources = JSON.parse(readFileSync(path.join(ROOT, "sources.json"), "utf8")) as LegalSource[];
   mkdirSync(path.join(ROOT, "text"), { recursive: true });
+  mkdirSync(path.join(ROOT, "links"), { recursive: true });
   const report: string[] = [];
   let failed = 0;
   for (const s of sources) {
@@ -63,7 +93,14 @@ async function main() {
     let from = "";
     for (const url of [s.api, s.url].filter(Boolean) as string[]) {
       try {
-        const t = htmlToText(await get(url));
+        const body = await get(url);
+        let t: string;
+        if (s.pdf) t = pdfToText(body);
+        else {
+          const html = body.toString("utf8");
+          t = htmlToText(html);
+          writeFileSync(path.join(ROOT, "links", `${s.id}.txt`), linksOf(html, url).join("\n") + "\n");
+        }
         if (t.length > 2000) {
           text = t;
           from = url;
@@ -84,6 +121,7 @@ async function main() {
     report.push(`ok   ${s.id} (${text.length.toLocaleString("en-US")} characters)`);
   }
   console.log(report.join("\n"));
+  writeFileSync(path.join(ROOT, "fetch-report.txt"), `Retrieved ${new Date().toISOString()}\n${report.join("\n")}\n`);
   if (failed) console.log(`${failed} source(s) could not be read`);
 }
 

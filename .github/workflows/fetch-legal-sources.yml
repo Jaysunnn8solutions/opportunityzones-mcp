@@ -25,12 +25,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: sudo apt-get install -y poppler-utils
       - run: npx tsx scripts/fetch-legal-sources.ts
       - name: Push to data/legal-sources
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B data/legal-sources
-          git add legal/text
+          git add legal/text legal/links legal/fetch-report.txt
           git commit -m "Legal source texts, fetched $(date -u +%F)"
           git push --force origin data/legal-sources
