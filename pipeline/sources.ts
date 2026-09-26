@@ -516,7 +516,7 @@ export const SOURCES = {
     geography: "270 m raster cells, looked up at a site (no areal aggregation)",
     vintage: "2024 release; landscape as of end of 2020 (LANDFIRE 2020 fuels)",
     notes:
-      "ImageServer identify on RMRS_WRC_BurnProbability at the point rounded to two decimals (~1 km). Reported as published (probability and '1 in N years'), with no classes of our own. Zero is reported as 'no wildland fire reached this area in the simulation', never as no risk; NoData as outside coverage.",
+      "ImageServer identify on the WRC burn probability raster at the point rounded to two decimals (~1 km), from the federal GeoPlatform copy (imagery.geoplatform.gov), falling back to apps.fs.usda.gov, which refused GitHub-hosted requests. Reported as published (probability and '1 in N years'), with no classes of our own. Zero is reported as 'no wildland fire reached this area in the simulation', never as no risk; NoData as outside coverage.",
     purposes: ["feasibility"],
     rationale:
       "Wildfire likelihood bears on insurability and construction standards at a site. The Forest Service's burn probability is the authoritative national model; the owner asked for hazard-specific sources in place of the National Risk Index.",

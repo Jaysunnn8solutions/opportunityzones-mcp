@@ -23,7 +23,15 @@ import { fetchJson, SourceError } from "../http";
 
 export const SOURCE_ID = "usfsWildfireRisk";
 
-const SERVICE = "https://apps.fs.usda.gov/fsgisx01/rest/services/RDW_Wildfire/RMRS_WRC_BurnProbability/ImageServer";
+/**
+ * The same Forest Service raster, published in two places. The federal
+ * GeoPlatform copy is tried first: the Forest Service's own server refused
+ * every request from GitHub's runners with HTTP 403 (checked 2026-09-26).
+ */
+export const SERVICES = [
+  "https://imagery.geoplatform.gov/iipp/rest/services/Fire_Aviation/USFS_EDW_RMRS_WRC_BurnProbability/ImageServer",
+  "https://apps.fs.usda.gov/fsgisx01/rest/services/RDW_Wildfire/RMRS_WRC_BurnProbability/ImageServer",
+] as const;
 
 export interface WildfireLikelihood {
   status: "modelled" | "not-covered";
@@ -76,8 +84,8 @@ export function oneIn(bp: number): number {
   return Math.round(n / mag) * mag;
 }
 
-export function identifyUrl(lon: number, lat: number): string {
-  const u = new URL(`${SERVICE}/identify`);
+export function identifyUrl(lon: number, lat: number, service: string = SERVICES[0]): string {
+  const u = new URL(`${service}/identify`);
   u.searchParams.set("geometry", JSON.stringify({ x: Number(lon.toFixed(2)), y: Number(lat.toFixed(2)), spatialReference: { wkid: 4326 } }));
   u.searchParams.set("geometryType", "esriGeometryPoint");
   u.searchParams.set("returnGeometry", "false");
@@ -88,6 +96,16 @@ export function identifyUrl(lon: number, lat: number): string {
 
 export async function wildfireLikelihoodAt(lon: number, lat: number): Promise<WildfireLikelihood> {
   if (!(Math.abs(lon) <= 180 && Math.abs(lat) <= 90)) throw new SourceError(SOURCE_ID, "rejected", "coordinates out of range");
-  const body = await fetchJson<IdentifyResponse>(identifyUrl(lon, lat), { sourceId: SOURCE_ID, timeoutMs: 12_000 });
-  return parseIdentify(body);
+  let last: unknown;
+  for (const service of SERVICES) {
+    try {
+      const body = await fetchJson<IdentifyResponse>(identifyUrl(lon, lat, service), { sourceId: SOURCE_ID, timeoutMs: 10_000, retries: 0 });
+      return parseIdentify(body);
+    } catch (err) {
+      // A malformed answer is a real problem; only an unreachable or refusing host falls through.
+      if (err instanceof SourceError && err.kind === "bad-response") throw err;
+      last = err;
+    }
+  }
+  throw last;
 }
