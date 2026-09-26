@@ -1,0 +1,144 @@
+Source: Opportunity Zones
+Publisher: CDFI Fund, U.S. Department of the Treasury
+URL: https://www.cdfifund.gov/opportunity-zones
+Read from: https://www.cdfifund.gov/opportunity-zones
+Retrieved: 2026-09-26
+---
+Opportunity Zones Resources | Community Development Financial Institutions Fund
+Skip to main content
+An official website of the United States government
+Here’s how you know
+Here’s how you know
+Official websites use
+A .gov website belongs to an official government organization in the United States.
+Secure websites use HTTPS
+A lock
+( Lock A locked padlock )
+or https:// means you’ve safely connected to the website. Share sensitive information only on official, secure websites.
+Community Development Financial Institutions Fund
+U.S. Department of the Treasury
+Top Navigation
+Contact
+Top Navigation Second
+Subscribe ›
+Enter Search Term(s):
+Main Menu
+-->
+-->
+About
+Careers
+Community Development Advisory Board
+Programs & Training
+Certification
+CDE
+CDFI
+Programs
+Bank Enterprise Award (BEA) Program
+Capital Magnet Fund (CMF) Program
+CDFI Bond Guarantee Program
+CDFI Equitable Recovery Program
+CDFI Program
+CDFI Rapid Response Program
+Native Initiatives
+New Markets Tax Credit (NMTC) Program
+Small Dollar Loan Program
+Training & TA
+Resource Banks
+Tools & Resources
+AMIS
+CIMS Mapping Tool
+Compliance and Performance Reporting Resources
+Opportunity Zones Resources
+Awards
+Searchable Awards Database
+NMTC Allocatee States Served
+Historical Award Documents
+Research & Data
+Research Reports
+Data Releases
+Program Eligibility Guidance
+Snap Stat
+Impact Blog
+News & Events
+Announcements
+Message From the Director
+Requests for Comments
+Upcoming Events
+Breadcrumb
+Home
+Opportunity Zones Resources
+Opportunity Zones Resources
+Update July 2, 2026: The CDFI Fund is assisting Treasury with the Opportunity Zone nomination and designation process. Treasury opened the new designation cycle for Opportunity Zones on July 1, 2026.
+Treasury's press release can be viewed on Treasury's website .
+Information for State Chief Executive Officers can be found on the Office of Tax Policy’s Data Transparency website .
+Members of the public interested in the Opportunity Zone nomination and designation process should contact their state or territory’s Governor’s office for more information.
+Archive Information: 2018 Implementation of Opportunity Zones
+The authority to implement IRC 1400Z-1 and 1400Z-2 has been delegated to the IRS. The CDFI Fund is supporting the IRS with the Opportunity Zone nomination and designation process under IRC 1400Z-1 only.
+Treasury and IRS have issued final regulations on how the Qualified Opportunity Zone (QOZ) tax benefits under IRC 1400Z-2 (including the certification of Qualified Opportunity Funds (QOFs) and eligible investments in QOZs) will be administered, the gains that may be deferred as a result of a taxpayer's investment in a QOF, special rules for an investment in a QOF held by a taxpayer for at least 10 years, and updates to portions of previously proposed regulations under section 1400Z-2 to address various issues, including: the definition of “substantially all.”
+IRS also has posted a list of Frequently Asked Questions about Opportunity Zones on the irs.gov Tax Reform pages. You will want to monitor the Opportunity Zones page at the IRS website for additional Opportunity Zone information and other Tax Reform information. For any other questions, please call IRS at (800) 829-1040 .
+Opportunity Zones
+List of designated Qualified Opportunity Zones (QOZs): This spreadsheet was updated December 14, 2018 , to include two additional census tracts in Puerto Rico that, based on 2012-2016 American Community Survey data, meet the statutory criteria for a Low-Income Community and are deemed as designated QOZs. (See IRS Notice 2018-48, 2018–28 Internal Revenue Bulletin 9 , July 9, 2018, and IRS Notice 2019-42, 2019–29 Internal Revenue Bulletin , July 15, 2019, for the official list of all population census tracts designated as QOZs for purposes of Internal Revenue Code §§ 1400Z-1 and 1400Z-2.) Based on nominations of eligible census tracts by the Chief Executive Officers of each State, Treasury has completed its designation of Qualified Opportunity Zones. Each State nominated the maximum number of eligible tracts, per statute, and these designations are final. The statute and legislative history of the Opportunity Zone designations, under IRC § 1400Z, do not contemplate an opportunity for additional or revised designations after the maximum number of zones allowable have been designated in a State or Territory.
+Based on IRC 1400Z-1, designations are based upon the boundaries of the tract at the time of the designation in 2018, and do not change over the period of the designation, even if the boundaries of an individual census tract are redefined in future Census releases. For more information, see IRS Announcement 2021-10 .
+For a map of all designated QOZs, click here . To view all designated QOZs, click on the “Layers” tab on the menu on the left hand side of the screen and select “Opportunity Zone.” Zoom in to a specific area on the map. Designated QOZs will appear in blue . (Please note that if other layer options are selected, it will change the colors of the tracts.)
+To view a specific census tract, enter the tract number in the search bar, click on the mailbox icon next the search bar, and select “2015 NMTC Tract.” Press enter to search, and select the census tract number that appears in the results below. (When searching by census tract by this method, the “2015 NMTC Tract – All” layer is automatically selected, so you will need to deselect that layer and make sure the “Opportunity Zone” layer is selected to see QOZ tracts only.)
+Additional guidance on visualizing designated QOZs can be found in this user guide .
+Additional Resources IRS Revenue Procedure : Provides information on the eligibility criteria for census tract designation as a Qualified Opportunity Zone and the nomination and designation process.
+Opportunity Zones Information Resource , with sortable lists by State of all census tracts originally eligible for designation as a QOZ.
+Opportunity Zones Shapefile : This Zip file contains a Geographic Information System (GIS) shapefile of all population census tracts designated as QOZs. See Readme text document for additional detail.
+For all questions on IRC 1400Z-2 related to Opportunity Funds and Opportunity Zone Investments:
+Phone: (800) 829-1040
+For questions only on IRC 1400Z-1 related to the Opportunity Zone nomination and designation process, or on the list and map of designated QOZs:
+E-mail: OpportunityZone@cdfi.treas.gov
+Please note that the CDFI Fund is unable to provide confirmation that an investment is in a Qualified Opportunity Zone. Interested parties can use the Census Bureau’s online Geocoder tool to determine the census tract in which a specific address lies and then use the Opportunity Zone mapping system or the list of designated Qualified Opportunity Zones to determine the status of that census tract.
+Main navigation
+About
+Careers
+Community Development Advisory Board
+Programs & Training
+Certification
+Programs
+Training & TA
+Tools & Resources
+AMIS
+CIMS Mapping Tool
+Compliance and Performance Reporting Resources
+Opportunity Zones Resources
+Awards
+Searchable Awards Database
+NMTC Allocatee States Served
+Historical Award Documents
+Research & Data
+Research Reports
+Data Releases
+Program Eligibility Guidance
+Snap Stat
+Impact Blog
+News & Events
+Announcements
+Message From the Director
+Requests for Comments
+Upcoming Events
+CDFI Tools
+Tools
+AMIS
+CIMS
+Community Development Financial Institutions Fund United States Department of the Treasury
+Twitter
+YouTube
+Instagram
+LinkedIn
+Footer Link Menu First
+USA.gov
+Grants.gov
+Regulations.gov
+OIG
+Treasury.gov
+Small & Disadvantaged Businesses
+No Fear Act
+Footer Link Menu Second
+Site Information
+Accessibility
+Disclaimer
+FOIA
+Fraud Alert
+Privacy Disclaimer

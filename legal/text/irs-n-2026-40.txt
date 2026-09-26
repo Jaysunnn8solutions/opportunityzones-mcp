@@ -1,0 +1,478 @@
+Source: Notice 2026-40, Transitional Guidance on Qualified Opportunity Zones
+Publisher: Internal Revenue Service
+URL: https://www.irs.gov/pub/irs-drop/n-26-40.pdf
+Read from: https://www.irs.gov/pub/irs-drop/n-26-40.pdf
+Retrieved: 2026-09-26
+---
+Part III - Administrative, Procedural, and Miscellaneous
+Transitional Guidance on Qualified Opportunity Zones under §§ 1400Z-1 and 1400Z-2
+Notice 2026-40
+SECTION 1. PURPOSE
+This notice announces that the Department of the Treasury (Treasury Department)
+and the Internal Revenue Service (IRS) intend to issue proposed regulations regarding
+qualified opportunity zones (QOZs) under §§ 1400Z-1 and 1400Z-2 of the Internal
+Revenue Code (Code) 1, as amended by § 70421 of Public Law 119-21, 139 Stat. 72
+(July 4, 2025), commonly known as the One, Big, Beautiful Bill Act (OBBBA), including
+transitional guidance related to qualifying investments under §§ 1400Z-1 and 1400Z-2,
+as in effect prior to amendment by § 70421 of the OBBBA (forthcoming proposed
+regulations). The forthcoming proposed regulations are anticipated to include proposed
+rules similar to the rules provided in sections 3 through 5 of this notice.
+SECTION 2. BACKGROUND
+.01 Sections 1400Z-1 and 1400Z-2
+(1) Section 1400Z-1. Section 1400Z-1 provides the procedural rules for the
+designation of QOZs, the related definitions, and the applicable period for which such
+1Unless otherwise specified, all “section” or “§” references are to sections of the Code or the Income Tax
+Regulations (26 CFR part 1).
+2
+designations remain in effect.
+(2) Section 1400Z-2. Section 1400Z-2 allows the deferral of inclusion in gross
+income for certain realized gains to the extent that corresponding amounts are timely
+invested in a corporation or partnership that meets the requirements to be certified as a
+qualified opportunity fund (QOF), as defined in § 1400Z-2(d)(1) and § 1.1400Z2(d)-1. If
+certain qualifications and holding period requirements are met, then (i) a portion of such
+deferred gains may be excluded from gross income, and (ii) gain on the taxpayer’s
+investment of such amounts in a QOF may be excludable from gross income.
+.02 References to §§ 1400Z-1 and 1400Z-2. All references hereinafter in this notice
+to “prior § 1400Z-1” and “prior § 1400Z-2” refer to §§ 1400Z-1 and 1400Z-2, as in effect
+after amendment of the Code by both § 13823 of Public Law 115-97, 131 Stat. 2054,
+2183 (December 22, 2017), commonly known as the Tax Cuts and Jobs Act (TCJA),
+and by § 41115 of the Bipartisan Budget Act of 2018 (BBA 2018), Public Law 115-123,
+132 Stat. 64, 161 (February 9, 2018), but prior to amendment by § 70421 of the
+OBBBA. All references in this notice to “§ 1400Z-1” and “§ 1400Z-2” refer to §§ 1400Z1 and 1400Z-2 as amended by § 70421 of the OBBBA.
+.03 Definitions
+(1) Qualified Opportunity Zones. For purposes of §§ 1400Z-1 and 1400Z-2,
+§ 1400Z-1(a) defines a QOZ as any population census tract that is a low-income
+community (LIC), as defined in § 1400Z-1(c)(1), that is designated as a QOZ. This
+notice refers to a QOZ designated under prior § 1400Z-1 as a “previously designated
+QOZ.”
+(2) Qualified Opportunity Fund. Section 1400Z-2(d)(1) provides that a QOF is an
+3
+investment vehicle that is organized as a corporation or a partnership for the purpose of
+investing in qualified opportunity zone property (QOZP), other than another QOF, that
+holds at least 90 percent of its assets in QOZP as measured on the dates described in
+§ 1400Z-2(d)(1)(A) and (B) (90-percent investment standard). See § 1.1400Z2(a)1(b)(4).
+(3) Qualified opportunity zone property. Section 1400Z-2(d)(2)(A) defines QOZP
+as property that is qualified opportunity zone stock (QOZ stock), qualified opportunity
+zone partnership interest (QOZ partnership interest), or qualified opportunity zone
+business property (QOZBP).
+(a) Qualified opportunity zone stock. Effective for stock acquired on or before
+December 31, 2026, prior § 1400Z-2(d)(2)(B) and the regulations thereunder define
+QOZ stock as any stock in a domestic corporation if: (i) the stock was acquired by a
+QOF at its original issue from the corporation solely in exchange for cash after
+December 31, 2017; (ii) the corporation was a qualified opportunity zone business
+(QOZB) (or newly organized for such purpose) at the time the stock was issued; and
+(iii) for 90 percent of the QOF’s holding period of such stock, the corporation qualified as
+a QOZB. See prior §§ 1400Z-2(d)(2)(B) and 1.1400Z2(d)-1(c)(2)(i). Effective for stock
+acquired after December 31, 2026, § 70421(c)(4)(B) of the OBBBA modified § 1400Z2(d)(2)(B)(i)(I) by replacing “December 31, 2017,” with “applicable date,” which, as
+defined in § 1400Z-2(d)(2)(E), means, with respect to any corporation that is a QOZB,
+the earliest applicable start date with respect to the QOZBP held by such QOZB. See
+paragraph (5) of this subsection for the definition of “applicable start date.”
+(b) Qualified opportunity zone partnership interest. Effective for partnership
+4
+interests acquired on or before December 31, 2026, prior § 1400Z-2(d)(2)(C) and the
+regulations thereunder define QOZ partnership interest as any capital or profits interest
+in a domestic partnership where: (i) the interest was acquired by a QOF from the
+partnership solely in exchange for cash after December 31, 2017; (ii) the partnership
+was a QOZB (or newly formed for such purpose) at the time the interest was acquired;
+and (iii) for 90 percent of the QOF’s holding period of such interest, the partnership
+qualified as a QOZB. See prior § 1400Z-2(d)(2)(C) and § 1.1400Z2(d)-1(c)(3)(i).
+Effective for partnership interests acquired after December 31, 2026, § 70421(c)(4)(B)
+of the OBBBA modified § 1400Z-2(d)(2)(C)(i) by replacing “December 31, 2017,” with
+“applicable date” as defined in § 1400Z-2(d)(2)(E). Under § 1400Z-2(d)(2)(E),
+“applicable date” means, with respect to any partnership that is a QOZB, the earliest
+applicable start date with respect to the QOZBP held by such QOZB.
+(c) Qualified opportunity zone business property. Effective for property acquired
+on or before December 31, 2026, prior § 1400Z-2(d)(2)(D) defines QOZBP as tangible
+property used in a trade or business of the QOF if (i) such property was acquired by the
+QOF by purchase after December 31, 2017, (ii) the original use of such property in the
+QOZ commences with the QOF or the QOF substantially improves the property, and (iii)
+during substantially all of the QOF’s holding period for such property, substantially all of
+the use of such property was in a QOZ. Effective for property acquired after December
+31, 2026, § 70421(c)(4)(A) of the OBBBA amended prior § 1400Z-2(d)(2)(D)(i)(I) by
+striking “December 31, 2017” at the end of the subclause and inserting “the applicable
+start date (as defined in § 1400Z-1(e)(2)) with respect to the [QOZ] described in”
+§ 1400Z-2(d)(2)(D)(i)(III).
+5
+(4) Qualified opportunity zone business.
+(a) In general. Section 1400Z-2(d)(3)(A) defines a QOZB as a trade or business
+in which substantially all of the tangible property owned or leased in connection with the
+trade or business is QOZBP. The trade or business must also satisfy the following
+requirements provided in § 1397C(b)(2), (4), and (8): (i) at least 50 percent of the total
+gross income of the entity must be derived from the active conduct of a trade or
+business in the QOZ; (ii) a substantial portion of the intangible property of such entity
+must be used in the active conduct of a trade or business in the QOZ; and (iii) less than
+five percent of the average of the aggregate unadjusted bases of the entity’s property
+must be attributable to nonqualified financial property. Finally, a QOZB may not be a
+trade or business described in § 144(c)(6)(B). See also § 1.1400Z2(d)-1(d)(3).
+(b) 70-percent tangible property standard. Section 1.1400Z2(d)-1(d)(1)(i) and
+(d)(2) clarify the “substantially all” requirement provided in § 1400Z-2(d)(3)(A)(i)
+regarding the amount of tangible property owned or leased by the taxpayer that is
+required to be QOZBP. Under the regulations, for an entity’s trade or business to
+satisfy the “substantially all” requirement, at least 70 percent (by value) of the tangible
+property owned or leased by the trade or business must be QOZBP.
+(5) Applicable start date and effective period. Section 70421(b)(2) of the OBBBA
+redesignated prior § 1400Z-1(f) as § 1400Z-1(e), and § 70421(b)(3) of the OBBBA
+modified when a QOZ designation period begins and ends for QOZs designated under
+§ 1400Z-1. A QOZ designation period under § 1400Z-1(e)(1) begins on the applicable
+start date and ends on the day before the date that is 10 years after the applicable start
+date. Under § 1400Z-1(e)(2), the term “applicable start date” means, with respect to
+6
+any QOZ designated under § 1400Z-1, the January 1 following the date on which such
+QOZ was certified and designated. These provisions are effective only for areas
+certified and designated after the enactment of the OBBBA.
+.04 Designations of QOZs.
+(1) In General. Section 1400Z-1(b)(1) allows the Chief Executive Officer (CEO) of
+each State, territory of the United States, and the District of Columbia (State) to
+nominate LICs within their jurisdiction to be certified and designated by the Secretary of
+the Treasury or Secretary’s delegate (Secretary) as QOZs. As described in section
+3.01(1) of this notice, § 1400Z-1(d) limits the number of population census tracts in a
+State that the Secretary may designate as QOZs with respect to any designation period.
+See Rev. Proc. 2026-14, 2026-20 IRB 910, for guidance for State CEOs regarding
+nomination of a population census tract for designation as a QOZ effective on January
+1, 2027.
+(2) Designations of previously designated QOZs.
+(a) In general. Under prior § 1400Z-1(c)(1), a population census tract was
+eligible for designation as a QOZ if it satisfied the definition of an LIC in § 45D(e). In
+addition, prior § 1400Z-1(e) provided that a population census tract that was not an LIC
+could be designated as a QOZ if, among other requirements, the tract was contiguous
+with an LIC that was designated as a QOZ. Rev. Proc. 2018-16, 2018-9 I.R.B. 383,
+provided guidance on the nomination, certification, and designation process under prior
+§ 1400Z-1(b)(1) and (2). After the enactment of the TCJA, § 41115 of BBA 2018
+created a special rule for Puerto Rico by adding prior § 1400Z-1(b)(3), under which all
+LICs in Puerto Rico were deemed certified and designated as QOZs effective on the
+7
+date of the enactment of the TCJA (that is, December 22, 2017).
+(b) Notices 2018-48 and 2019-42. Notice 2018-48, 2018-28 I.R.B. 9, amplified
+by Notice 2019-42, 2019-29 I.R.B. 352, provides a list of LICs certified and designated
+as QOZs by the Secretary in 2018, as well as LICs in Puerto Rico deemed certified and
+designated as QOZs under prior § 1400Z-1(b)(3), effective on December 22, 2017.
+Notice 2019-42, 2019-29 I.R.B. 352, added two additional census tracts in Puerto Rico
+that were deemed certified and designated as QOZs under prior § 1400Z-1(b)(3)
+effective on December 22, 2017.
+(c) Period for which designation is in effect. Prior § 1400Z-1(f) provided a 10year “QOZ designation period” for which a population census tract, once designated as
+a QOZ, would remain designated, beginning on the date of the designation and ending
+at the close of the 10th calendar year beginning on or after such date of designation.
+Accordingly, the QOZ designation period under prior § 1400Z-1(f) ends on—
+(i) December 31, 2027, for QOZs deemed certified and designated in Puerto
+Rico under prior § 1400Z-1(b)(3), and
+(ii) December 31, 2028, for all other QOZs.
+SECTION 3. TRANSITIONAL GUIDANCE REGARDING SECTION 1400Z-1
+.01 QOZ designations under the OBBBA.
+(1) Application of 25-percent limitation. Prior § 1400Z-1(d)(1) provided that, except
+as provided in prior § 1400Z-1(d)(2) 2 and (b)(3) (deemed designation rule for Puerto
+Rico), the number of designated QOZs may not exceed 25 percent of the total number
+2 Prior § 1400Z-1(d)(2) provided that, notwithstanding the 25-percent limitation, if a State contains fewer
+than 100 LICs, then a total of 25 tracts that are LICs may be designated.
+8
+of LIC population census tracts in the State (25-percent limitation). Section 70421(a) of
+the OBBBA amended prior § 1400Z-1 to apply the 25-percent limitation on the number
+of QOZ designations made during any period. Specifically, § 70421(a)(4) of the OBBBA
+amended prior § 1400Z-1(d)(1) to remove the exception from the 25-percent limitation
+for Puerto Rico and amended prior § 1400Z-1(d)(1) and (2) to add references to “during
+any period.” For purposes of applying the 25-percent limitation on the number of
+population census tracts in a State that may be designated as QOZs by the Secretary,
+the phrase “during any period” refers to the QOZ designation period under § 1400Z1(e)(1) beginning on the applicable start date and ending on the day before the date
+that is 10 years after the applicable start date during which an LIC is designated as a
+QOZ. Accordingly, the number of previously designated QOZs in a State will not affect
+the number of population census tracts that a State CEO may nominate to be
+designated as QOZs for the QOZ designation period beginning January 1, 2027.
+(2) Applicable start date and designation period. Under § 1400Z-1(e)(2), the term
+“applicable start date” means, with respect to any QOZ designated under § 1400Z-1,
+the January 1 following the date on which such QOZ was certified and designated.
+Therefore, for every LIC certified and designated by the Secretary as a QOZ under
+§ 1400Z-1(b) during 2026, the QOZ designation period begins on January 1, 2027, and
+ends on December 31, 2036.
+SECTION 4. TRANSITIONAL GUIDANCE FOR INVESTORS
+.01 Gain realized on or before December 31, 2026, and invested in a QOF on or
+before December 31, 2026.
+(1) In general. Under § 1400Z-2(a)(1)(A) and § 1.1400Z2(a)-1, in the case of a
+9
+taxpayer with one or more eligible gains, as defined in § 1.1400Z2(a)-1(b)(11), at the
+election of the taxpayer, gross income for the taxable year will not include the aggregate
+amount of such gain invested by the taxpayer in a QOF during the 180-day period
+beginning on the date of the events that gave rise to that gain. Prior § 1400Z-2(b)(1)(B)
+and § 1.1400Z2(b)-1(b) provide that if gain was deferred by reason of an election under
+§ 1400Z-2(a) for a timely qualifying investment made on or before December 31, 2026,
+then such gain must be included in the taxpayer’s gross income in the taxable year that
+includes the earlier of (i) the date on which an inclusion event, as defined in
+§ 1.1400Z2(b)-1(c), occurs with respect to such qualifying investment (or portion
+thereof), or (ii) December 31, 2026.
+(2) Inability to make a deferral election for taxpayers holding qualifying investments
+through December 31, 2026. Taxpayers holding a qualifying investment (or portion
+thereof) through December 31, 2026, are required to include in income in the taxable
+year that includes that date the amount of remaining deferred gain from the qualifying
+investment as calculated under prior § 1400Z-2(b)(2) and § 1.1400Z2(b)-1(e)(3)
+(deemed included gain). Taxpayers that recognize deemed included gain on December
+31, 2026, continue to hold a qualifying investment for which an election under § 1400Z2(a) remains in effect. See § 1400Z-2(e)(1)(A), §§ 1.1400Z2(a)-1(b)(34) and
+1.1400Z2(c)-1(b)(1)(i). Amounts of deemed included gain may not be deferred pursuant
+to either prior or current § 1400Z-2(a)(1)(A) because, as noted above, an election
+continues to be in effect under prior and current § 1400Z-2(a)(2) with respect to the
+eligible gain that gave rise to the deemed included gain on December 31, 2026. Thus,
+no amount of deemed included gain can be eligible gain with respect to which an
+10
+election under either prior or current § 1400Z-2(a) may be made.
+(3) Continued eligibility to make an election under § 1400Z-2(c). Because the
+election under § 1400Z-2(a) with respect to a qualifying investment continues in effect
+when an eligible taxpayer recognizes deemed included gain in the taxable year which
+includes December 31, 2026, under prior § 1400Z-2(b)(1)(B) and § 1.1400Z2(b)-1(b)(2),
+the taxpayer remains potentially eligible to make an election under § 1400Z-2(c) on the
+later sale or exchange of that qualifying investment. (The election under § 1400Z-2(c)
+can be made only if the taxpayer satisfies the 10-year holding period requirement and
+the other requirements of § 1400Z-2 and the regulations thereunder through the date on
+which the investment is disposed of. See § 1.1400Z2(c)-1(b)(1)(i).)
+.02 Gain realized on or before December 31, 2026, and invested in a QOF on or
+after January 1, 2027.
+(1) In general. Section 70421(c)(1) of the OBBBA modified prior § 1400Z-2(a)(2)
+by allowing a deferral election to be made after December 31, 2026. In addition,
+§ 70421(c)(2) of the OBBBA modified prior § 1400Z-2(b) in multiple ways, including by
+changing the taxable year of inclusion in prior § 1400Z-2(b)(1)(B) from that which
+includes December 31, 2026, to that which includes the date that is 5 years after the
+date the qualifying investment was made. Under § 1400Z-2(b)(2)(B), if a qualifying
+investment is held for at least five years, a taxpayer’s basis in the qualifying investment
+increases by 10 percent (or 30 percent, in the case of any investment in a qualified rural
+opportunity fund), as defined in § 1400Z-2(b)(2)(C)). Section 1400Z-2(b)(2)(B) and (C)
+are effective for amounts invested in QOFs after December 31, 2026. See
+§ 70421(c)(5)(A) of the OBBBA.
+11
+(2) Gain eligible for deferral. In the case of a taxpayer with eligible gain realized
+on, before, or after December 31, 2026, who timely invests a corresponding amount in a
+QOF on or after January 1, 2027, the taxpayer may elect to defer the recognition of that
+gain provided the requirements under § 1400Z-2(a) are met. See § 1.1400Z2(a)-1(b)(7)
+for guidance on what is considered a timely investment. The deferred gain with respect
+to a qualifying investment made on or after January 1, 2027, must be included in gross
+income in the taxable year that includes the earliest of (i) the date on which such
+qualifying investment (or portion thereof) is sold or exchanged, (ii) the date on which an
+inclusion event other than a sale or exchange occurs with respect to such qualifying
+investment (or portion thereof), or (iii) five years from the date the qualifying investment
+was made. Section 1400Z-2(b)(2)(B) provides for the determination of basis for
+purposes of determining the amount of gain included in gross income.
+.03 Eligibility of inclusion event gain.
+(1) In general. Under § 1.1400Z2(a)-1(b)(11)(iv)(A), gain with respect to a
+qualifying investment (or portion thereof) that is otherwise required to be included in
+gross income due to the occurrence of an inclusion event (inclusion event gain) may be
+eligible for deferral under § 1400Z-2(a)(1), provided that all of the requirements to elect
+to defer eligible gain under § 1400Z-2(a)(1)(A) are met. For purposes of determining
+whether inclusion event gain is eligible gain under § 1400Z-2(a)(1)(A), such inclusion
+event gain is treated as if it were realized upon the occurrence of the inclusion event
+rather than on the sale or exchange that gave rise to the eligible gain to which the
+inclusion event relates. See § 1.1400Z2(a)-1(b)(11)(iv).
+(2) Requirements to defer inclusion event gain under § 1400Z-2(a). Inclusion
+12
+event gain may be deferred by making a qualifying investment within 180 days of the
+inclusion event date. See § 1.1400Z2(a)-1(b)(11)(iv)(B). To the extent a taxpayer has
+an inclusion event with respect to any portion of a qualifying investment, that portion is
+no longer a qualifying investment and the taxpayer is not eligible to make an election
+pursuant to § 1400Z-2(c) with respect to that portion of the qualifying investment. For
+guidance on the treatment of the portion of a qualifying investment to which an inclusion
+event relates and the inability to make an election under § 1400Z-2(c) with respect to
+that portion of the investment, see § 1.1400Z2(c)-1(b)(1)(i).
+SECTION 5. TRANSITIONAL GUIDANCE FOR QOFS AND QOZBS
+.01 Tangible property acquired after December 31, 2026.
+(1) In general. In order for tangible property to meet the “acquired by purchase”
+requirement under § 1400Z-2(d)(2)(D)(i)(I), such property must be purchased, as
+defined in § 179(d)(2), after the applicable start date, as defined in § 1400Z-1(e)(2), with
+respect to the QOZ (that is, January 1 following the date on which such QOZ was
+certified and designated as a QOZ). The amendment to the language in prior § 1400Z2(d)(2)(D)(i)(I) by § 70421(c)(4)(A) of the OBBBA, from property acquired by purchase
+after “December 31, 2017” to property acquired by purchase after the “applicable start
+date,” applies to any property acquired after December 31, 2026. See § 70421(c)(5)(B)
+of the OBBBA. Thus, § 1400Z-1(e)(2)’s definition of “applicable start date” is effective
+only for a QOZ designated after the date of enactment of the OBBBA. See
+§ 70421(b)(4) of the OBBBA. A previously designated QOZ does not have an
+“applicable start date” under § 1400Z-1(e)(2) because its designation took place before
+the date of enactment of OBBBA. Therefore, property acquired by a QOF or QOZB
+13
+after December 31, 2026, cannot be QOZBP unless (i) the property is acquired for use
+in a QOZ that is designated after July 4, 2025, or (ii) one of the exceptions in section
+5.01(2) and (3) of this notice applies.
+(2) Property acquired pursuant to a working capital safe harbor plan after
+December 31, 2026.
+(a) In general. Section 1400Z-2(d)(3)(A)(ii) incorporates § 1397C(b)(8), which
+requires that less than 5 percent of the average of the aggregate unadjusted bases of
+the property of the relevant entity be attributable to nonqualified financial property in
+each taxable year. In general, under § 1397C(e), “nonqualified financial property”
+means debt, stock, partnership interests, options, futures contracts, forward contracts,
+warrants, notional principal contracts, annuities, and other similar property specified in
+regulations. However, under § 1397C(e)(1), this term does not include reasonable
+amounts of working capital held in cash, cash equivalents, or debt instruments with a
+term of 18 months or less. For purposes of applying § 1397C(e)(1) to a QOZB under
+§ 1400Z-2(d)(3), § 1.1400Z2(d)-1(d)(3)(v) provides a safe harbor under which working
+capital assets are treated as reasonable in amount if the following requirements,
+provided in § 1.1400Z2(d)-1(d)(3)(v)(A) through (C), are satisfied. First, the working
+capital assets must be designated in writing for the development of a trade or business
+in a QOZ, including when appropriate the acquisition, construction, and/or substantial
+improvement of tangible property in the QOZ. Second, there must be a written
+schedule consistent with the ordinary start-up of a trade or business for expenditure of
+those working capital assets. Under the schedule, the working capital assets must be
+spent within 31 months of the receipt by the business of the assets. Third, the working
+14
+capital assets must be used in a manner that is substantially consistent with the writing
+and the written schedule. A single business may benefit from more than a single
+application of the working capital safe harbor, provided that each application
+independently satisfies all of the requirements of § 1.1400Z2(d)-1(d)(3)(v)(A) through
+(C). See § 1.1400Z2(d)-1(d)(3)(v)(E). Additionally, pursuant to a working capital safe
+harbor for start-up businesses that are not yet operating as a trade or business, these
+entities may treat certain amounts as satisfying the requirements for QOZB qualification
+under § 1400Z-2(d)(3)(i) for the duration of the working capital safe harbor. See
+§ 1.1400Z2(d)-1(d)(3)(vi).
+(b) Transition guidance regarding QOZBP. If an entity acquires property after
+December 31, 2026, for use in a previously designated QOZ and pursuant to a written
+plan meeting the requirements of the § 1.1400Z2(d)-1(d)(3)(v) and (vi) working capital
+safe harbors, then that property may satisfy the acquisition requirement of § 1400Z2(d)(2)(D)(i)(I) if (i) the working capital plan was adopted on or before December 31,
+2026, (ii) the relevant property acquisitions are made in a manner substantially
+consistent with that plan, (iii) the QOZB has received at least ten percent of the total
+estimated working capital assets designated in writing pursuant to the plan by
+December 31, 2026, and (iv) the QOZB expends at least five percent of the total
+estimated working capital assets by December 31, 2026. Amounts required to be
+expended by a QOZB pursuant to a binding agreement entered into prior to January 1,
+2027, will be considered to be expended for purposes of the requirement to expend five
+percent of the total estimated working capital assets by December 31, 2026.
+(c) Transition guidance regarding QOZP. Stock or partnership interests acquired
+15
+after December 31, 2026, pursuant to a written plan described in this section 5.01(2),
+are treated as acquired after the “applicable date” for purposes of § 1400Z2(d)(2)(B)(i)(I) and § 1400Z-2(d)(2)(C)(i).
+(3) Tangible property acquired in the ordinary course of business after December
+31, 2026, for use in a previously designated QOZ. Tangible property acquired after
+December 31, 2026, by a QOF or QOZB for use in the ordinary course of its trade or
+business in a previously designated QOZ to replace existing tangible business property
+may be treated as QOZBP if the requirements of § 1400Z-2(d)(2)(D) are otherwise met.
+Replacements in the ordinary course of a trade or business include the replacement or
+modernization of property necessary to continue the operations of the trade or business.
+Replacements in the ordinary course of a trade or business do not include tangible
+property acquired pursuant to the expansion of a trade or business or the transition of a
+trade or business into a new trade or business.
+(4) Examples. The following examples illustrate the application of the provisions in
+section 5.01(1) through (3) of this notice.
+(i) Example 1—Tangible property acquired pursuant to the expansion of a trade
+or business. QOZB A owns and operates an industrial manufacturing facility in Tract A,
+which was designated as a QOZ in 2018 under prior § 1400Z-1. On June 15, 2028,
+QOZB A purchases a new warehouse on an adjacent plot of land from an unrelated
+third party to expand the facility’s capacity to produce a new product. The new
+warehouse acquired by QOZB A on that date is not located in a tract that was
+designated as a QOZ effective January 1, 2027. Because the new warehouse was not
+acquired after the applicable start date of a tract designated as a QOZ on January 1,
+16
+2027, it is not QOZBP under the general rule in section 5.01(1) of this notice. Because
+the new warehouse was not developed pursuant to a written plan within the scope of
+section 5.01(2) of this notice and was acquired pursuant to the expansion of QOZB A’s
+trade or business within the meaning of section 5.01(3) of this notice, it cannot qualify
+as QOZBP.
+(ii) Example 2—Replacement of existing tangible business property in the
+ordinary course of the trade or business. QOZB A owns and operates an apartment
+building that is QOZBP in Tract B, which was designated as a QOZ in 2018 under prior
+§ 1400Z-1. The apartment building is not located in a tract that was designated as a
+QOZ effective January 1, 2027. In 2028 and in 2029, the apartment building requires
+window replacements and the purchase of replacement appliances, fixtures, cabinetry,
+flooring, and similar tangible property pursuant to the renovation of apartment units
+when tenants vacate the premises. These acquisitions are necessary for the continued
+operation of the apartment building and are replacements in the ordinary course of
+business that qualify as QOZBP under § 1400Z-2(d)(2)(D). See section 5.01(3) of this
+notice.
+(iii) Example 3—Modernization of property necessary to continue the operations
+of the trade or business. QOZB C operates a trade or business as a restaurant in
+Tract D, which was designated as a QOZ in 2018 under prior § 1400Z-1. The
+restaurant is not located in a tract that was designated as a QOZ effective January 1,
+2027. In 2028, in order to maintain operations and embrace industry advancements,
+the restaurant renovates and modernizes its kitchen, including adding a new ventilation
+system to its kitchen to improve energy efficiency and replacing its point-of-sale system
+17
+for a system with tools tailored specifically for the restaurant. The renovation and
+modernization of the kitchen are necessary for the continued operation of the restaurant
+in an efficient manner and are replacements in the ordinary course of business that
+qualify as QOZBP under § 1400Z-2(d)(2)(D). See section 5.01(3) of this notice.
+(iv) Example 4–Property acquired pursuant to a working capital safe harbor plan
+adopted prior to December 31, 2026. QOF A forms domestic C corporation B (QOZB
+B) to develop a large mixed-use real estate development that will consist of commercial
+and residential real property. QOZB B has a master written plan for the completion of
+the commercial and residential developments over a 55-month period that is estimated
+to cost $50 million with $30 million allocated to the initial commercial development
+phase and $20 million allocated to the subsequent residential development phase. The
+plan provides that the commercial development will be completed over a 30-month
+schedule, ending on November 30, 2026, and subsequently, the residential
+development will be completed over a 25-month schedule, estimated to be completed
+by December 31, 2028. The plan further provides that a portion of the commercial
+development is unable to be used in a trade or business after the completion of the
+commercial development since that portion of the commercial development will be
+unusable during the residential construction phase. On May 1, 2024, QOF A acquires
+stock of QOZB B in exchange for cash of $30 million. QOZB B expends the full $30
+million in completing the commercial development by December 2026. Pursuant to
+QOZB B’s original master plan for the completion of the real estate development, QOF
+A acquires additional stock in QOZB B for cash in December 2026, and QOZB B begins
+to use the cash for the residential development phase in early 2027. The development
+18
+is located in Tract D, which was designated as a QOZ in 2018 under prior § 1400Z-1.
+The development is not located in a tract that was designated as a QOZ effective
+January 1, 2027. The mixed-use development satisfies the safe harbor in section
+5.01(2) and acquisitions of tangible property made pursuant to the plan may qualify as
+QOZBP if they are made in a manner substantially consistent with the plan.
+(v) Example 5— Property acquired pursuant to a working capital safe harbor plan
+adopted prior to December 31, 2026. The facts are the same as example 4, except that
+in November 2027 it becomes apparent that the residential development is over budget,
+delayed by three months, and will require additional capital to complete a portion of the
+residential development that includes a swimming pool for use by apartment residents.
+In December 2027, QOF A acquires additional stock of QOZB B solely in exchange for
+cash. The cash received by QOZB B in December 2027 is expended in accordance
+with the initial master plan established in 2024 to complete the residential apartment
+complex, including the completion of the swimming pool. The residential development
+is completed and placed into service by March 2029. The swimming pool was an
+integral part of the initial master plan established by QOZB B in May 2024. See
+§ 1.1400Z2(d)-1(d)(3)(vi)(A). The commercial and residential real property may qualify
+as QOZBP assuming the other requirements of § 1400Z-2(d)(2)(D) are met. Because
+the stock was acquired in exchange for cash needed to complete development of the
+project, it may be treated as having been acquired after the applicable date pursuant to
+section 5.01(2)(c) of this notice.
+.02 Compliance tests after a QOZ designation period ends.
+(1) In general. Section 70421(c)(3) of the OBBBA amended prior § 1400Z-2(c) by
+19
+providing that, in the case of any qualifying investment held by the taxpayer for at least
+10 years and with respect to which the taxpayer makes an election under that
+subsection, the basis of such qualifying investment equals its fair market value on the
+earlier of (i) the date such qualifying investment is sold or exchanged, or (ii) the date
+that is 30 years after the date of that qualifying investment. Section 1400Z-2(c) is
+effective for amounts invested in QOFs after December 31, 2026. See § 70421(c)(5)(A)
+of the OBBBA. Prior § 1400Z-2(c) allowed a taxpayer holding a qualifying investment
+for at least 10 years to make an election under prior § 1400Z-2(c) to adjust the basis of
+the property equal to the fair market value of that qualifying investment on the date that
+qualifying investment was sold or exchanged (without regard to the number of years
+that have passed since the date of the qualifying investment). Section 1.1400Z2(c)-1(c)
+provides that, for dispositions occurring before January 1, 2048, the ability to make an
+election under prior § 1400Z-2(c) for qualifying investments held for at least 10 years is
+not impaired solely because, under § 1400Z-1(f), the designation of one or more QOZs
+ceases to be in effect. See also § 1.1400Z2(c)-1(d), Example 1. Section 1400Z-2(d)
+contains multiple requirements the satisfaction of which are dependent on whether
+property owned by a QOF or QOZB, or a trade or business engaged in by a QOF or
+QOZB, is located in a QOZ. Given that § 1400Z-2(c) and § 1.1400Z2(c)-1(c)
+contemplate the ability to continue a qualifying investment made in a QOZ after its
+designation as a QOZ ceases to be in effect, the Treasury Department and the IRS
+expect that the forthcoming proposed regulations will include the following safe harbors
+for QOFs and QOZBs to continue to satisfy these requirements after the expiration of a
+QOZ’s designation period.
+20
+(2) Substantial use element of the definition of QOZBP. For tangible property to
+qualify as QOZBP, substantially all of the use of that property must be in a QOZ for
+substantially all of the entity’s holding period for such property. See § 1400Z2(d)(2)(D)(i)(III); see also § 1.1400Z2(a)-1(b)(3). If property otherwise qualifies as
+QOZBP, a QOF or QOZB that acquires that property on or before the expiration of its
+QOZ designation period (December 31, 2027, or December 31, 2028, as applicable), or
+pursuant to sections 5.01(2) or 5.01(3) of this notice, may continue to treat a previously
+designated QOZ the designation of which has expired as a QOZ solely for purposes of
+§ 1400Z-2(d)(2)(D)(i)(III) through December 31, 2047.
+(3) QOZB Compliance Tests. For an entity to qualify as a QOZB, at least 50
+percent of its gross income must be derived from the active conduct of a trade or
+business in a QOZ, and a substantial portion of its intangible property must be used in
+the active conduct of a trade or business in a QOZ. See § 1400Z-2(d)(3)(A)(ii); see also
+§ 1.1400Z2(d)-1(d)(3)(i) and (ii). A QOZB that has begun to engage in the active
+conduct of a trade or business within a previously designated QOZ on or before the
+expiration of its QOZ designation period (December 31, 2027, or December 31, 2028,
+as applicable), or that reasonably anticipates to begin doing so in accordance with a
+written plan that meets the requirements of section 5.01(2) of this notice, may continue
+to treat a previously designated QOZ the designation of which has expired as a QOZ
+solely for the purposes of § 1400Z-2(d)(3)(A)(ii) through December 31, 2047.
+SECTION 6. APPLICABILITY DATE
+The Treasury Department and the IRS anticipate that the forthcoming proposed
+regulations will propose that the final regulations, once published in the Federal
+21
+Register, would apply to taxable years ending after the date this notice is issued to the
+public. See § 7805(b)(1)(C).
+SECTION 7. DRAFTING AND CONTACT INFORMATION
+The principal author of this notice is Maria Castillo Valle of the Office of Associate
+Chief Counsel (Income Tax & Accounting). For further information regarding this notice,
+contact Ms. Castillo Valle at (202) 317-7006 (not a toll-free number).

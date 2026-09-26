@@ -15,6 +15,7 @@ const NAV: Array<[string, string]> = [
   ["/", "Start"],
   ["/guide", "Guided check"],
   ["/how-it-works", "How it works"],
+  ["/rules", "Rules & sources"],
   ["/map", "Map"],
   ["/funds", "Funds"],
   ["/check", "Check properties"],

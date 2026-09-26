@@ -1,0 +1,45 @@
+name: Fetch legal sources
+
+# Downloads the statutes, regulations and IRS pages in legal/sources.json as
+# plain text (scripts/fetch-legal-sources.ts) and pushes them to the
+# data/legal-sources branch, so the rules the app states can be quoted from,
+# and tested against, the actual sources. Runs on demand, and when the source
+# list changes on a claude/ branch. Needs no secrets; the texts are U.S.
+# government works.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["legal/sources.json", "scripts/fetch-legal-sources.ts", ".github/workflows/fetch-legal-sources.yml"]
+
+permissions:
+  contents: write
+
+# One run at a time, so runs do not overwrite each other's results.
+concurrency:
+  group: fetch-legal-sources
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: sudo apt-get install -y poppler-utils
+      - name: Start from the last saved texts, so a source that cannot be read this time keeps its previous copy
+        run: |
+          git fetch origin data/legal-sources && git checkout FETCH_HEAD -- legal/text legal/links || true
+      - run: npx tsx scripts/fetch-legal-sources.ts
+      - name: Push to data/legal-sources
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B data/legal-sources
+          git add legal/text legal/fetch-report.txt && git add -f legal/links
+          git commit -m "Legal source texts, fetched $(date -u +%F)"
+          git push --force origin data/legal-sources

@@ -1,0 +1,137 @@
+[
+  {
+    "id": "usc-1400Z-2",
+    "title": "26 U.S.C. § 1400Z-2, Special rules for capital gains invested in opportunity zones",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1400Z-2&num=0&edition=prelim"
+  },
+  {
+    "id": "usc-1400Z-1",
+    "title": "26 U.S.C. § 1400Z-1, Designation",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1400Z-1&num=0&edition=prelim"
+  },
+  {
+    "id": "plaw-119-21",
+    "title": "Public Law 119-21 (2025), section 70421, Permanent renewal and enhancement of opportunity zones",
+    "publisher": "U.S. Government Publishing Office (govinfo)",
+    "url": "https://www.govinfo.gov/content/pkg/PLAW-119publ21/html/PLAW-119publ21.htm"
+  },
+  {
+    "id": "cfr-1.1400Z2a-1",
+    "title": "26 CFR § 1.1400Z2(a)-1, Deferring tax on capital gains by investing in opportunity zones",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(a)-1",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(a)-1"
+  },
+  {
+    "id": "cfr-1.1400Z2c-1",
+    "title": "26 CFR § 1.1400Z2(c)-1, Investments held for at least 10 years",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(c)-1",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(c)-1"
+  },
+  {
+    "id": "cfr-1.1400Z2d-1",
+    "title": "26 CFR § 1.1400Z2(d)-1, Qualified opportunity funds and qualified opportunity zone businesses",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(d)-1",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(d)-1"
+  },
+  {
+    "id": "cfr-1.1400Z2d-2",
+    "title": "26 CFR § 1.1400Z2(d)-2, Qualified opportunity zone business property",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(d)-2",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(d)-2"
+  },
+  {
+    "id": "irs-oz-faq",
+    "title": "Opportunity zones frequently asked questions",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/credits-deductions/opportunity-zones-frequently-asked-questions"
+  },
+  {
+    "id": "irs-oz",
+    "title": "Opportunity zones",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/credits-deductions/businesses/opportunity-zones"
+  },
+  {
+    "id": "irs-i8996",
+    "title": "Instructions for Form 8996, Qualified Opportunity Fund",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/instructions/i8996"
+  },
+  {
+    "id": "cdfi-oz",
+    "title": "Opportunity Zones",
+    "publisher": "CDFI Fund, U.S. Department of the Treasury",
+    "url": "https://www.cdfifund.gov/opportunity-zones"
+  },
+  {
+    "id": "irs-n-2026-40",
+    "title": "Notice 2026-40, Transitional Guidance on Qualified Opportunity Zones",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/pub/irs-drop/n-26-40.pdf",
+    "pdf": true
+  },
+  {
+    "id": "irs-rp-2026-14",
+    "title": "Revenue Procedure 2026-14, Procedure for nominating census tracts to be designated as qualified opportunity zones",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/pub/irs-drop/rp-26-14.pdf",
+    "pdf": true
+  },
+  {
+    "id": "irs-n-2026-55",
+    "title": "Notice 2026-55, Request for Additional Comments on Issues under section 1400Z-2",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/pub/irs-drop/n-26-55.pdf",
+    "pdf": true
+  },
+  {
+    "id": "irs-invest-qof",
+    "title": "Invest in a Qualified Opportunity Fund",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund"
+  },
+  {
+    "id": "usc-42",
+    "title": "26 U.S.C. § 42, Low-income housing credit",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section42&num=0&edition=prelim"
+  },
+  {
+    "id": "usc-45D",
+    "title": "26 U.S.C. § 45D, New markets tax credit",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section45D&num=0&edition=prelim"
+  },
+  {
+    "id": "irs-n-2025-50",
+    "title": "Notice 2025-50",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/pub/irs-drop/n-25-50.pdf",
+    "pdf": true
+  },
+  {
+    "id": "irs-certify-qof",
+    "title": "Certify and maintain a Qualified Opportunity Fund",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/credits-deductions/businesses/certify-and-maintain-a-qualified-opportunity-fund"
+  },
+  {
+    "id": "usc-1221",
+    "title": "26 U.S.C. § 1221, Capital asset defined",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1221&num=0&edition=prelim"
+  },
+  {
+    "id": "cfr-1.1400Z2f-1",
+    "title": "26 CFR § 1.1400Z2(f)-1, Administrative rules: penalties, anti-abuse, etc.",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(f)-1",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(f)-1"
+  }
+]

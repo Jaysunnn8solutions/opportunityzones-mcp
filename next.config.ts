@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
     "/tract/**": ["./data/*.json", "./data/*.bin"],
     // The site snapshot finds a tract's interior point in the boundary files.
     "/api/site": ["./public/boundaries/tracts/*.json"],
+    // Rules and sources reads each saved source's retrieval date.
+    "/rules": ["./legal/text/*.txt"],
   },
   // Map outlines built by the pipeline (pipeline/map/boundaries.ts). They change
   // once a year, are identical for every viewer, and carry nothing about users.
