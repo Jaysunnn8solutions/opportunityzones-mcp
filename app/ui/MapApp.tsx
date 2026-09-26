@@ -22,6 +22,8 @@ import { countyHasZones, type CountyCounts } from "@/lib/data/countyZones";
 import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 import { versionLabel } from "@/lib/version";
+import type { MapLayerId } from "@/lib/content/mapLayers";
+import { LayerInfoCard } from "./LayerInfo";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
@@ -139,6 +141,9 @@ export default function MapApp() {
   const marker = useRef<Marker | null>(null);
 
   const [flag, setFlag] = useState<FlagName>("eligible");
+  // Layer explanations: shown while hovering or focusing a layer, or kept open by clicking its "i".
+  const [hoverInfo, setHoverInfo] = useState<MapLayerId | null>(null);
+  const [pinnedInfo, setPinnedInfo] = useState<MapLayerId | null>(null);
   const [zoom, setZoom] = useState(0);
   const [basemap, setBasemap] = useState<BasemapId>(DEFAULT_BASEMAP);
   const [selected, setSelected] = useState<string | null>(null);
@@ -430,12 +435,27 @@ export default function MapApp() {
           </ul>
         )}
 
-        <div className="layer-picker" role="group" aria-label="Colour tracts by">
-          {PICKER.map((f) => (
-            <button key={f} type="button" aria-pressed={flag === f} onClick={() => setFlag(f)}>
-              {FLAGS[f].label}
-            </button>
-          ))}
+        <div onMouseLeave={() => setHoverInfo(null)}>
+          <div className="layer-picker" role="group" aria-label="Colour tracts by">
+            {PICKER.map((f) => (
+              <span key={f} className="layer-choice" onMouseEnter={() => setHoverInfo(f as MapLayerId)}>
+                <button type="button" aria-pressed={flag === f} onClick={() => setFlag(f)}>
+                  {FLAGS[f].label}
+                </button>
+                <button
+                  type="button"
+                  className="layer-info-toggle"
+                  aria-label={`What is ${FLAGS[f].label}?`}
+                  aria-expanded={pinnedInfo === f}
+                  onClick={() => setPinnedInfo(pinnedInfo === f ? null : (f as MapLayerId))}
+                  onFocus={() => setHoverInfo(f as MapLayerId)}
+                >
+                  i
+                </button>
+              </span>
+            ))}
+          </div>
+          {(hoverInfo ?? pinnedInfo) && <LayerInfoCard id={(hoverInfo ?? pinnedInfo)!} onClose={pinnedInfo ? () => setPinnedInfo(null) : undefined} />}
         </div>
         <div className="layer-picker" role="group" aria-label="Basemap">
           {(Object.keys(BASEMAPS) as BasemapId[]).map((b) => (
