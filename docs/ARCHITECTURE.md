@@ -120,7 +120,9 @@ personal is stored" rule; client data never goes in.
   `lib/geo/stateBoundaries.ts`), so a whole state such as Georgia is drawn at
   once. Files are cached for a day at the CDN (`next.config.ts`).
 - Fallback: until those files are generated and committed (`npx tsx
-  pipeline/map/boundaries.ts`, or the full pipeline), or if `index.json` is
+  pipeline/map/boundaries.ts`, the full pipeline, or the "Refresh map data"
+  GitHub workflow, which pushes them to `data/map-boundaries` for a pull
+  request), or if `index.json` is
   missing, the map fetches outlines per web-mercator tile from TIGERweb through
   `/api/boundaries/{tracts|counties}/{z}/{x}/{y}` as before (counties below zoom
   8, tracts from zoom 8, cached at the CDN for 30 days).
