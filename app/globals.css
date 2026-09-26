@@ -586,6 +586,19 @@ button.link {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
+.map-version {
+  position: absolute;
+  right: 10px;
+  bottom: 28px;
+  padding: 2px 6px;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
 .map-legend .swatch {
   margin-right: 6px;
 }
