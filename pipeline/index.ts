@@ -32,6 +32,7 @@ import { log } from "./lib/http";
 import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
 import { compare } from "./oz1/compare";
+import { buildGrowth } from "./oz1/growth";
 import { buildOz1Lists } from "./oz1/lists";
 import { buildMapBoundaries } from "./map/boundaries";
 import { buildOz2Designated } from "./oz2/designated";
@@ -56,6 +57,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["Housing age (ACS B25034)", buildHousingAge],
   ["EPA Superfund and brownfield sites by tract", buildEpaSites],
   ["HMDA mortgage lending by tract", () => buildHmda()],
+  ["HMDA 2018 home-purchase lending (2010 tracts), for the OZ 1.0 comparison", () => buildHmda(2018)],
   ["Anchor institutions: colleges and hospitals", buildAnchors],
   ["HUD Small Area Fair Market Rents", buildSafmr],
   ["Distance to the nearest Interstate", buildInterstateDistance],
@@ -65,6 +67,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
+  ["OZ 1.0 lift in money measures", buildGrowth],
 ];
 
 async function main(): Promise<void> {

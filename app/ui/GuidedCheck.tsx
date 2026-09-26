@@ -42,8 +42,10 @@ import { Cite } from "./Cite";
 
 export interface GuidePersona {
   slug: string;
+  group: string;
   who: string;
   title: string;
+  summary: string;
   ask: string[];
 }
 export interface GuideState {
@@ -108,7 +110,9 @@ function loadSaved() {
 }
 
 /** Rendered only in the browser, where the saved answers and the step in the URL can be read. */
-export default function GuidedCheck(props: { personas: GuidePersona[]; states: GuideState[] }) {
+type GuideProps = { personas: GuidePersona[]; groups: Array<{ id: string; title: string }>; states: GuideState[] };
+
+export default function GuidedCheck(props: GuideProps) {
   const inBrowser = useSyncExternalStore(
     noop,
     () => true,
@@ -118,7 +122,7 @@ export default function GuidedCheck(props: { personas: GuidePersona[]; states: G
   return <Wizard {...props} />;
 }
 
-function Wizard({ personas, states }: { personas: GuidePersona[]; states: GuideState[] }) {
+function Wizard({ personas, groups, states }: GuideProps) {
   const [saved] = useState(loadSaved);
   const [answers, setAnswers] = useState<Answers>(saved?.answers ?? EMPTY_ANSWERS);
   const [current, setCurrent] = useState<StepId>(() => stepFromHash(window.location.hash) ?? saved?.current ?? "who");
@@ -259,13 +263,32 @@ function Wizard({ personas, states }: { personas: GuidePersona[]; states: GuideS
           title: "Which describes you best?",
           intro: "This sets the examples and questions you see. Pick the closest.",
           action: (
-            <div className="cards">
-              {personas.map((x) => (
-                <Choice key={x.slug} value={x.slug} current={answers.persona} onPick={(v) => set("persona", v)} title={x.who}>
-                  {x.title}
-                </Choice>
-              ))}
-            </div>
+            <>
+              <label className="persona-select">
+                <span className="visually-hidden">Which describes you best?</span>
+                <select value={answers.persona ?? ""} onChange={(e) => set("persona", e.target.value || null)}>
+                  <option value="">Choose the one closest to you…</option>
+                  {groups.map((gr) => (
+                    <optgroup key={gr.id} label={gr.title}>
+                      {personas
+                        .filter((x) => x.group === gr.id)
+                        .map((x) => (
+                          <option key={x.slug} value={x.slug}>
+                            {x.who}
+                          </option>
+                        ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </label>
+              {p && (
+                <div className="persona-panel">
+                  <p className="card-kicker">{p.who}</p>
+                  <h3>{p.title}</h3>
+                  <p>{p.summary}</p>
+                </div>
+              )}
+            </>
           ),
         };
 

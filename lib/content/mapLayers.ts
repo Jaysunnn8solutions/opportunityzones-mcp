@@ -47,7 +47,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "A zone designated in 2018. It stays designated through December 31, 2028, but property bought there after December 31, 2026, generally does not qualify.",
     rules: ["zones2018", "boughtAfterStart"],
-    mapped: "The 2018 zones are 2010 census tracts. A 2020 tract is coloured when at least half of its population lives in one.",
+    mapped: "The 2018 zones are 2010 census tracts. A 2020 tract is coloured when at least half of its population lives in one. How the 2018 zones fared against comparable tracts is on the 2018 results page (/2018-zones).",
     sourceId: "oz1Designated",
   },
   qct: {

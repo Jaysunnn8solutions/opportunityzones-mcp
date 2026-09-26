@@ -3,6 +3,7 @@ import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
 import { stateSummaries } from "@/lib/data/stateViews";
 import { designationNote, designationPublication, designationRoundTotals } from "@/lib/data/tracts";
 import FrontDoor from "./ui/FrontDoor";
+import PersonaPicker from "./ui/PersonaPicker";
 import { Cite } from "./ui/Cite";
 
 /** Start: what the program is, where things stand, and where to go next. */
@@ -60,20 +61,10 @@ export default function StartPage() {
 
       <section>
         <h2>Which describes you?</h2>
-        {PERSONA_GROUPS.map((g) => (
-          <div key={g.id} className="persona-group">
-            <h3>{g.title}</h3>
-            <div className="cards personas">
-              {PERSONAS.filter((p) => p.group === g.id).map((p) => (
-                <Link key={p.slug} className="card" href={`/for/${p.slug}`}>
-                  <span className="card-kicker">{p.who}</span>
-                  <strong>{p.title}</strong>
-                  <span>{p.summary}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
+        <PersonaPicker
+          groups={PERSONA_GROUPS}
+          personas={PERSONAS.map(({ slug, group, who, title, summary, tools }) => ({ slug, group, who, title, summary, tools }))}
+        />
       </section>
 
       <section>

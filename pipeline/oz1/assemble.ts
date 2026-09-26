@@ -142,7 +142,7 @@ function harmonizeCt<T>(
   return out;
 }
 
-const MEDIAN_FIELDS = new Set(["homeValue", "homeValueMoe", "rent", "rentMoe", "hhIncome", "hhIncomeMoe", "familyIncome", "yearBuilt"]);
+const MEDIAN_FIELDS = new Set(["homeValue", "homeValueMoe", "rent", "rentMoe", "hhIncome", "hhIncomeMoe", "familyIncome", "yearBuilt", "perCapitaIncome"]);
 
 /** Merge two ACS rows that land on one 2020 tract: sum counts, weight medians by people. */
 function mergeAcs(a: Row, b: Row): Row {
@@ -199,6 +199,12 @@ export async function assemble(): Promise<void> {
   const known2020 = new Set(readCsv(need("xwalk_t10_t20.csv")).rows.map((r) => r[1]));
   const acs24 = harmonizeCt(keyed("acs_2024.csv"), ctMap, known2020, mergeAcs, "ACS 2020-24");
   const hpi = harmonizeCt(keyed("fhfa_hpi.csv"), ctMap, known2020, mergeLevels, "FHFA HPI");
+  // Home-purchase mortgages, 2018 (HMDA still on 2010 tracts) and 2024 (2020
+  // tracts). Optional: without both files the mortgage columns are empty.
+  const haveHmda = existsSync(path.join(CLEAN_DIR, "hmda_2018.csv")) && existsSync(path.join(CLEAN_DIR, "hmda_2024.csv"));
+  const hmda18 = haveHmda ? keyed("hmda_2018.csv") : new Map<string, Row>();
+  const hmda24 = haveHmda ? harmonizeCt(keyed("hmda_2024.csv"), ctMap, known2020, mergeAcs, "HMDA 2024") : new Map<string, Row>();
+  if (!haveHmda) log("assemble: HMDA 2018 or 2024 not built; mortgage columns left empty");
   const land10 = keyed("tract2010_land.csv");
   const area10 = keyed("tract2010_area.csv");
   const cpiRows = keyed("cpi_u.csv");
@@ -310,6 +316,22 @@ export async function assemble(): Promise<void> {
   const rent24 = censor24("rent", col24("rent"));
   const inc24 = censor24("hhIncome", col24("hhIncome"));
   const homeCv24 = new Map([...acs24].map(([g, r]) => [g, cv(r.homeValue, r.homeValueMoe)]));
+  // Money measures, 2020-tract series (counts, except per-capita income).
+  const sumOf = (r: Row, keys: string[]) => (keys.every((k) => r[k] != null) ? keys.reduce((a, k) => a + (r[k] as number), 0) : null);
+  const colSum24 = (keys: string[]) => new Map([...acs24].map(([g, r]) => [g, sumOf(r, keys)]));
+  const hhU24 = col24("hhIncomeUniverse");
+  const hh125Plus24 = colSum24(["hhIncome125to150k", "hhIncome150to200k", "hhIncome200kPlus"]);
+  const snapU24 = col24("snapUniverse");
+  const snap24 = col24("snapReceived");
+  const paU24 = col24("publicAssistanceUniverse");
+  const pa24 = col24("publicAssistanceReceived");
+  const vehU24 = col24("vehiclesUniverse");
+  const noVeh24 = colSum24(["ownerNoVehicle", "renterNoVehicle"]);
+  const kids24 = col24("childrenUnder18");
+  const mortU24 = col24("mortgageUniverse");
+  const mort24 = col24("withMortgage");
+  const pci24 = col24("perCapitaIncome");
+  const homePurchase24 = new Map([...hmda24].map(([g, r]) => [g, r.home_purchase_originations ?? null]));
 
   // Each median describes a different set of homes, so it is weighted by that
   // set when 2020 pieces are combined: home value by owner-occupied units, rent
@@ -428,6 +450,18 @@ export async function assemble(): Promise<void> {
       a16?.eduUniverse ?? null
     );
     const unemp16 = ratio(a16?.unemployed ?? null, a16?.laborForce ?? null);
+    // Money measures at baseline. $100k+ in 2012-16 dollars is compared with
+    // $125k+ in 2020-24 dollars: CPI-U rose about 31% between the two, and
+    // $125,000 is the nearest ACS income bracket edge to $100,000 x 1.31.
+    const sum16 = (keys: string[]) => (a16 && keys.every((k) => a16[k] != null) ? keys.reduce((t, k) => t + (a16[k] as number), 0) : null);
+    const hh100Plus16 = ratio(sum16(["hhIncome100to125k", "hhIncome125to150k", "hhIncome150to200k", "hhIncome200kPlus"]), a16?.hhIncomeUniverse ?? null);
+    const snap16 = ratio(a16?.snapReceived ?? null, a16?.snapUniverse ?? null);
+    const pa16 = ratio(a16?.publicAssistanceReceived ?? null, a16?.publicAssistanceUniverse ?? null);
+    const noVeh16 = ratio(sum16(["ownerNoVehicle", "renterNoVehicle"]), a16?.vehiclesUniverse ?? null);
+    const kids16 = ratio(a16?.childrenUnder18 ?? null, a16?.population ?? null);
+    const mort16 = ratio(a16?.withMortgage ?? null, a16?.mortgageUniverse ?? null);
+    const pci16 = a16?.perCapitaIncome ?? null;
+    const purchases18 = haveHmda ? (hmda18.get(g)?.home_purchase_originations ?? 0) : null;
 
     // Post-period (2020-2024) on 2010 boundaries.
     const hasXw = xw.to10.has(g);
@@ -447,6 +481,14 @@ export async function assemble(): Promise<void> {
     const hpiPlacebo = hasXw ? intensiveTo2010(xw, g, hpi13to17, "hu") : { value: null, coverage: 0 };
     const hpiPre = hasXw ? intensiveTo2010(xw, g, hpi12to16, "hu") : { value: null, coverage: 0 };
     const hpiAligned = hasXw ? intensiveTo2010(xw, g, hpi14to22, "hu") : { value: null, coverage: 0 };
+    const hhRich24 = hasXw ? ratio(countTo2010(xw, g, hh125Plus24, "hu"), countTo2010(xw, g, hhU24, "hu")) : null;
+    const snapPost = hasXw ? ratio(countTo2010(xw, g, snap24, "hu"), countTo2010(xw, g, snapU24, "hu")) : null;
+    const paPost = hasXw ? ratio(countTo2010(xw, g, pa24, "hu"), countTo2010(xw, g, paU24, "hu")) : null;
+    const noVehPost = hasXw ? ratio(countTo2010(xw, g, noVeh24, "hu"), countTo2010(xw, g, vehU24, "hu")) : null;
+    const kidsPost = hasXw ? ratio(countTo2010(xw, g, kids24, "pop"), popPost) : null;
+    const mortPost = hasXw ? ratio(countTo2010(xw, g, mort24, "hu"), countTo2010(xw, g, mortU24, "hu")) : null;
+    const pciPost = hasXw ? intensiveTo2010(xw, g, pci24, "pop") : { value: null, coverage: 0 };
+    const purchases24 = hasXw && haveHmda ? countTo2010(xw, g, homePurchase24, "hu") : null;
 
     const jobs = jobs10.get(g) ?? null;
     const jobsAt = (year: number): number | null => {
@@ -551,6 +593,24 @@ export async function assemble(): Promise<void> {
       sens1317_dlog_home_value: realLogChange(home17, homePost.value, cpi(2017), cpi(2024)),
       sens1317_dlog_rent: realLogChange(rent17, rentPost.value, cpi(2017), cpi(2024)),
       sens1317_dlog_hh_income: realLogChange(inc17, incPost.value, cpi(2017), cpi(2024)),
+
+      // Money measures: baseline 2012-2016, change to 2020-2024 (real where in dollars).
+      per_capita_income_2016: pci16,
+      hh_100k_plus_share_2016: hh100Plus16,
+      snap_share_2016: snap16,
+      public_assistance_share_2016: pa16,
+      no_vehicle_share_2016: noVeh16,
+      children_share_2016: kids16,
+      mortgage_share_2016: mort16,
+      home_purchase_loans_2018: purchases18,
+      out_dlog_per_capita_income: realLogChange(pci16, pciPost.value, cpi(2016), cpi(2024)),
+      out_d_hh_high_income_share: diff(hh100Plus16, hhRich24),
+      out_d_snap_share: diff(snap16, snapPost),
+      out_d_public_assistance_share: diff(pa16, paPost),
+      out_d_no_vehicle_share: diff(noVeh16, noVehPost),
+      out_d_children_share: diff(kids16, kidsPost),
+      out_d_mortgage_share: diff(mort16, mortPost),
+      out_dlog_home_purchase_loans_2018_2024: purchases18 == null || purchases24 == null ? null : Math.log1p(purchases24) - Math.log1p(purchases18),
     });
   }
 

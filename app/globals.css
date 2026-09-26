@@ -1720,3 +1720,131 @@ main [id] {
   margin: 6px 0;
   font-weight: 600;
 }
+
+/* 2018-zone lift charts: estimate and 95% range against a zero line */
+.lift-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.lift-table th,
+.lift-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.lift-table .group-start td {
+  border-top: 2px solid var(--line);
+}
+
+.lift-col {
+  width: 34%;
+  min-width: 140px;
+}
+
+.lift-axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.liftbar {
+  position: relative;
+  height: 16px;
+}
+
+.liftbar-zero {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--muted);
+}
+
+.liftbar-ci {
+  position: absolute;
+  top: 7px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+
+.liftbar-dot {
+  position: absolute;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--panel);
+  box-sizing: border-box;
+}
+
+.liftbar-dot.clear {
+  background: var(--ink);
+}
+
+.callout.warn {
+  border-color: var(--warn-line);
+  background: var(--warn-bg);
+}
+
+@media (max-width: 640px) {
+  .lift-table th,
+  .lift-table td {
+    padding: 5px 4px;
+    font-size: 13px;
+  }
+
+  .lift-col {
+    width: 26%;
+    min-width: 64px;
+  }
+}
+
+/* Persona dropdown */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.persona-select select {
+  width: 100%;
+  max-width: 560px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.persona-panel {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.persona-panel h3 {
+  margin: 2px 0 6px;
+}
+
+.persona-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
