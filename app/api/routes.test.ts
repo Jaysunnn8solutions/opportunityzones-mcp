@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET as boundaries } from "./boundaries/[layer]/[z]/[x]/[y]/route";
 import { GET as counties } from "./counties/route";
 import { POST as geocode } from "./geocode/route";
+import { POST as site } from "./site/route";
 import { GET as status } from "./status/[state]/route";
 import { GET as tract } from "./tract/[geoid]/route";
 
@@ -111,5 +112,28 @@ describe("/api/geocode", () => {
   it("rejects a missing or oversized address", async () => {
     const bad = await geocode(new Request("http://localhost/api/geocode", { method: "POST", body: JSON.stringify({ address: "x" }) }));
     expect(bad.status).toBe(400);
+  });
+});
+
+describe("/api/site", () => {
+  const post = (body: unknown) => new Request("http://localhost/api/site", { method: "POST", body: JSON.stringify(body) });
+
+  it("finds a tract's interior point from the boundary files and reports each source on its own", async () => {
+    // Every live source fails: each item says so, and the response still succeeds.
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
+    const res = await site(post({ geoid: "13121003500" }));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    const body = (await res.json()) as { basis: string; items: Array<{ key: string; headline: string | null; unavailable?: string }> };
+    expect(body.basis).toBe("tract");
+    expect(body.items.map((i) => i.key)).toEqual(["flood", "earthquake", "wildfire", "epa", "traffic", "amenities"]);
+    for (const i of body.items) expect(i.headline == null && typeof i.unavailable === "string").toBe(true);
+  });
+
+  it("uses an exact point when one is given, and rejects anything else", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
+    expect(((await (await site(post({ lat: 33.749, lon: -84.388 }))).json()) as { basis: string }).basis).toBe("address");
+    expect((await site(post({ geoid: "13" }))).status).toBe(400);
+    expect((await site(post({ geoid: "99999999999" }))).status).toBe(404);
   });
 });

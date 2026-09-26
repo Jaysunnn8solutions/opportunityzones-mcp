@@ -31,7 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <header className="site-header">
           <h1>
-            <Link href="/">Opportunity Zone screening</Link>
+            <Link href="/">
+              <svg className="logo-mark" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" fill="var(--accent)" />
+                <path d="M6 16 L10 11 L13 14 L18 7" stroke="var(--accent-ink)" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Opportunity Zone screening
+            </Link>
           </h1>
           <nav aria-label="Main">
             {NAV.map(([href, label]) => (

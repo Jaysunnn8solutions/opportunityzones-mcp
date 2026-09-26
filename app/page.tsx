@@ -1,43 +1,59 @@
 import Link from "next/link";
 import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
+import { stateSummaries } from "@/lib/data/stateViews";
 import { designationNote, designationPublication, designationRoundTotals } from "@/lib/data/tracts";
+import FrontDoor from "./ui/FrontDoor";
 
 /** Start: what the program is, where things stand, and where to go next. */
 export default function StartPage() {
   const totals = designationRoundTotals();
   const published = designationPublication();
+  const states = stateSummaries();
   const n = (v: number) => v.toLocaleString("en-US");
   return (
     <main className="page">
       <section className="hero">
-        <h1>Opportunity Zones, step by step</h1>
+        <p className="card-kicker">2027 Opportunity Zones</p>
+        <h1>Is this place in an Opportunity Zone, and what would that mean?</h1>
         <p className="lead">
-          The Opportunity Zone program gives federal tax benefits to people who reinvest <strong>capital gains</strong> through
-          a <strong>Qualified Opportunity Fund</strong> into property or businesses in <strong>designated low-income census
-          tracts</strong>. A new round of zones takes effect on January 1, 2027.
+          Check any address, census tract or state against the 2027 rules, in plain English, with the public data behind it. Then
+          see how the program works for your situation.
         </p>
-        <ol className="pipeline" aria-label="The three parts">
+        <FrontDoor states={states} />
+      </section>
+
+      <section className="how">
+        <h2>How the program works, in three parts</h2>
+        <ol className="flow" aria-label="The three parts">
           <li>
-            <span className="pipeline-n">1</span>
+            <span className="flow-n">1</span>
             <strong>A capital gain</strong>
-            <span>from selling stock, a business, real estate or other assets</span>
+            <span>From selling stock, a business, or real estate held as an investment. Generally 180 days to reinvest it.</span>
+          </li>
+          <li className="flow-arrow" aria-hidden="true">
+            →
           </li>
           <li>
-            <span className="pipeline-n">2</span>
+            <span className="flow-n">2</span>
             <strong>A Qualified Opportunity Fund</strong>
-            <span>an existing fund, or one you set up, that holds at least 90% of its assets in zones</span>
+            <span>An existing fund, or one set up for a project, holding at least 90% of its assets in zones.</span>
+          </li>
+          <li className="flow-arrow" aria-hidden="true">
+            →
           </li>
           <li>
-            <span className="pipeline-n">3</span>
+            <span className="flow-n">3</span>
             <strong>A designated zone</strong>
-            <span>new or substantially improved property, or an operating business, in a designated tract</span>
+            <span>New or substantially improved property, or an operating business, in a designated tract.</span>
           </li>
         </ol>
         <p>
           <Link className="button" href="/guide">
             Start the guided check
           </Link>{" "}
-          <span className="hint">A few questions, then a checklist of how the rules apply and what to ask an adviser.</span>
+          <Link className="button secondary" href="/how-it-works">
+            How it works
+          </Link>
         </p>
       </section>
 

@@ -12,6 +12,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { lookupPlace, reportHref } from "@/lib/client/place";
 import { longDate, NEW_RULES_START, windowEnd } from "@/lib/oz/timing";
 
 export interface GuidePersona {
@@ -37,6 +38,7 @@ interface Place {
   county: string | null;
   state: string | null;
   matched: string | null;
+  point: [number, number] | null;
   eligible: number | null;
   rural: boolean | null;
   zone2018: number | null;
@@ -45,33 +47,15 @@ interface Place {
 
 const STEPS = ["You", "The money", "The place", "The fund", "Your checklist"] as const;
 async function checkPlace(input: string): Promise<Place | "no-match" | "error"> {
-  let geoid = input.replace(/\s/g, "");
-  let matched: string | null = null;
-  if (!/^\d{11}$/.test(geoid)) {
-    if (input.trim().length < 5) return "no-match";
-    const res = await fetch("/api/geocode", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ address: input }) });
-    if (!res.ok) return "error";
-    const { matches } = (await res.json()) as { matches: Array<{ geoid: string; label: string | null }> };
-    if (!matches.length) return "no-match";
-    geoid = matches[0].geoid;
-    matched = matches[0].label;
-  }
-  const r = await fetch(`/api/tract/${geoid}`);
-  if (r.status === 404) return "no-match";
-  if (!r.ok) return "error";
-  const t = (await r.json()) as {
-    geoid: string;
-    county: string | null;
-    state: string | null;
-    measures: Record<string, { value: number | null }>;
-    rural: { treasury: boolean | null };
-    designation2027: { status: string; text: string };
-  };
+  const r = await lookupPlace(input);
+  if (typeof r === "string") return r;
+  const t = r.profile;
   return {
     geoid: t.geoid,
     county: t.county,
     state: t.state,
-    matched,
+    matched: r.matched,
+    point: r.point,
     eligible: t.measures.eligible_2027?.value ?? null,
     rural: t.rural.treasury,
     zone2018: t.measures.oz2018_population_share?.value ?? null,
@@ -268,7 +252,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
                 ))}
               </ul>
               <p>
-                <Link href={`/tract/${place.geoid}`}>Full tract profile</Link> · <Link href={`/map#t=${place.geoid}`}>See it on the map</Link>
+                <Link href={reportHref(place.geoid, place.point)}>Place report</Link> · <Link href={`/map#t=${place.geoid}`}>See it on the map</Link>
               </p>
             </div>
           )}
