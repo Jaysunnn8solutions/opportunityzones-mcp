@@ -3,6 +3,7 @@ import Link from "next/link";
 import { designationNote } from "@/lib/data/tracts";
 import { versionLabel } from "@/lib/version";
 import McpHelper from "./ui/McpHelper";
+import { RulePopupProvider } from "./ui/RulePopup";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ))}
           </nav>
         </header>
-        {children}
+        <RulePopupProvider>{children}</RulePopupProvider>
         <footer className="site-footer">
           Basemap: OpenFreeMap, © OpenStreetMap contributors, or USGS The National Map. Boundaries: U.S. Census Bureau. Data: U.S.
           Treasury, Census Bureau, HUD, CDFI Fund, CFPB/FFIEC, EPA, FHWA, FEMA, USGS, USDA Forest Service, BLS, NCES, CMS; see each

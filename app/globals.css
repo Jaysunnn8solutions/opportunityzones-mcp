@@ -1544,3 +1544,55 @@ button.linkish {
 main.page {
   padding-bottom: 80px;
 }
+
+/* Rule pop-up */
+.rule-popup {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 12px 48px rgba(16, 24, 32, 0.25);
+}
+
+.rule-popup::backdrop {
+  background: rgba(16, 24, 32, 0.45);
+}
+
+.rule-popup-body {
+  padding: 16px 20px;
+}
+
+.rule-popup-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.rule-popup-rule h3 {
+  margin: 12px 0 4px;
+}
+
+.new-tab {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+.cite button.linkish {
+  color: inherit;
+  text-decoration: underline dotted;
+  font-size: inherit;
+}
+
+.new-tab-icon {
+  font-size: 0.85em;
+}
+
+.wizard-loading {
+  min-height: 420px;
+  padding: 24px;
+  color: var(--muted);
+}

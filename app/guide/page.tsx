@@ -13,7 +13,8 @@ export default function GuidePage() {
       <h1>Guided check</h1>
       <p className="lead">
         Small steps, one thing at a time, ending in a checklist to take to a tax adviser. Use the outline to jump around.
-        Nothing you enter is stored.
+        Your answers stay in this browser tab, so you can open other pages and come back; they are cleared when you close
+        the tab or start over, and never sent to a server.
       </p>
       <GuidedCheck personas={personas} states={states} />
       <p className="note">
