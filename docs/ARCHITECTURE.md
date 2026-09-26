@@ -99,9 +99,15 @@ personal is stored" rule; client data never goes in.
 
 **Decided 2026-09-25 by the owner: Census TIGERweb, no hosted tile file.**
 
-- Basemap: water, roads and state/county/place labels are TIGERweb map images
-  (`Hydro`, `Transportation`, `tigerWMS_Current`), loaded by the browser
-  directly (public, CORS-enabled).
+- Basemap (changed 2026-09-26): TIGERweb's map images were too coarse, so the
+  basemap is chosen in the panel from `lib/geo/basemaps.ts`: OpenFreeMap
+  vector styles (Light = Positron, Streets = Liberty; OpenStreetMap, ODbL,
+  no key, commercial use allowed) or USGS National Map aerial imagery (public
+  domain). The map's own layers are merged in beneath the basemap's first
+  label layer so names stay readable. Esri basemaps were considered and left
+  out: they are metered past a free quota (the "free services only" rule in
+  AGENTS.md), need an API key exposed in the browser, and are licensed under
+  Esri's terms rather than an open licence.
 - Tract and county outlines: TIGERweb queries per web-mercator tile through
   `/api/boundaries/{tracts|counties}/{z}/{x}/{y}`, cached at the CDN for 30
   days, so the Census servers see each tile about once. Counties below zoom 8,
