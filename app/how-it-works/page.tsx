@@ -208,7 +208,8 @@ export default function HowItWorksPage() {
         <ol className="timeline">
           <li>
             <strong>2018 to 2028:</strong> the original zones (designated in 2018) remain designated through December 31, 2028.{" "}
-            <Cite rules={["zones2018End"]} />
+            <Cite rules={["zones2018End"]} /> How they fared against comparable tracts:{" "}
+            <Link href="/2018-zones">Did the 2018 zones gain more money?</Link>
           </li>
           <li>
             <strong>July 1 to October 28, 2026 (at the latest):</strong> governors nominate 2027 zones; Treasury then has 30 days
