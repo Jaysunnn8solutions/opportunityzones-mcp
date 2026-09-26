@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { getTract, loadTractData } from "../data/tracts";
+import { percentile, statePositions } from "../data/compare";
+import { getTract } from "../data/tracts";
+
+export { percentile };
 import { DESCRIPTION_SUFFIX, error, geoidSchema, readOnly, text } from "./shared";
 
 /** Measures compared, each shown on its own with a short label; no composite. */
@@ -35,29 +38,13 @@ export const compareTractConfig = {
   annotations: readOnly,
 };
 
-/** Share of `values` strictly below `x`, plus half of ties (mid-rank percentile). */
-export function percentile(values: readonly number[], x: number): number {
-  let below = 0;
-  let equal = 0;
-  for (const v of values) {
-    if (v < x) below++;
-    else if (v === x) equal++;
-  }
-  return values.length ? (below + equal / 2) / values.length : NaN;
-}
-
 export function compareTractHandler({ geoid }: { geoid: string }) {
   const t = getTract(geoid);
   if (!t) return error(`No tract ${geoid} in Treasury's 2027 tract list.`);
-  const { payload } = loadTractData();
-  const state = geoid.slice(0, 2);
-  const eligible = payload.columns.get("eligible_2027")!;
-  const peers: number[] = [];
-  for (let i = 0; i < payload.count; i++) {
-    if (payload.geoids[i].startsWith(state) && eligible.get(i) === 1) peers.push(i);
-  }
+  const positions = statePositions(geoid, Object.keys(COMPARED));
+  const peers = Math.max(0, ...Object.values(positions).map((p) => p.peers));
   const lines = [
-    `# Tract ${geoid} against the ${peers.length.toLocaleString("en-US")} eligible tracts in ${t.state}`,
+    `# Tract ${geoid} against the ${peers.toLocaleString("en-US")} eligible tracts in ${t.state}`,
     "Percentile = share of those tracts with a lower value. A description of where the tract sits, not a judgement.",
     "",
     "| Measure | This tract | Percentile | Compared with |",
@@ -65,12 +52,10 @@ export function compareTractHandler({ geoid }: { geoid: string }) {
   ];
   for (const [name, label] of Object.entries(COMPARED)) {
     const m = t.measures[name];
-    const col = payload.columns.get(name)!;
-    const values = peers.map((i) => col.get(i)).filter((v): v is number => v != null);
+    const pos = positions[name];
     const shown =
       m.value == null ? "n/a" : m.unit === "share" ? `${(m.value * 100).toFixed(1)}%` : m.unit === "USD" ? `$${Math.round(m.value).toLocaleString("en-US")}` : m.value.toLocaleString("en-US", { maximumFractionDigits: 2 });
-    const p = m.value == null || values.length === 0 ? null : percentile(values, m.value);
-    lines.push(`| ${label} | ${shown} | ${p == null ? "n/a" : ordinal(Math.round(p * 100))} | ${values.length.toLocaleString("en-US")} tracts with data |`);
+    lines.push(`| ${label} | ${shown} | ${pos.percentile == null ? "n/a" : ordinal(Math.round(pos.percentile * 100))} | ${pos.peers.toLocaleString("en-US")} tracts with data |`);
   }
   return text(lines.join("\n"), ["oz2Eligible", "acs5", "lodesWac", "hmdaLar"]);
 }
