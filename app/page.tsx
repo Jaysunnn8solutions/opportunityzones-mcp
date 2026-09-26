@@ -3,6 +3,7 @@ import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
 import { stateSummaries } from "@/lib/data/stateViews";
 import { designationNote, designationPublication, designationRoundTotals } from "@/lib/data/tracts";
 import FrontDoor from "./ui/FrontDoor";
+import { Cite } from "./ui/Cite";
 
 /** Start: what the program is, where things stand, and where to go next. */
 export default function StartPage() {
@@ -128,13 +129,17 @@ export default function StartPage() {
             )}
           </li>
           <li>
-            <strong>December 31, 2026:</strong> gains deferred under the original rules become taxable.
+            <strong>December 31, 2026:</strong> gains deferred under the original rules are taxed no later than the tax year
+            that includes this date. <Cite rules={["investedBy2026"]} />
           </li>
           <li>
-            <strong>January 1, 2027:</strong> the new zones and the new rules for newly invested gains begin.
+            <strong>January 1, 2027:</strong> the new zones (to December 31, 2036) and the new rules begin. The new rules apply to
+            amounts invested from this date, including gains from 2026 sales still within their 180 days.{" "}
+            <Cite rules={["zonePeriod", "gain2026Invested2027"]} />
           </li>
           <li>
-            <strong>Through 2028:</strong> the 2018 zones remain in effect.
+            <strong>Through 2028:</strong> the 2018 zones remain designated, but property bought in them after 2026 generally does
+            not qualify. <Cite rules={["zones2018End", "boughtAfterStart"]} />
           </li>
         </ol>
         <p className="note">

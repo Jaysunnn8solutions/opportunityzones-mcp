@@ -1,0 +1,244 @@
+Source: Notice 2026-55, Request for Additional Comments on Issues under section 1400Z-2
+Publisher: Internal Revenue Service
+URL: https://www.irs.gov/pub/irs-drop/n-26-55.pdf
+Read from: https://www.irs.gov/pub/irs-drop/n-26-55.pdf
+Retrieved: 2026-09-26
+---
+Part III - Administrative, Procedural, and Miscellaneous
+Request for Additional Comments on Issues under § 1400Z-2 Regarding Investments in
+Qualified Opportunity Funds and Qualified Opportunity Zone Businesses
+Notice 2026-55
+SECTION 1. PURPOSE
+This notice requests comments on issues arising under § 1400Z-2 of the Internal
+Revenue Code (Code) 1, as amended by § 70421 of Public Law 119-21, 139 Stat. 72
+(July 4, 2025), commonly known as the One, Big, Beautiful Bill Act (OBBBA), regarding
+investments in businesses located in qualified opportunity zones (QOZs), including on
+whether additional guidance is needed under § 1400Z-2 to address issues relating to
+qualifying investments of amounts of eligible gains made by taxpayers in qualified
+opportunity funds (QOFs) and investments of such funds made by QOFs in qualified
+opportunity zone businesses (QOZBs). 2
+1Unless otherwise specified, all “section” or “§” references are to sections of the Code or the Income Tax
+Regulations (26 CFR part 1).
+2 Unless otherwise defined, terms used in this notice have the meanings, as applicable, provided in
+Notice 2025-50, 2025-43 I.R.B. 542, Rev. Proc. 2026-14, 2026-20 I.R.B. 910, Notice 2026-40, 2026-28
+I.R.B. 33, or §§ 1.1400Z2(a)-1 through 1.1400Z2(f)-1 and the regulations thereunder.
+2
+SECTION 2. BACKGROUND
+.01 Statutory Framework. Section 13823 of Public Law 115-97, 131 Stat. 2054,
+2183-88 (December 22, 2017), commonly known as the Tax Cuts and Jobs Act (TCJA),
+added §§ 1400Z-1 and 1400Z-2 to the Code. Section 41115 of the Bipartisan Budget
+Act of 2018 (BBA 2018), Public Law 115-123, 132 Stat. 64, 161 (February 9, 2018),
+amended § 1400Z-1 to add a special rule for Puerto Rico. Section 70421 of the OBBBA
+amended prior §§ 1400Z-1 and 1400Z-2 in several ways, including establishing ongoing
+tax incentives for investing in qualified opportunity funds (QOFs). All references
+hereinafter in this notice to “prior § 1400Z-1” and “prior § 1400Z-2” refer to §§ 1400Z-1
+and 1400Z-2, as in effect after amendment of the Code by both § 13823 of the TCJA,
+and by § 41115 of the BBA 2018, but prior to amendment by § 70421 of the OBBBA. All
+references in this notice to “§ 1400Z-1” and “§ 1400Z-2” refer to §§ 1400Z-1 and
+1400Z-2 as amended by § 70421 of the OBBBA.
+Section 1400Z-2 allows the deferral of inclusion in gross income for certain
+realized gains to the extent that corresponding amounts are timely invested in a
+corporation or partnership that meets the requirements to be certified as a QOF. If
+certain qualifications and holding period requirements are met, then (i) a portion of such
+deferred gains may be excluded from gross income, and (ii) gain on the taxpayer’s
+investment of such amounts in a QOF may be excludable from gross income.
+Additionally, § 1400Z-2(e)(4) expressly delegates authority to the Secretary of the
+Treasury or the Secretary’s delegate (Secretary) to prescribe such regulations as may
+be necessary or appropriate to carry out the purposes of § 1400Z-2, including: rules for
+the certification of QOFs; rules to ensure a QOF has a reasonable period of time to
+3
+reinvest the return of capital from investments in QOZ stock and QOZ partnership
+interests, and to reinvest proceeds received from the sale or disposition of qualified
+opportunity zone property (QOZP); and rules to prevent abuse.
+For amounts invested in QOFs after December 31, 2026, the OBBBA amendments
+to prior § 1400Z-2(b) generally provide that deferred gain is included in gross income no
+later than five years after the date of the qualifying investment. If an investment is held
+for at least five years, its basis is increased by 10 percent of the deferred gain, or by 30
+percent in the case of an investment in a qualified rural opportunity fund (QROF).
+For investments made after December 31, 2026, the OBBBA also amended
+§ 1400Z-2(c) to provide that for an investment held for at least 10 years for which the
+taxpayer makes the election under § 1400Z-2(c), the basis of the investment is
+generally its fair market value on the date of sale or exchange if the investment is sold
+before the date that is 30 years after the investment date. In any other case, the basis is
+its fair market value on the date that is 30 years after the investment date.
+In addition, for QOZP acquired after December 31, 2026, the OBBBA amendments
+to § 1400Z-2(d) replaced the former “December 31, 2017,” acquisition-date references
+with requirements determined by reference to an “applicable start date” for qualified
+opportunity zone business property (QOZBP) and an “applicable date” for QOZ stock
+and QOZ partnership interests.
+.02 Regulations and Other Guidance under §§ 1400Z-1 and 1400Z-2.
+In early 2020, the Department of the Treasury (Treasury Department) and the
+Internal Revenue Service (IRS) published final regulations (T.D. 9889) in the Federal
+Register (85 F.R. 1866 (Jan. 13, 2020), corrected by 85 F.R. 19082 (Apr. 6, 2020))
+4
+under § 1400Z-2 (§ 1400Z-2 regulations). The § 1400Z-2 regulations are comprised of
+§§ 1.1400Z2(a)-1 through 1.1400Z2(f)-1 and include rules concerning eligible taxpayers
+and eligible gains, the 180-day investment period, inclusion events that end deferral of
+gains, the election under § 1400Z-2(c), the 90-percent investment standard for QOFs,
+and requirements for qualification as a QOZB, QOZB working capital safe harbors,
+leased property, original use, and substantial improvement of property under § 1400Z-2.
+In 2021, the Treasury Department and the IRS published a notice of proposed
+rulemaking in the Federal Register (86 F.R. 19585), which proposed rules for the
+reduction or elimination of withholding under §§ 1445, 1446(a), or 1446(f) of the Code
+on transfers that give rise to gain that is deferred under § 1400Z-2(a) and for
+modifications to the working capital safe harbor.
+After the enactment of the OBBBA, the Treasury Department and the IRS published
+Notice 2025-50, 2025-43 I.R.B. 542 (2025), to provide guidance concerning the
+definition of a “rural area” under § 1400Z-2(b)(2)(C)(ii) and the application of the
+reduced substantial-improvement threshold for property in a QOZ comprised entirely of
+a rural area. In addition, the Treasury Department and the IRS published Rev. Proc.
+2026-14, 2026-20 I.R.B. 910 (2026), to provide procedures under § 1400Z-1 for State
+chief executive officers to nominate population census tracts for QOZ designation
+effective January 1, 2027.
+In July 2026, the Treasury Department and the IRS published Notice 2026-40, 202628 I.R.B. 33 (2026), to provide transitional guidance concerning the designation rules
+under § 1400Z-1, investors with gains and qualifying investments that span the
+December 31, 2026, transition date, the acquisition of QOZP after December 31, 2026,
+5
+in previously designated QOZs, and the continued operation of QOFs and QOZBs after
+a previously designated QOZ's designation period expires. On September 11, 2026, the
+Treasury Department and the IRS published proposed regulations concerning the new
+information-reporting requirements and updated QOF certification and decertification
+procedures under §§ 1400Z-2, 6039K, and 6039L (91 F.R. 57968).
+SECTION 3. REQUEST FOR COMMENTS
+.01 Comments Regarding Need for Additional Guidance. The Treasury Department
+and the IRS request additional comments on all aspects of the implementation of
+§ 1400Z-2 following the amendments made by the OBBBA. Commenters are
+encouraged to identify provisions of the § 1400Z-2 regulations or other guidance that
+should be retained, modified, or supplemented, and to describe in technical detail the
+legal analysis supporting any such changes based on the statutory text of § 1400Z-2
+and other applicable provisions of the Code. Additional comments describing common
+transaction structures or factual examples in which existing guidance produces
+uncertain results would be particularly helpful. In addition to comments of a general
+nature, the Treasury Department and the IRS request comments in response to specific
+questions as discussed below.
+(1) Executive Order 14394. Section 5(a) and (b) of Executive Order 14394 of
+March 13, 2026, Removing Regulatory Barriers to Affordable Home Construction (91
+F.R. 13207), directs the Secretary and the Secretary of Housing and Urban
+Development to jointly evaluate Administration actions to better align programs and
+incentives with Opportunity Zone tax incentives to expand investment in single-family
+home construction, including considering lawful mechanisms to link grants, financing
+6
+tools, or other incentives with new or increased investment in QOFs engaged in the
+development and sale of single-family homes.
+(a) Comments are requested on actions, consistent with existing statutory
+authority, through which the tax incentives provided by § 1400Z-2 could better support
+Department of Housing and Urban Development (HUD) programs and incentives to
+expand investment in single-family home construction, including considering lawful
+mechanisms to link grants, financing tools, or other incentives with new or increased
+investment in QOFs engaged in the development and sale of single-family homes.
+Specifically, comments are requested on any opportunities that exist to coordinate
+§ 1400Z-2 with the New Markets Tax Credit under § 45D to promote single-family home
+construction in census tracts that qualify both as QOZs and as low-income communities
+for the purposes of the New Markets Tax Credit.
+(b) Taking into account the preamble discussions of legal authority published in
+the Federal Register at 84 F.R. 18652, 18660 (May 1, 2019), and at 85 F.R. 1866,
+1931-1932 (January 13, 2020), including the conclusion in the preamble to the 2020
+final regulations that § 1400Z-2 permits gain deferral only at the QOF-owner level and
+that asset-level nonrecognition must arise under another provision of subtitle A of the
+Code (subtitle A), what statutory or legal authority, including § 1400Z-2(e)(4)(B), the
+broader grants of authority in § 1400Z-2(e)(4) and § 7805(a), or any grant of authority
+under another provision of the Code, is there that would support regulations under
+which some or all income or gain realized by a QOF engaged in developing and selling
+single-family homes would be deferred from inclusion in gross income if the QOF
+reinvests the proceeds from selling its housing inventory into its trade or business within
+7
+a reasonable period of time? Commenters recommending any particular interpretation
+of the law are requested to set forth their legal analysis clearly and in detail, including
+how any such rules would interact with otherwise applicable recognition rules under
+subtitle A and the anti-abuse rule of § 1400Z-2(e)(4)(C). Comments are specifically
+requested on whether the legal analysis would differ between (i) income or gain from a
+QOF’s direct sale or disposition of housing inventory and (ii) gain from a QOF’s sale or
+disposition of QOZ stock or a QOZ partnership interest in a QOZB engaged in
+developing and selling single-family homes. Commenters are also requested to provide
+additional legal analysis regarding the authority under which inclusion in gross income
+of income or gain from the sale or disposition of housing inventory allocated to a QOF
+from a QOZB classified as a partnership for Federal income tax purposes could be
+deferred.
+(c) If there were adequate statutory authority to defer inclusion in gross income of
+any income or gain realized on the sale or disposition of housing inventory, when should
+the deferred income or gain be included in gross income, and what reinvestment,
+holding-period, basis, character (that is, ordinary or capital), or other limitations or
+clarifications would be necessary to tailor any “interim-gain” rule to the limits of that
+statutory authority? For example, would changes to the definition of QOZBP be
+required, such as the rules for substantial improvement under § 1400Z-2(d)(2)(D)(ii)?
+(d) Should any such deferral be limited to businesses engaged in developing and
+selling single-family homes, rather than making it available to other inventory selling
+businesses? What administrable eligibility criteria and anti-abuse safeguards would be
+necessary to define and enforce that limitation?
+8
+(2) Working capital safe harbor. An eligible entity must meet certain requirements
+to be a QOZB, including the requirement of § 1397C(b)(8) of the Code that less than
+5 percent of the average of the aggregate unadjusted bases of the entity’s property be
+attributable to nonqualified financial property, as defined in § 1397C(e). See § 1400Z2(d)(3)(A)(ii). Section 1397C(e) excludes from nonqualified financial property
+reasonable amounts of working capital that are held in cash, cash equivalents, or debt
+instruments with a term of 18 months or less. See § 1.1400Z2(d)-1(d)(3)(iv). The
+§ 1400Z-2 regulations provide QOZBs with a safe harbor for treating an amount of
+working capital as reasonable for purposes of § 1397C(e) if certain requirements are
+satisfied (working capital safe harbor). See § 1.1400Z2(d)-1(d)(3)(v) (providing the
+scope of the working capital safe harbor and conditions for eligibility).
+(a) Should a QOZB be permitted to modify a working capital safe harbor plan? If
+so, under what circumstances should the modifications be permitted? Should a modified
+plan be required to remain “substantially consistent” with the original plan? How should
+“substantially consistent” be defined? How should these rules apply when a QOZB has
+more than one overlapping or sequential application of the working capital safe harbor
+under § 1.1400Z2(d)-1(d)(3)(v)(E)?
+(b) The Treasury Department and the IRS have received questions regarding the
+expenditure of working capital assets on property that may not be QOZBP. Section
+1.1400Z2(d)-1(d)(2) provides that a QOZB must satisfy the 70-percent tangible property
+standard, which requires that at least 70 percent of the tangible property owned or
+leased by a QOZB is QOZBP. What additional rules or guidance would be useful in
+clarifying how expenditures of working capital assets affect the 70-percent tangible
+9
+property standard?
+(3) Rules for operating businesses. What additional guidance would help operating
+businesses to benefit from the tax incentives in § 1400Z-2? For example, is additional
+guidance needed regarding the use of QOZBP, including inventory, in QOZs?
+(4) Election for investments held for at least 10 years and the 30-year rule. For
+qualifying investments made after December 31, 2026, § 1400Z-2(c) provides a fair
+market value basis rule for a qualifying investment held for at least 10 years, subject to
+a 30-year limit. What additional guidance is needed concerning the time and manner of
+making the § 1400Z-2(c) election in the case of an investment that has not been sold or
+exchanged by the date that is 30 years after the investment was made? What valuation
+rules or substantiation requirements would be appropriate for determining fair market
+value on that date? How should subsequent appreciation or depreciation be treated
+after basis is determined by reference to fair market value on the 30-year date? What
+modifications to § 1.1400Z2(c)-1 are needed for QOFs classified as partnerships or
+S corporations, including rules governing dispositions of QOF assets and interests held
+through pass-through entities?
+(5) Additional guidance for QOFs, QOZBs, and inclusion events.
+(a) Are additional rules needed regarding corporations and partnerships that are
+either QOFs, QOZBs, or investors in QOFs?
+(b) Should gain arising from an inclusion event be eligible for deferral under
+§ 1.1400Z2(a)-1(b)(11)(iv) only if the inclusion event is treated as a sale or exchange?
+(c) Should the rules regarding the inclusion of the deferred gain under § 1400Z2(b) be clarified in regulations to address situations where there are debt-financed
+10
+distributions or debt-financed losses that impact the calculation of the deferred gain?
+(d) Should the rules regarding disguised sales under § 1.1400Z2(a)-1(c)(2) be
+modified?
+(6) Opportunity Zone investment in Tribal and Alaska Native communities. Certain
+population census tracts designated as QOZs overlap with areas in Tribal and Alaska
+Native communities, including trust lands, Alaska Native Villages, and Tribal areas in
+Oklahoma. The OBBBA amendments to § 1400Z-2 provide enhanced benefits for
+qualifying investments in rural areas. The Treasury Department and the IRS request
+comments on how the Opportunity Zone incentive has been used in Tribal and Alaska
+Native communities, as well as any suggested clarifications that may encourage
+investment in QOZs on Tribal and ANCSA lands.
+.02 Procedures for Submitting Comments.
+(1) Deadline. Written comments should be submitted by November 23, 2026.
+Consideration will be given, however, to any written comment submitted after November
+23, 2026, if such consideration will not delay the issuance of guidance.
+(2) Form and manner. The subject line for the comments should include a
+reference to Notice 2026-55. All commenters are strongly encouraged to submit
+comments electronically. Comments may be submitted in one of two ways:
+(a) Electronically via the Federal eRulemaking Portal at
+https://www.regulations.gov (type IRS-2026-1156 in the search field on the
+https://www.regulations.gov homepage to find this notice and submit comments); or
+(b) By mail to: Internal Revenue Service, CC:PA:LPD:PR (Notice 2026-55),
+Room 5203, P.O. Box 7604, Ben Franklin Station, Washington, DC 20044.
+11
+(3) Publication of comments. The Treasury Department and the IRS will publish for
+public availability any comment submitted electronically or on paper to the IRS’s public
+docket on https://www.regulations.gov.
+SECTION 4. DRAFTING AND CONTACT INFORMATION
+The principal author of this notice is the Office of Associate Chief Counsel (Income
+Tax & Accounting).

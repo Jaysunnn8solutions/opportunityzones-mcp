@@ -1,0 +1,639 @@
+Source: Instructions for Form 8996, Qualified Opportunity Fund
+Publisher: Internal Revenue Service
+URL: https://www.irs.gov/instructions/i8996
+Read from: https://www.irs.gov/instructions/i8996
+Retrieved: 2026-09-26
+---
+Instructions for Form 8996 (12/2024) | Internal Revenue Service
+Skip to main content
+An official website of the United States government
+Here's how you know
+Here's how you know
+Official websites use .gov
+A .gov website belongs to an official government organization in the United States.
+Secure .gov websites use HTTPS
+A lock
+( )
+or https:// means you've safely connected to the .gov website. Share sensitive information only on official, secure websites.
+English
+Español
+中文 (简体)
+中文 (繁體)
+한국어
+Русский
+Tiếng Việt
+Kreyòl ayisyen
+Information Menu
+Help
+News
+Tax Pros
+Sign in
+Individual
+Business
+Tax Pro
+Access your tax information with an IRS account.
+Refunds
+Payments
+Tax records
+Create account
+Search
+Help Menu Mobile
+Sign in
+Individual
+Business
+Tax Pro
+Access your tax information with an IRS account.
+Refunds
+Payments
+Tax records
+Create account
+Menu
+Main navigation
+File
+Overview
+INFORMATION FOR…
+Individuals
+Business and self-employed
+Charities and nonprofits
+International filers
+Retirement
+Governments and tax-exempt bonds
+Indian Tribal Governments
+FILING FOR INDIVIDUALS
+How to file
+When to file
+Where to file
+Update your information
+POPULAR
+Tax record (transcript)
+Apply for an Employer ID Number (EIN)
+Amend return
+Identity Protection PIN (IP PIN)
+Pay
+Overview
+PAY BY
+Bank Account (Direct Pay)
+Payment Plan (Installment Agreement)
+Electronic Federal Tax Payment System (EFTPS)
+POPULAR
+Your Online Account
+Tax Withholding Estimator
+Estimated Taxes
+Penalties
+Refunds
+Overview
+About refunds
+Direct deposit
+Reduced refunds
+Where’s my amended return?
+Credits & Deductions
+Overview
+INFORMATION FOR...
+Individuals
+For you and your family
+Businesses & Self-Employed
+Standard mileage and other information
+POPULAR
+Earned Income Credit (EITC)
+Child Tax Credit
+Clean Energy and Vehicle Credits
+Standard Deduction
+Retirement Plans
+Forms
+Overview
+POPULAR FORMS & INSTRUCTIONS
+Form 1040
+Individual Income Tax Return
+Form 1040 Instructions
+Instructions for Form 1040
+Form W-9
+Request for Taxpayer Identification Number (TIN) and Certification
+Form 4506-T
+Request for Transcript of Tax Return
+Form W-4
+Employee&#039;s Withholding Certificate
+Form 941
+Employer&#039;s Quarterly Federal Tax Return
+Form W-2
+Wage and Tax Statement
+Form 9465
+Installment Agreement Request
+POPULAR FOR TAX PROS
+Form 1040-X
+Amended Individual Income Tax Return
+Form 2848
+Power of Attorney
+Form W-7
+Apply for an ITIN
+Circular 230
+Regulations Governing Practice before the IRS
+Report Fraud
+Overview
+Tax fraud and scams
+Identity theft
+Fake IRS email or message
+Tax return preparer
+Search
+Include Historical Content
+- Any - No
+Include Historical Content
+- Any - No
+Search
+File
+Overview
+INFORMATION FOR…
+Individuals
+Business and self-employed
+Charities and nonprofits
+International filers
+Retirement
+Governments and tax-exempt bonds
+Indian Tribal Governments
+FILING FOR INDIVIDUALS
+How to file
+When to file
+Where to file
+Update your information
+POPULAR
+Tax record (transcript)
+Apply for an Employer ID Number (EIN)
+Amend return
+Identity Protection PIN (IP PIN)
+Pay
+Overview
+PAY BY
+Bank Account (Direct Pay)
+Payment Plan (Installment Agreement)
+Electronic Federal Tax Payment System (EFTPS)
+POPULAR
+Your Online Account
+Tax Withholding Estimator
+Estimated Taxes
+Penalties
+Refunds
+Overview
+About refunds
+Direct deposit
+Reduced refunds
+Where’s my amended return?
+Credits & Deductions
+Overview
+INFORMATION FOR...
+Individuals
+Businesses & Self-Employed
+POPULAR
+Earned Income Credit (EITC)
+Child Tax Credit
+Clean Energy and Vehicle Credits
+Standard Deduction
+Retirement Plans
+Forms
+Overview
+POPULAR FORMS & INSTRUCTIONS
+Form 1040
+Form 1040 Instructions
+Form W-9
+Form 4506-T
+Form W-4
+Form 941
+Form W-2
+Form 9465
+POPULAR FOR TAX PROS
+Form 1040-X
+Form 2848
+Form W-7
+Circular 230
+Report Fraud
+Overview
+Tax fraud and scams
+Identity theft
+Fake IRS email or message
+Tax return preparer
+Main navigation
+File
+Pay
+Refunds
+Credits & Deductions
+Forms & Instructions
+Info Menu Mobile
+Charities & Nonprofits
+Help
+News
+Tax Pros
+Search
+Include Historical Content
+- Any - No
+Include Historical Content
+- Any - No
+Search
+Home
+Instructions
+Instructions for Form 8996 (12/2024)
+General Instructions
+Future Developments
+Purpose of Form
+Definitions
+Qualified opportunity zone (QOZ).
+Qualified opportunity fund (QOF).
+90% investment standard.
+Cash not immediately invested.
+QOF reinvestment in QOZ property.
+U.S. territory.
+Total assets.
+QOZ property.
+QOZ stock
+QOZ partnership interest
+QOZ business property
+Real property that straddles a QOZ and a non-QOZ.
+Purchased tangible property.
+Property undergoing substantial improvement.
+Multiple buildings in a QOZ.
+Leased tangible property.
+Leases with governments.
+Investment value.
+QOZ business.
+Non-qualified financial property.
+Working capital assets of a QOZ business.
+Working capital consumed over a period longer than 31 months.
+Working capital assets during working capital safe harbor period.
+Who Must File
+QOFs That Are Part of a Consolidated Group
+Specific Instructions
+Name and Employer Identification Number
+Note. Qualified opportunity zone businesses.
+Part I
+Line 2
+Line 3
+Line 4
+Line 5
+Line 6
+Part II
+Value determination.
+Note.
+Applicable financial statement valuation method.
+Alternative valuation method.
+Line 7
+Special rule for first year of QOF.
+Line 8
+Line 9
+Line 10
+Line 11
+Line 12
+Part III
+Line 13
+Line 14
+Line 15
+Part IV
+Accounting period.
+Lines 1 and 3
+Line 5
+Line 7
+Part V
+Column (a)
+Columns (b) and (c)
+Mobile tangible property used in multiple QOZs.
+Special rule for first year as a QOF.
+Columns (d) and (e)
+Line 1
+Part VI
+Working capital property.
+Column (a)
+QOZs.
+Column (b)
+Column (c)
+Property in multiple zones.
+Mobile tangible property used in QOZs and non-QOZs.
+Special rule for first-year QOF.
+Columns (d) and (e)
+Column (f)
+Columns (g) and (h)
+Line 1
+Line 2
+Line 3
+Line 4
+Part VII
+Line 1
+Line 2
+Instructions for Form 8996 - Notices
+Paperwork Reduction Act Notice.
+Instructions for Form 8996 (12/2024)
+Qualified Opportunity Fund
+Section references are to the Internal Revenue Code unless otherwise noted.
+Revised: 12/2024
+General Instructions
+Future Developments
+For the latest information about developments related to Form 8996 and its instructions, such as legislation enacted after this form and instructions were published, go to IRS.gov/Form8996 .
+Purpose of Form
+The Tax Cuts and Jobs Act (TCJA), section 13823, added section 1400Z-1 to provide for the designation of certain census tracts as qualified opportunity zones (QOZs) and added section 1400Z-2 to provide certain benefits for investments in these QOZs through investment in qualified opportunity funds (QOFs). Taxpayers that invest in QOZ property through a QOF can defer the recognition of certain gains. See Definitions , later.
+A corporation or partnership uses Form 8996 to certify that it is organized to invest in QOZ property. In addition, a corporation or partnership files Form 8996 annually to report that the QOF meets the 90% investment standard of section 1400Z-2 or to figure the penalty if it fails to meet the investment standard. Form 8996 is not filed by QOZ businesses. See Definitions , later. Also see IRS.gov/Ozfaqs for more information and guidance.
+Definitions
+Qualified opportunity zone (QOZ).
+For a complete list of QOZs, see Notice 2018-48 and Notice 2019-42. You can find Notice 2018-48 at IRS.gov/IRB/2018-28_IRB#NOT-2018-48 . Notice 2019-42 can be found at IRS.gov/IRB/2019-29_IRB#NOT-2019-42 .
+Qualified opportunity fund (QOF).
+A QOF is an investment vehicle organized as a corporation or a partnership for the purpose of investing in QOZ property (other than another QOF). To be eligible to be a QOF, such an investment vehicle must be organized under the laws of one of the 50 states, a federally recognized Indian tribe, the District of Columbia, or a U.S. territory. A QOF must hold at least 90% of its total assets in QOZ property. See 90% investment standard next.
+90% investment standard.
+The 90% investment standard is determined by the average of the percentage of QOZ property held in the QOF as measured on:
+The last day of the first 6-month period of the tax year of the QOF, and
+The last day of the tax year of the QOF.
+If a corporation or partnership is organized in a U.S. territory, it may be a QOF only if it is organized for the purpose of investing in QOZ property that relates to a trade or business operated in the U.S. territory in which the corporation or partnership is organized.
+Cash not immediately invested.
+If an investor contributes cash to your QOF, but you are unable to immediately invest the cash into a QOZ property, you can still meet the 90% investment standard. You may exclude the cash from the calculation of the 90% investment standard if the following requirements are met:
+You received the property in exchange for stock or partnership interest in the QOF;
+The contribution or exchange occurred not more than 6 months before the test from which it is excluded; and
+Between the date of the fifth business day after the contribution or exchange and the date of the semiannual test, the amount was held continuously in cash, cash equivalents, or debt instruments with a term of 18 months or less.
+QOF reinvestment in QOZ property.
+If a QOF receives proceeds from the return of capital or the sale or disposition of QOZ property and reinvests such proceeds in QOZ property within 12 months of the distribution, sale, or disposition, then the proceeds are treated as QOZ property for purposes of the 90% investment standard, but only to the extent that until reinvested the proceeds are continuously held in cash, cash equivalents, or debt instruments with a term of 18 months or less.
+U.S. territory.
+A U.S. territory is any jurisdiction other than the 50 states and the District of Columbia where there is a designated QOZ, which includes the following U.S. territories: American Samoa, Guam, the Commonwealth of the Northern Mariana Islands, the Commonwealth of Puerto Rico, and the U.S. Virgin Islands.
+Total assets.
+Total assets includes cash, investments, furniture, fixtures, equipment, receivables, intangibles, and any items of value owned or leased by the investment vehicle. In determining satisfaction of the 90% investment standard, an investment vehicle may choose for some items to be excluded from total assets. These optionally excludable items are inventory property and certain property that the corporation or partnership received solely in exchange for stock in, or a partnership interest in, the investment vehicle.
+To determine if you meet the requirements for exclusion of property received for equity in the investment, see Cash not immediately invested , earlier.
+An item excluded from total assets is not included in Part II, lines 8 and 11 (“Total assets” at various times), or in Part II, lines 7 and 10 (“Total QOZ property” at those times).
+QOZ property.
+QOZ property means QOZ stock, a QOZ partnership interest, and QOZ business property.
+QOZ stock
+is any stock of a domestic corporation that a QOF acquires after 2017 from the corporation, either directly or through an underwriter, solely in exchange for cash. The corporation must be a QOZ business , defined later in Definitions , when the stock is purchased (or, in the case of a new corporation, the corporation must be organized for the purpose of being a QOZ business). The corporation must qualify as a QOZ business for at least 90% of the time the QOF holds the stock.
+A corporation organized in a U.S. territory is a domestic corporation for this purpose only if the corporation conducts a QOZ business in the U.S. territory in which the corporation is organized. See Who Must File regarding when such a corporation must file Form 1120-F.
+QOZ partnership interest
+is any capital or profits interest in a domestic partnership that a QOF acquires from the partnership after 2017 in exchange for cash. The partnership must be a QOZ business when the QOF acquires the interest (or, in the case of a new partnership, the partnership must be organized for the purpose of being a QOZ business). The partnership must qualify as a QOZ business for at least 90% of the time the QOF holds the interest.
+A partnership organized in a U.S. territory is a domestic partnership for this purpose only if the partnership conducts a QOZ business in the U.S. territory in which the partnership is organized.
+QOZ business property
+is tangible property that a QOF or QOZ business acquires by purchase or lease after 2017, if the QOF or QOZ business uses the tangible property in a trade or business. Additional requirements (described below) apply depending on whether the property is acquired by purchase or lease. See Regulations section 1.1400Z2(d)-2 for additional special rules.
+Real property that straddles a QOZ and a non-QOZ.
+If you purchase real property that straddles a QOZ and a non-QOZ, the real property can still be treated as QOZ business property if it meets all the following requirements.
+You use the portion of the real property that is within the QOZ in your trade or business.
+You use the portion of the real property that is outside the QOZ in your trade or business.
+The portion of the real property that is located within the QOZ is substantial compared to the portion of the real property that is outside the QOZ. To determine if it’s substantial, either the square footage in the QOZ must be greater than the square footage outside the QOZ, or the unadjusted cost of the real property located in the QOZ must be greater than the unadjusted cost basis of the real property located outside the QOZ.
+The portion of the real property inside the QOZ must be adjoining the portion of the real property outside the QOZ. Real property will be considered adjoining if they possess common boundaries and would be adjoining but for the intrusion of a road, street, or similar boundary.
+Purchased tangible property.
+Purchased tangible property must satisfy both of the following tests.
+The use of the property in a QOZ originates with the QOF, or the QOF substantially improves the property.
+To satisfy the substantial improvement test in (1) above, the property must be in a QOZ and, during any 30-month period beginning after the date of the acquisition of such property, additions to basis with respect to the property in the hands of the QOF are more than an amount equal to the adjusted basis of the property at the beginning of the 30-month period in the hands of the QOF.
+During substantially all of the QOF’s holding period for the property, substantially all of the use of the property was in a QOZ. To meet this requirement, at least 70% of the use of the property must be in a QOZ during at least 90% of the time the QOF held the property.
+Tangible property owned by a QOZ business is QOZ business property if it complies with rules similar to those above.
+Property undergoing substantial improvement.
+Purchased tangible property in a QOZ that is undergoing the substantial improvement process can be treated as QOZ business property for purposes of the 90% investment standard. You may treat tangible property undergoing improvement that is not yet placed in service as QOZ business property during the 30-month period as long as you reasonably expect the property will be QOZ business property after the improvements are completed.
+Multiple buildings in a QOZ.
+If you purchase multiple buildings in a QOZ or adjoining QOZs, you can treat the buildings as a single property for purposes of the substantial improvement requirements if either of the following applies.
+All the eligible buildings are located entirely within one parcel of land described in one deed.
+All the buildings are located entirely within the geographic borders of adjoining parcels of land described in separate deeds; each building is operated as one or more trades or businesses that are operated exclusively by you; the buildings share facilities or significant centralized business elements and are operated in coordination with each other.
+Leased tangible property.
+Leased tangible property must satisfy both of the following tests.
+At the time that the lease was entered into, the lease terms must be market rate (they reflect common, arm’s-length market pricing in the locale that includes the QOZ).
+During substantially all of the QOF’s holding period for the property, substantially all of the use of the property was in a QOZ. To meet this requirement, at least 70% of the use of the property must be in a QOZ during at least 90% of the time the QOF leased the property.
+Tangible property leased by a QOZ business is QOZ business property if it complies with rules similar to those above.
+There are additional requirements that must be satisfied for tangible property leased from a related person to be QOZ business property. The lessee must not at any time make any prepayment in connection with the lease that exceeds 12 months. In the case of leased tangible personal property that was used in the QOZ before the beginning of the lease, the lessee must purchase QOZ business property with a value at least equal to the value of the leased tangible personal property before the earlier of the last day of the lease or 30 months after receipt of the tangible personal property under the lease.
+Leases with governments.
+Leases between the QOF or QOZ business and state governments, local governments, or Indian tribal governments are not subject to the market rate requirement.
+Investment value.
+Investment value is the value of QOZ stock or a QOZ partnership interest owned by the QOF, as determined according to the rules in Regulations section 1.1400Z2(d)-1(b).
+QOZ business.
+A trade or business is a QOZ business if at least 70% of its owned or leased tangible property is QOZ business property, defined in Definitions , earlier, and if the trade or business satisfies all of the following tests.
+The business generates at least 50% of its total gross income from the active conduct of a trade or business in a QOZ.
+The business uses a substantial part of its intangible property in the active conduct of any such business.
+Less than 5% of the average of the total unadjusted basis of the property of the business is from nonqualified financial property.
+The business is not a private or commercial golf course, country club, massage parlor, hot tub facility, suntan facility, racetrack or other facility used for gambling, or any store the principal business of which is the sale of alcoholic beverages for consumption off premises.
+Non-qualified financial property.
+Non-qualified financial property means debt, stock, partnership interests, options, futures contracts, forward contracts, warrants, notional principal contracts, annuities, and other similar property. The definition doesn’t include debt instruments described in section 1221(a)(4) or reasonable amounts of working capital held as cash, cash equivalents, or debt instruments with a term of 18 months or less.
+Working capital assets of a QOZ business.
+A QOZ business can exclude reasonable amounts of working capital from the value of property that is treated as nonqualified financial property. A reasonable amount of working capital satisfies all of the following tests.
+The working capital is designated in writing for the development of a trade or business in a QOZ, including, when appropriate, the acquisition, construction, and/or substantial improvement of tangible property in a QOZ.
+There is a reasonable written schedule for the consumption of the working capital to achieve the goal set out in (1) above.
+The working capital is to be consumed within 31 months of the business’s receipt of the assets. Any additional applications of the working capital safe harbor must meet the requirements of Regulations section 1.1400Z2(d)-1(d)(3)(v) and must be for a total period of no more than 62 months.
+The working capital is actually used in a manner that is substantially consistent with the requirements in items (1) through (3).
+If the consumption of the working capital assets is delayed by waiting for government action on a completed application, the delay doesn’t cause a failure of this safe harbor.
+If the QOZ business is located in a QOZ that is in a federally declared disaster area, the QOZ business may receive up to an additional 24 months to consume its working capital assets, provided it meets the requirements of Regulations section 1.1400Z2(d)-1(d)(3)(v).
+Working capital consumed over a period longer than 31 months.
+Generally, a QOF that invests cash into a QOZ business can use the safe harbor for working capital, even if the completion of the development is expected to take longer than 31 months if the QOZ business has less than 5% of its assets in non-qualified financial property (debt, stock, partnership interests, or other similar property).
+Example 1.
+QOF A invested cash in B, a QOZ business. B intends to use the cash to develop a large mixed-use real estate development that will consist of commercial and residential real property. B has a master written plan to develop the property over a 55-month period. The plan provides the commercial portion of the property will be completed over a 30-month period and the residential portion of the property will be completed over a subsequent 25-month period.
+In Example 1 , B can take advantage of the safe harbor for working capital even though the completion of the development is expected to take longer than 31 months. QOZ businesses must have less than 5% of their assets in non-qualified financial property (debt, stock, partnership interests, or other similar property). However, non-qualified financial property does not include a reasonable amount of cash, cash equivalents, or debt instruments with a term of 18 months or less. QOZ businesses may utilize a safe harbor for their working capital so long as there is a written plan designating the consumption of the working capital and the working capital is spent according to that plan. Tangible property may benefit from multiple working capital safe harbors, for a total of 62 months, in the form of multiple overlapping or sequential periods, provided each application satisfies the working capital safe harbor requirements.
+Working capital assets during working capital safe harbor period.
+During the working capital safe harbor period, working capital assets are not treated as QOZ business property for purposes of the 70% tangible property standard applicable to QOZ businesses. Working capital assets that have not been expended are not treated as QOZ business property. As stated earlier, in Definitions , Property undergoing substantial improvement is treated as QOZ business property during the substantial improvement period so long as there is a reasonable expectation that the property will become QOZ business property at the end of the improvement process.
+Who Must File
+A corporation or partnership that is organized and operated as a QOF must file Form 8996 annually with one of the following tax returns, as applicable.
+Form 1120, U.S. Corporation Income Tax Return.
+Form 1120-F, U.S. Income Tax Return of a Foreign Corporation. A QOF organized in a U.S. territory is eligible to attach Form 8996 to its Form 1120-F.
+Form 1120-REIT, U.S. Income Tax Return for Real Estate Investment Trusts.
+Form 1120-RIC, U.S. Income Tax Return for Regulated Investment Companies.
+Form 1120-S, U.S. Income Tax Return for an S Corporation.
+Form 1065, U.S. Return of Partnership Income.
+QOZ businesses do not file Form 8996. You must file Form 8996 by the due date of the tax return (including extensions).
+If a corporation or partnership completes this form, it’s self-certifying that it’s a QOF. By self-certifying, the QOF is attesting that the property used to satisfy the 90% investment standard is QOZ property. This includes the requirement that any stock or partnership interests used to satisfy the 90% investment standard are in an entity that satisfies section 1400Z-2(d)(3) (that is, that the entity is a QOZ business). The information provided to the QOF regarding whether the entity satisfies section 1400Z-2(d)(3) must be sufficient for the QOF to rely on that information. If the entity doesn’t satisfy section 1400Z-2(d)(3), the QOF may be subject to penalties.
+QOFs That Are Part of a Consolidated Group
+A consolidated group should include with the group's return a separate Form 8996 for each group member that must certify its QOF status.
+Specific Instructions
+Name and Employer Identification Number
+Enter the same information as shown on the QOF’s applicable tax return under Who Must File , earlier.
+Note. Qualified opportunity zone businesses.
+Qualified opportunity zone businesses do not file Form 8996. Form 8996 is only filed by entities to self-certify as a QOF or to certify that they have met the 90% investment standard. See 90% investment standard , earlier.
+Part I
+Complete Part I annually and attach it to your applicable tax return listed under Who Must File , earlier. Part I is used to certify that the corporation or partnership was organized to operate as a QOF. See Definitions , earlier.
+Line 2
+If you checked “Yes,” you are self-certifying that you are a QOF and you must complete the entire form. If you checked “No,” don’t complete this form and don’t file it with your return.
+If you answer “Yes” on line 2, then by the end of your first QOF year, the organizing documents should include a description of the trade(s) or business(es) that the QOF expects to engage in, either directly or indirectly, through a first-tier operating entity (QOZ business).
+Line 3
+Check “Yes” if you are certifying that this is the first period in which you are a QOF and fill out line 4.
+If you check “No,” you are indicating that you have certified in a prior year that you are a QOF.
+Regardless of whether you check “Yes” or “No” on line 3, continue to Part II and Part III to determine if the QOF met the investment standard for this tax year.
+Line 4
+Provide the first month in which you chose to be a QOF. This month cannot be any earlier than the month in which the entity forms.
+Example 2.
+A new corporation is formed at the beginning of the year, on January 5, for the purpose of operating a QOF, but it doesn’t receive any investment under a deferral election under section 1400Z-2(a) until May 1, of the same year. The corporation may choose any month from January through May to use as a certification date. If the corporation chooses any month from January through May of the same year to use as a certification date, a May 1 investment can support a deferral election under section 1400Z-2(a). This example also applies to pre-existing corporations or partnerships that become a QOF.
+Example 3.
+The facts are the same as in Example 2 , except that the corporation is formed during the middle of the year, on July 1, for the purpose of operating as a QOF. The corporation may only choose a month after July 1, of the same year, as its first month of certification. Any investments made prior to July 1, of the same year, will not be qualifying investments.
+Note.
+A QOF may receive an investment relating to an investor’s deferral election in the first month that the QOF is certified but not in any earlier month.
+Line 5
+If you checked “Yes,” you must attach a statement to your return that includes each investor’s name(s), Taxpayer Identification Number(s), the date of the disposition and the interest that they disposed of. Also see the Instructions for Form 1099-B for reporting information.
+Line 6
+Do not check this box. Skip this line.
+Part II
+Complete Part II annually and attach Form 8996 to your applicable tax return listed under Who Must File , earlier. Part II determines whether you meet the 90% investment standard for a QOF. See Definitions , earlier.
+Value determination.
+Regulations section 1.1400Z2(d)-1(b) provides general and special rules for determining the value of your owned or leased assets for purposes of determining whether you meet the 90% investment standard for a QOF. The general rules allow the value of your assets to be determined using one of the following two valuation methods consistently during the tax year. Special rules may allow you to exclude recently contributed property from both the numerator and the denominator of the 90% investment standard test on a particular testing date, or to similarly exclude inventory property on each testing date, during the tax year.
+Note.
+If you exclude recently contributed property from both the numerator and the denominator of the 90% investment standard on a particular testing date, don’t include such property in the penalty calculation for the months such property was excluded if a penalty calculation is applicable.
+Applicable financial statement valuation method.
+If the applicable financial statement method is used, then the value of each item of property owned or leased by the QOF is the value of that asset as reported on the QOF’s applicable financial statement. This method can be used to value a leased asset only if the applicable financial statement is prepared in accordance with U.S. GAAP, and the statement assigns a value to the leased asset.
+Alternative valuation method.
+If the alternative valuation method is used, then the value of each item of property purchased or constructed by the QOF for fair market value is the QOF’s unadjusted basis of the asset under section 1012 or 1013. The value of each item of property owned by the QOF that isn’t purchased or constructed for fair market value is the item of property’s fair market value, determined on the last day of the first 6-month period of the taxable year and on the last day of the taxable year.
+The value of each item of property leased by the QOF under the alternative valuation method is the present value, determined as of the date of entering into the lease, of the payments under the lease. The required discount rate for calculating the present value is provided in Regulations section 1.1400Z2(d)-1(b)(4)(iii)(B). Once calculated, the present value is used as the value for the property for all testing dates during the term of the lease for purposes of the 90% investment standard.
+Line 7
+Enter the value of QOZ property (see Definitions , earlier) held by the QOF on the last day of the first 6-month period of the tax year. This is the amount from Part VI, line 2. See the discussion under Total assets , earlier, in Definitions , regarding certain property that may optionally be excluded from lines 7 and 8.
+Special rule for first year of QOF.
+If you answered “Yes” on line 3, the 6-month period starts with the month you indicated on line 4. Lines 7 through 9 may be blank depending on the tax year and the month indicated on line 4. See Example 5 .
+If you check “Yes” on line 3, but don’t list the first month in which you choose to be a QOF on line 4, the 6-month period of the QOF starts on the first day of your tax year, even if you received no investment relating to an investor’s deferral election until later in the year.
+Example 4.
+Partners Virginia, Joe, Laura, and Ishmael formed a new partnership at the beginning of the year, in January, for the purposes of operating as a QOF. It chooses April, of the same year, as its first month for certification. The first 6-month period for the QOF asset test ends on September 30. January to March are not considered for purposes of the 6-month period.
+Example 5.
+The facts are the same as in Example 4 , except the partnership chooses July, of the same year, as the certification date. The first 6-month period for the QOF assets ends on December 31. The 6 months from January through June are not considered, and lines 7 through 9 will be blank.
+Line 8
+Enter the value of Total assets held by the QOF on the last day of the first 6-month period of the tax year.
+Line 9
+Divide the number on line 7 by the number on line 8. Enter the result on line 9 as a decimal to two places. Round the number up or down to two places if necessary. For third place numbers of 5 or more, round up to the next higher second place number. For third place numbers of less than 5, round down to the lower second place number. Enter the decimal using the following format: one digit, a decimal point, and two digits (for example, enter 92% as 0.92 and 100% as 1.00).
+Example 6.
+The facts are the same as in Example 4 . The value of the QOZ property held by the partnership on September 30 and reflected on Part VI, line 2, is $89,500. The value of the total assets held by the partnership on September 30 is $100,000. The partnership enters “89,500” from Part VI, line 2, on line 7 and “100,000” on line 8. The result when the partnership divides 89,500 by 100,000 is 0.895. The partnership rounds up to 0.90. On line 9, the partnership enters “0.90.”
+If the figure entered on line 9 is less than 90% (0.90), a penalty may apply. See Part III of the instructions for more details. Enter -0- if lines 7 and 8 are blank.
+Line 10
+Enter the value of QOZ property (see Definitions , earlier) held by the QOF on the last day of the tax year. This is the amount from Part VI, line 3. See Total assets , earlier, in Definitions , regarding certain property that may optionally be excluded from lines 10 and 11.
+Note.
+If you answered “Yes” on line 3, the tax year may be less than 12 months.
+Line 11
+Enter the value of the Total assets held by the QOF on the last day of the tax year.
+Note.
+If you checked “Yes” on line 3, the tax year may be less than 12 months.
+Line 12
+Divide the number on line 10 by the number on line 11. Enter the result on line 12 as a decimal to two places. Round the number up or down to two places if necessary. For third place numbers of 5 or more, round up to the next higher second place number. For third place numbers of less than 5, round down to the lower second place number. See Example 6 . Enter the decimal using the following format: one digit, a decimal point, and two digits (for example, enter 92% as 0.92 and 100% as 1.00).
+If the figure entered on line 12 is less than 90% (0.90), a penalty may apply. See Part III of the instructions for more details.
+Part III
+Complete Part III annually and attach Form 8996 to your applicable tax return listed under Who Must File , earlier. Part III determines whether you are subject to a penalty. See Qualified opportunity fund in Definitions , earlier.
+Line 13
+Add the numbers on lines 9 and 12.
+Line 14
+If lines 7 through 9 are blank, then enter the result from line 13, otherwise divide line 13 by 2.0. Enter the result on line 14 as a decimal to two places.
+Note.
+If you answered “Yes” on line 3, the tax year may be less than 12 months.
+Line 15
+If you checked “Yes,” the QOF met the 90% investment standard. Attach the form to your tax return to report you met the investment standard for the tax year.
+If you checked “No,” the QOF failed to meet the 90% investment standard. Go to Part IV to figure the penalty for each month the QOF didn’t satisfy that investment standard. The IRS will send you a notice regarding the penalty reported on line 15. This notice will include instructions on the penalty, the reasonable cause relief process, and payment instructions.
+Regardless of whether you checked “Yes” or “No” on line 15, complete Parts V, VI, and VII.
+Part IV
+Complete Part IV if you checked “No” on Part III, line 15. Use Part IV to figure the penalty for each month that the QOF didn’t hold at least 90% of its assets in QOZ property. See Definitions , earlier.
+Accounting period.
+Columns (a) through (l) in Part IV assume that you were a QOF for the full tax year (January to December for calendar year or 12 consecutive months for fiscal year). See Pub. 538, Accounting Periods and Methods , for more information on accounting periods.
+If you answered “Yes” on Part I, line 3, and you weren’t a QOF for the full tax year, you won’t use all of the columns in Part IV. Instead, use the month listed on Part I, line 4, as your Month 1 (see column (a) of Part IV of the form), and continue using the other columns as needed to complete the tax year.
+Example 7.
+The facts are the same as in Example 4 under Part II instructions, earlier. In that situation, the partnership entered April on Part I, line 4. Assume the answer to Part III, line 15, is “No.” When filling out Part IV, the partnership enters months only in columns (a) through (i), because April would be Month 1 and December would be Month 9.
+Lines 1 and 3
+See Value determination , in Part II, earlier, for information on what figure to enter on these lines.
+Line 5
+The figure to enter here is the interest rate for each calendar quarter, which the IRS will determine during the first month in the preceding quarter. These rates are published quarterly in an IRS news release and in a revenue ruling in the Internal Revenue Bulletin (IRB). Go to IRS.gov/IRB for the IRBs. You can subscribe to IRS Newswire to receive news releases of the quarterly interest rates, and IRS GuideWire to receive emails with a link to the revenue rulings in which the quarterly interest rates are published by going to IRS.gov/uac/E-News-Subscriptions-2 .
+Line 7
+Divide line 6 by 12 even if you answered “Yes” in Part I, line 3, and you weren’t a QOF for the full tax year. This is because the underpayment rate used on line 5 is annualized.
+Part V
+Complete Part V annually and attach Form 8996 to your applicable tax return listed under Who Must File , earlier. Part V is for QOZ business property that you directly owned or leased. See QOZ business property in Definitions , earlier.
+See the IRS.gov/Ozfaqs page on IRS.gov for more information and guidance.
+Column (a)
+Use a separate line to enter the 11-digit QOZ number in which the QOF directly owns or leases QOZ business property. These QOZ numbers are listed in Notice 2018-48 and Notice 2019-42. You can find Notice 2018-48 at IRS.gov/IRB/2018-28_IRB#NOT-2018-48 . Notice 2019-42 can be found at IRS.gov/IRB/2019-29_IRB#NOT-2019-42 .
+Columns (b) and (c)
+For QOZ business property held directly on the last day of the first 6-month period of the tax year, enter the total value of all owned property in column (b) and the total value of all leased property in column (c), for the QOZ indicated in column (a). See Value determination , in Part II, earlier, for more information on what amount to enter on these lines.
+Mobile tangible property used in multiple QOZs.
+See Mobile tangible property used in QOZs and non-QOZs , and Examples 10 and 11 in the Part VI instructions, later.
+Special rule for first year as a QOF.
+If you answered “Yes” on Part I, line 3, the 6-month period starts with the month you indicated on Part I, line 4. Columns (b) and (c) may be blank depending on the tax year and the month indicated on Part I, line 4. See Examples 4 and 5 under Part II, line 7, earlier.
+If you check “Yes” on Part I, line 3, but don’t list the first month in which you choose to be a QOF on Part I, line 4, the 6-month period of the QOF starts on the first day of your tax year, even if the QOF received no investment relating to an investor’s deferral election until later in the year.
+Columns (d) and (e)
+For QOZ business property held directly on the last day of the tax year, enter the total value of all owned property in column (d) and the total value of all leased property in column (e) for the QOZ indicated in column (a). See Value determination , in Part II, earlier, for information on what amounts to enter on these lines.
+Line 1
+If you directly owned or leased QOZ business property used in one or more QOZs listed in column (a) for Part V, then attach a separate statement. The separate statement should be prepared in the same manner and format as Part V. Enter the totals from the separate statement on line 1, columns (b) through (e). Submit the separate statement with Form 8996 and your tax return.
+Part VI
+Complete Part VI annually and attach Form 8996 to your applicable tax return listed under Who Must File , earlier. Use Part VI to report investments in QOZ stock or partnership interests with values apportioned to QOZs and non-QOZs based on where the tangible property of the QOZ business is located. See QOZ stock and QOZ partnership interest in Definitions , earlier.
+Working capital property.
+For property that is treated as QOZ business property pursuant to the working capital safe harbor rules, allocate the value to the QOZ that’s specified in the written designation for the development of a trade or business required under the regulations.
+Column (a)
+QOZs.
+For each QOZ business in which you own a stock or a partnership interest on either the last day of the first 6-month period of the tax year or the last day of the tax year, enter the 11-digit QOZ number for each QOZ in which the tangible property of the QOZ business is located. If you invested in more than one QOZ business in a particular QOZ, you should repeat a QOZ as many times as you need to capture each stock or partnership interest the QOF holds in that QOZ.
+Non-QOZs.
+Indicate non-QOZs by 99999999999. If the QOZ business holds any tangible property that isn’t QOZ business property, including property located in a non-QOZ, add an additional line for that EIN with the identifier “99999999999” instead of an 11-digit QOZ number. A separate 99999999999 line should be used for each QOZ business that holds tangible property that isn’t QOZ business property.
+Example 8.
+QOZ business X operates in QOZs A, B, and C. QOZ business Y operates in QOZs A and B. Report QOZs A, B, and C for QOZ business X on separate lines, followed by QOZs A and B for QOZ business Y on separate lines.
+Column (b)
+Enter the EIN of the QOZ business. If the QOZ business you invested in operates in more than one QOZ, complete column (b) for each line necessary.
+Column (c)
+For each QOZ stock or partnership interest held on the last day of the first 6-month period of the tax year, enter in column (c) the investment value of that interest on that date. See Investment value in Definitions , earlier. Apportion that value according to the share of tangible property of the QOZ business located in each QOZ. See Examples 9, 10 , and 11 , later.
+Property in multiple zones.
+Example 9 shows how to account for your interest in a QOZ business when that QOZ business holds tangible property in QOZs and non-QOZs. All tangible property that is not QOZ business property is assigned to the non-qualifying line (99999999999) for that QOZ business, even if the property is located in a QOZ.
+Example 9.
+On the last day of the first 6-month period of the tax year, QOF A owns a $1 million interest in QOZ business B. QOZ business B holds $4 million of tangible property and operates in QOZs and non-QOZs. $2 million of QOZ business B’s tangible property is located in QOZ X, $1 million is located in QOZ Y, and $1 million is located in multiple non-QOZs. All of the tangible property of QOZ business B located in QOZ X and QOZ Y is QOZ business property. Of the tangible property of QOZ business B, 50% is located in QOZ X, 25% is located in QOZ Y, and 25% is located in multiple non-QOZs. QOF A should report the location of its $1 million interest in QOZ business B according to the share of tangible property of QOZ business B that is located in each QOZ, by treating each QOZ separately and treating all non-QOZs as one aggregated non-QOZ. Therefore, QOF A would enter an investment value of $500,000 in QOZ X, $250,000 in QOZ Y, and $250,000 in the aggregated non-QOZ (99999999999).
+Mobile tangible property used in QOZs and non-QOZs.
+If mobile tangible property is used in QOZs and non-QOZs and otherwise qualifies as QOZ business property, assign the full value of that property to the QOZ where it’s primarily used, that is, to the QOZ that receives the highest percentage of use. If tangible property is used in one or more QOZs, determine whether the property has been substantially used in a QOZ (that’s at least 70% of its use) by aggregating the number of days the tangible property in each QOZ is utilized. See Example 11 , later.
+Under a safe harbor, a limited amount of mobile tangible property may be excluded from the general time-of-use calculation. Specifically, not more than 20% of the tangible property may be treated as satisfying the 70% use test if the tangible property is utilized in activities both inside and outside of a QOZ and meets the following requirements.
+The trade or business has an office or fixed location within a QOZ (QOZ office).
+The tangible property is operated by employees of the business who regularly use that QOZ office.
+The employees are managed directly, actively, and substantially by employees who carry out their duties at a QOZ office.
+The property isn’t operated exclusively outside a QOZ for a period longer than 14 consecutive days.
+See Example 10 for an illustration of this rule.
+Example 10.
+QOF A owns a $1 million interest in QOZ business B. QOZ business B owns $4 million of tangible property, $1.2 million of which is stationary and located in QOZ X, $1 million of which is stationary and located in QOZ Y, and $1 million of which is stationary and located in multiple non-QOZs. The remaining $800,000 is mobile tangible property. QOZ business B has its main headquarters in QOZ X, and that location is treated as a QOZ office. In addition, the mobile tangible property is returned from non-QOZs to QOZs X and Y on a daily basis. Because not more than 20% of QOZ business B’s tangible property is mobile tangible property, the entire $800,000 is counted towards the QOZ business B’s QOZ business property. The location of the mobile tangible property is assigned to the QOZ office located in QOZ X, for a total of $2 million in QOZ business property in QOZ X (50% of the total tangible property). QOF A reports an investment value of $500,000 in QOZ X, $250,000 in QOZ Y, and $250,000 in non-QOZs (99999999999).
+Example 11.
+QOF A owns a $2 million interest in QOZ business B. QOZ business B owns $4 million of tangible property, $1.2 million of which is stationary and located in QOZ X, $1 million of which is stationary and located in QOZ Y, and $1 million of which is stationary and located in non-QOZs. The remaining $800,000 is mobile tangible property. Unlike in Example 10 , a safe harbor doesn’t apply. The mobile tangible property is used during 50% of all days in QOZ X, 25% of all days in QOZ Y, and 25% of all days in non-QOZs. Because at least 70% of the use of the mobile tangible property is located within a QOZ, the entire $800,000 is counted towards QOZ business B’s QOZ business property. The full value of the mobile tangible property is assigned to QOZ X, as that is the QOZ where the property is primarily used. The total amount of QOZ business property located in QOZ X, stationary plus mobile, is $2 million, which is 50% of QOZ business B’s tangible property. Therefore, QOF A reports an investment value of $1,000,000 in QOZ X, $500,000 in QOZ Y, and $500,000 in non-QOZs (99999999999).
+Special rule for first-year QOF.
+If you answered “Yes” on Part I, line 3, the 6-month period starts from the month you indicated on Part I, line 4. Columns (c) through (e) may be blank depending on the tax year and the month you indicated on Part I, line 4. See Examples 4 and 5 under Part II, line 7, earlier.
+If you check “Yes” on Part I, line 3, but don’t list the first month in which you choose to be a QOF on Part I, line 4, the 6-month period of the QOF starts on the first day of your tax year, even if the QOF received no investment relating to an investor’s deferral election until later in the year.
+Columns (d) and (e)
+For each QOZ stock or partnership interest held on the last day of the first 6-month period of the tax year, enter the gross value of tangible property that is owned and leased by the QOZ business, for each QOZ. (Don’t adjust for ownership share or leveraged assets. All QOFs investing in the same QOZ business should report identical values for these columns.)
+Example 12.
+The facts are the same as in Example 9 under Part VI, column (c) instructions, earlier. In addition, QOZ business B has the following shares of owned and leased tangible property. QOZ business B owns 70% of its $2 million in tangible property located in QOZ X and leases the other 30%, owns 60% of its $1 million in tangible property located in QOZ Y and leases the other 40%, and owns 50% of its $1 million in tangible property located in non-QOZs, and leases the other 50%. QOF A should enter the following values for QOZ X: $1,400,000 in column (d) and $600,000 in column (e). For QOZ Y, enter $600,000 in column (d) and $400,000 in column (e), and for non-QOZs, $500,000 in column (d), and $500,000 in column (e).
+Column (f)
+For each QOZ stock or QOZ partnership interest held on the last day of the tax year, enter in column (f) the investment value of that interest on that date. See Investment value in Definitions , earlier. Apportion that value according to the share of tangible property of the QOZ business located in each QOZ.
+See Examples 9, 10, and 11 under the instructions for column (c).
+Columns (g) and (h)
+For each QOZ business held on the last day of the tax year, enter the gross value of tangible property that is owned and leased by the QOZ business, for each QOZ. (Don’t adjust for ownership share or leveraged assets. All QOFs investing in the same QOZ business should report identical values for these columns.)
+See Example 12 under the instructions for Columns (d) and (e) , earlier.
+Line 1
+Enter the amounts reported on Part VII, line 2, columns (c) and (f), on Part VI, line 1, columns (c) and (f), respectively. If you complete more than one Part VII, add up all of the amounts from Part VII, lines 2, column (c) and enter on Part VI, line 1, column (c). Similarly, if you complete more than one Part VII, add up all the amounts from Part VII, line 2, column (f), and enter on Part VI, line 1, column (f).
+Line 2
+To figure the value of QOZ property held by the QOF on the last day of the first 6-month period of the tax year, add Part V, columns (b) and (c), and Part VI, column (c). Enter the total here and on Part II, line 7.
+Line 3
+To figure the value of QOZ property held by the QOF on the last day of the tax year, add Part V, columns (d) and (e), and Part VI, column (f). Enter the total here and on Part II, line 10.
+Line 4
+Depending on which type of accounting method you are using to determine the value of the property listed on this form, check either the “Applicable financial statement valuation method” box or the “Alternative valuation method” box. See Value determination in Part II , earlier.
+Part VII
+Complete Part VII only if you need additional lines to report your investments in QOZ business(es) that have locations in more than the QOZs listed in Part VI. For information on how to complete columns (a) through (h), refer to the instructions under Part VI for columns (a) through (h), earlier.
+Line 1
+Total columns (c) and (f) respectively. If you complete more than one Part VII, add up all of the amounts from Part VII, columns (c) and (f), respectively, and enter on line 1.
+Line 2
+Add columns (c) and (f). Enter the total here and on Part VI, line 1, columns (c) and (f), respectively.
+Instructions for Form 8996 - Notices
+Paperwork Reduction Act Notice.
+We ask for the information on this form to carry out the Internal Revenue laws of the United States. You are required to give us the information. We need it to ensure that you are complying with these laws and to allow us to figure and collect the right amount of tax.
+You are not required to provide the information requested on a form that is subject to the Paperwork Reduction Act unless the form displays a valid OMB control number. Books or records relating to a form or its instructions must be retained as long as their contents may become material in the administration of any Internal Revenue law. Generally, tax returns and return information are confidential, as required by Code section 6103.
+The average time and expense required to complete and file this form will vary depending on individual circumstances. For the estimated averages, see the instructions for your income tax return.
+If you have suggestions for making this form simpler, we would be happy to hear from you. See the instructions for your income tax return.
+Page Last Reviewed or Updated: 30-Apr-2026
+Share Facebook
+Twitter
+Linkedin
+Print
+Footer Navigation
+Our Agency
+About IRS
+Careers
+Financial and Budget Reports
+Tax Statistics
+Help
+Find a Local Office
+Know Your Rights
+Taxpayer Bill of Rights
+Taxpayer Advocate Service
+Independent Office of Appeals
+Civil Rights
+FOIA
+No FEAR Act Data
+Reliance on Guidance
+Resolve an Issue
+IRS Notices and Letters
+Identity Theft
+Tax scams
+Tax Fraud
+Criminal Investigation
+Whistleblower Office
+Languages
+Español
+中文 (简体)
+中文 (繁體)
+한국어
+Pусский
+Tiếng Việt
+Kreyòl ayisyen
+English
+Related Sites
+U.S. Treasury
+Treasury Inspector General for Tax Administration
+USA.gov
+USAspending.gov
+Vote.gov
+Subfooter
+Privacy Policy
+Accessibility

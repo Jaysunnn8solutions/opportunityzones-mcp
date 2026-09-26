@@ -1,0 +1,269 @@
+Source: Revenue Procedure 2026-14, Procedure for nominating census tracts to be designated as qualified opportunity zones
+Publisher: Internal Revenue Service
+URL: https://www.irs.gov/pub/irs-drop/rp-26-14.pdf
+Read from: https://www.irs.gov/pub/irs-drop/rp-26-14.pdf
+Retrieved: 2026-09-26
+---
+Part III
+Administrative, Procedural, and Miscellaneous
+26 CFR 601.601: Rules and regulations.
+(Also Part 1, §§ 1400Z-1, 1400Z-2.)
+Rev. Proc. 2026-14
+SECTION 1. PURPOSE
+This revenue procedure provides guidance to the Chief Executive Officer (CEO) of
+any State, of any territory of the United States, and of the District of Columbia regarding
+the procedure for nominating population census tracts to be designated as qualified
+opportunity zones (QOZs) effective on January 1, 2027, for purposes of §§ 1400Z-1 and
+1400Z-2 of the Internal Revenue Code (Code) 1, as amended by § 70421 of Public Law
+119-21, 139 Stat. 72, 223 (July 4, 2025), commonly known as the One, Big, Beautiful
+Bill Act (OBBBA).
+1
+Unless otherwise specified, all “section” or “§” references are to sections of the Code.
+-2SECTION 2. BACKGROUND
+.01 Sections 1400Z-1 and 1400Z-2, in general.
+(1) Section 1400Z-1. For purposes of §§ 1400Z-1 and 1400Z-2, § 1400Z-1(a)
+defines a QOZ as any population census tract that is a low-income community (LIC), as
+defined in § 1400Z-1(c)(1), that is designated as a QOZ. See section 2.02 of this
+revenue procedure for a description of the process prescribed by § 1400Z-1 for the
+designation of population census tracts that are LICs as QOZs.
+(2) Section 1400Z-2. Section 1400Z-2 allows the temporary deferral of inclusion in
+gross income for certain realized gains to the extent that corresponding amounts are
+timely invested in a corporation or partnership that meets the requirements to be
+certified as a qualified opportunity fund (QOF). In addition, if certain qualifications and
+holding period requirements are met, a taxpayer may be able to exclude a portion of
+such deferred gains from gross income and may also be able to exclude gain
+attributable to the taxpayer’s investment in a QOF from gross income.
+(3) References to §§ 1400Z-1 and 1400Z-2. All references in this revenue
+procedure to “prior § 1400Z-1” and “prior § 1400Z-2” refer to §§ 1400Z-1 and 1400Z-2,
+as in effect after amendment of the Code by both § 13823 of Public Law 115-97, 131
+Stat. 2054, 2183 (December 22, 2017), commonly known as the Tax Cuts and Jobs Act
+(TCJA), and by § 41115 of the Bipartisan Budget Act of 2018 (BBA 2018), Public Law
+115-123, 132 Stat. 64, 161 (February 9, 2018), but prior to amendment by § 70421 of
+the OBBBA. All references in this revenue procedure to “§ 1400Z-1” and “§ 1400Z-2”
+refer to §§ 1400Z-1 and 1400Z-2 as amended by § 70421 of the OBBBA.
+(4) Definitions. This section 2.01(4) defines terms used in this revenue procedure.
+-3(a) Qualified opportunity fund and qualified rural opportunity fund.
+(i) Qualified opportunity fund. Section 1400Z-2(d)(1) provides that a QOF is an
+investment vehicle that is organized as a corporation or a partnership for the purpose of
+investing in qualified opportunity zone property (QOZP), other than another QOF, and
+that holds at least 90 percent of its assets in QOZP as measured on the dates
+described in §1400Z-2(d)(1)(A) and (B). Pursuant to § 1400Z-2(d)(2)(A), QOZP means
+property that is qualified opportunity zone stock (QOZ stock), qualified opportunity zone
+partnership interest (QOZ partnership interest), or qualified opportunity zone business
+property (QOZBP).
+(ii) Qualified rural opportunity fund. Section 1400Z-2(b)(2)(C)(i) defines the
+term “qualified rural opportunity fund” (QROF) 2 as a QOF that holds at least 90 percent
+of its assets in QOZP that is—
+(A) QOZBP substantially all of the use of which, during substantially all of the
+QOF’s holding period for such property, was in a QOZ comprised entirely of a rural area,
+or
+(B) QOZ stock, or a QOZ partnership interest, in a qualified opportunity zone
+business in which substantially all of the tangible property owned or leased is QOZBP
+and substantially all the use of which is in a QOZ comprised entirely of a rural area.
+(iii) Rural area. Section 1400Z-2(b)(2)(C)(ii) defines the term “rural area” as
+any area other than (1) a city or town that has a population of greater than 50,000
+inhabitants and (2) any urbanized area contiguous and adjacent to a city or town that
+has a population of greater than 50,000 inhabitants. See Notice 2025-50, 2025-43
+Section 70421(c)(2) of the OBBBA added § 1400Z-2(b)(2)(C)(i) to the Code, effective for amounts
+invested in QOFs after December 31, 2026. See section 70421(c)(5)(A) of the OBBBA.
+2
+-4I.R.B. 542 for more information on the definition of rural area.
+(b) Qualified opportunity zone business property. Prior § 1400Z-2(d)(2)(D)
+defined QOZBP as tangible property used in a trade or business of the QOF if such
+property was acquired by the QOF by purchase after December 31, 2017, the original
+use of such property in the QOZ commences with the QOF or the QOF substantially
+improves the property, and during substantially all of the QOF’s holding period for such
+property, substantially all of the use of such property was in a QOZ. Applicable to
+property acquired after December 31, 2026, § 70421(c)(4)(A) of the OBBBA amended
+prior § 1400Z-2(d)(2)(D)(i)(I) by striking “December 31, 2017” at the end of the
+subclause and inserting “the applicable start date (as defined in § 1400Z-1(e)(2)) with
+respect to the [QOZ] described in” § 1400Z-2(d)(2)(D)(i)(III). See section 2.02(6) of this
+revenue procedure regarding the applicable start date under § 1400Z-1(e)(2).
+.02 Designations of QOZs under § 1400Z-1.
+(1) In general. Section 1400Z-1(b)(1)(A) allows the CEO of each State 3 to
+nominate LICs to be designated as QOZs. If a State CEO nominates a population
+census tract to be designated as a QOZ, section 1400Z-1(b)(1)(B) authorizes the
+Secretary of the Treasury or the Secretary’s delegate (Secretary) to certify the
+nomination and designate such population census tract as a QOZ. However, § 1400Z1(d) limits the number of population census tracts in a State that the Secretary may
+designate as QOZs under § 1400Z-1 with respect to any designation period.
+(2) QOZ designations under prior § 1400Z-1.
+(a) In general. Under prior § 1400Z-1(c)(1), a population census tract was
+For purposes of § 1400Z-1 and this revenue procedure, the term “State” means any State, any territory
+of the United States, and the District of Columbia. See §§ 1400Z-1(c)(3) and 7701(a)(10).
+3
+-5eligible for designation as a QOZ if it satisfied the definition of LIC in § 45D(e). In
+addition, prior § 1400Z-1(e) provided that a population census tract that was not an LIC
+could be designated as a QOZ if, among other requirements, the tract was contiguous
+with an LIC that was designated as a QOZ (contiguous tract). See Rev. Proc. 2018-16,
+2018-9 I.R.B. 383, which provided guidance on the nomination, certification, and
+designation process under prior § 1400Z-1(b)(1) and (2).
+(b) Special rule for Puerto Rico. After the enactment of the TCJA, § 41115 of
+BBA 2018 added prior § 1400Z-1(b)(3) to the Code, under which all LICs in Puerto Rico
+were deemed certified and designated as QOZs effective on the date of the enactment
+of the TCJA, which was December 22, 2017.
+(c) Period for which designation is in effect. Prior § 1400Z-1(f) provided a 10year period for which a population census tract, once designated as a QOZ, would
+remain designated, beginning on the date of the designation and ending at the close of
+the 10th calendar year beginning on or after such date of designation. The 10-year
+period under prior § 1400Z-1(f) ends on—
+(i) December 31, 2028, for QOZs nominated and designated pursuant to
+Rev. Proc. 2018-16, and
+(ii) December 31, 2027, for QOZs certified and designated in Puerto Rico
+under BBA 2018.
+(d) Notices 2018-48 and 2019-42. Notice 2018-48, 2018-28 I.R.B. 9, amplified
+by Notice 2019-42, 2019-29 I.R.B. 352, lists LICs that were nominated pursuant to Rev.
+Proc. 2018-16 and certified and designated as QOZs by the Secretary in 2018, as well
+as LICs deemed certified and designated as QOZs under prior § 1400Z-1(b)(3) effective
+-6on December 22, 2017. Notice 2019-42, 2019-29 I.R.B. 352, added two additional
+census tracts in Puerto Rico that were deemed certified and designated as QOZs under
+prior § 1400Z-1(b)(3) effective on December 22, 2017.
+(3) QOZ designations under the OBBBA.
+(a) Definition of LIC. Section 70421(b)(1) of the OBBBA amended prior § 1400Z1(c)(1) to provide a narrower definition of an LIC. Rather than defining an LIC through a
+cross-reference to the definition of LIC under § 45D(e) as prior § 1400Z-1 had, § 1400Z1(c)(1)(A) and (B) define the term LIC by reference to the median family income of a
+population census tract and, in certain cases, the poverty rate of the tract.
+(i) In the case of a population census tract not located within a metropolitan
+area, § 1400Z-1(c)(1) provides that such a population census tract is an LIC if it has
+either (I) a median family income that does not exceed 70 percent of the statewide
+median family income or (II) a poverty rate of at least 20 percent and a median family
+income that does not exceed 125 percent of the statewide median family income.
+(ii) In the case of a population census tract located within a metropolitan area,
+§ 1400Z-1(c)(1) provides that such a population census tract is an LIC if it has either
+(I) a median family income that does not exceed 70 percent of the metropolitan area
+median family income or (II) a poverty rate of at least 20 percent and a median family
+income that does not exceed 125 percent of the metropolitan area median family
+income.
+(b) Contiguous tracts. Applicable to areas designated under § 1400Z-1 after July
+4, 2025 (the date of enactment of the OBBBA), § 70421(b)(2) of the OBBBA removed
+prior § 1400Z-1(e) related to contiguous tracts. Thus, any population census tract that
+-7is nominated for designation as a QOZ after July 4, 2025, can be designated as a QOZ
+only if the tract qualifies as an LIC without regard to any other population census tract.
+(c) Number of designations. Section 70421(a)(4) of the OBBBA amended prior
+§ 1400Z-1(d) to apply the limitation on the number of designations of QOZs to each
+QOZ designation period. Section 1400Z-1(d)(1) provides that the number of population
+census tracts in a State that may be designated as QOZs may not exceed, during any
+QOZ designation period, 25 percent of the number of LICs in the State (25-percent
+limitation). If the number of LICs in a State is not evenly divisible by 4, the 25-percent
+limitation is determined by rounding the fractional quotient up to the next whole number.
+For example, if a State contains 197 LICs, the maximum number of designations is 50,
+even though 25 percent of 197 is 49.25. Section 1400Z-1(d)(2) further provides that,
+notwithstanding the 25-percent limitation, if a State contains fewer than 100 LICs for a
+designation period, then a total of 25 LIC tracts may be designated. For example, a
+State with 24 LICs may nominate all of those 24 LICs.
+(d) Designation of LICs in Puerto Rico. Section 70421(a)(3) of the OBBBA
+removed the special rule for Puerto Rico under prior § 1400Z-1(b)(3), which, as
+previously described in section 2.02(2)(b) of this revenue procedure, had deemed all
+LICs in Puerto Rico to be certified and designated as QOZs. Following the enactment
+of § 70421(a)(3) of the OBBBA, which becomes effective on December 31, 2026, the
+Governor of Puerto Rico may nominate LICs in Puerto Rico for designation as QOZs in
+accordance with § 1400Z-1, subject to the 25-percent limitation under § 1400Z-1(d).
+Therefore, beginning on July 1, 2026 (the next decennial determination date as
+provided in § 1400Z-1(c)(2)(C)), the Governor of Puerto Rico will be able to nominate up
+-8to 25 percent of the LICs in Puerto Rico using the procedures set forth in section 5 of
+this revenue procedure. Existing QOZs in Puerto Rico remain designated until the
+expiration of their 10-year designation period on December 31, 2027.
+(e) Determination period and extension. Pursuant to § 1400Z-1(b)(1)(A), the
+CEO of the State in which an LIC is located may nominate the tract to be designated as
+a QOZ, and any such nomination must be made no later than the end of the
+determination period. Section 1400Z-1(c)(2)(B) and (c)(2)(C)(i) provides that the term
+“determination period” means the 90-day period beginning on the decennial
+determination date (including any extension), the first decennial determination date
+being July 1, 2026. The Department of the Treasury (Treasury Department) and the
+Internal Revenue Service (IRS) anticipate that States will benefit from as much
+discretion and consistent administration of the QOZ nomination process as is permitted
+under § 1400Z-1. Consistent with this view, notifications of a State CEO’s nominations
+under §1400Z-1(b)(1)(A)(ii) that are submitted prior to the conclusion of the 90-day
+period provided under § 1400Z-1(c)(2)(B) will be considered received by the Secretary
+not earlier than the conclusion of that 90-day period. This will enable State CEOs to
+make multiple submissions of nominations of eligible population census tracts rather
+than submitting all nominations at once. It will also enable State CEOs to modify
+previously submitted nominations as long as the modifications are received by the end
+of the 90-day period. In addition, under § 1400Z-1(b)(2), the State CEO may request,
+and receive, a 30-day extension of this deadline, which would conclude, at the latest, on
+October 28, 2026.
+(f) Consideration period and extension. Under § 1400Z-1(c)(2)(A), not later than
+-9the end of a 30-day “consideration period” beginning on the date that the Secretary
+receives notice of a nomination, the Secretary may certify the nomination and designate
+the nominated tract as a QOZ. As previously described, section 2.02(e) of this revenue
+procedure provides a determination period that ends on October 28, 2026, if an
+extension is requested by a State CEO. Thus, with respect to a population census tract
+nominated by a State CEO during the determination period, the 30-day consideration
+period for the Secretary to certify and designate the nominated population census tract
+under § 1400Z-1(c)(2)(A) would conclude on November 27, 2026, at the latest. Under
+§ 1400Z-1(b)(2), however, the State CEO may request, and receive, a 30-day extension
+of this deadline, which would extend it to December 28, 2026, at the latest.
+(g) Applicable start date and effective period. Section 70421(b)(2) of the OBBBA
+redesignated prior § 1400Z-1(f) as § 1400Z-1(e) and section 70421(b)(3) of the OBBBA
+amended the period for which a QOZ designation begins and ends. Under § 1400Z1(e)(1), a designation as a QOZ remains in effect for the period beginning on the
+applicable start date and ending on the day before the date that is 10 years after the
+applicable start date (QOZ designation period). Under § 1400Z-1(e)(2), the term
+“applicable start date” means, with respect to any LIC certified and designated as a
+QOZ, the January 1 following the date on which such QOZ was certified and
+designated. Therefore, for any LIC certified and designated by the Secretary as a QOZ
+pursuant to this revenue procedure (2027 QOZ), the QOZ designation period begins on
+January 1, 2027, and ends on December 31, 2036.
+SECTION 3. IDENTITY OF LICs FOR DESIGNATION AS 2027 QOZs
+.01 Number of LICs eligible for designation as 2027 QOZs.
+- 10 (1) In general. Based on the 2020-2024 American Community Survey (ACS)
+5-Year and the 2020 Decennial Census of Island Areas (DECIA) data sets from the
+Bureau of the Census (Census Bureau), which are public, online resources, the
+Treasury Department and the IRS have identified 25,332 population census tracts that
+are LICs eligible for nomination as a 2027 QOZ. Of those population census tracts,
+8,334 tracts are comprised entirely of a rural area. A list of population census tracts
+eligible for nomination as a 2027 QOZ, including those comprised entirely of a rural
+area, is provided in the Appendix to this revenue procedure. The 2020-2024 ACS 5Year and 2020 DECIA data sets are the data sets used to determine the eligible
+population census tracts that are LICs eligible for nomination as 2027 QOZs contained
+in the Appendix to this revenue procedure because they provide the most accurate, upto-date, and consistent data necessary to provide the State CEOs with a list of eligible
+LICs that may be relied upon to nominate as 2027 QOZs. The 2020-2024 ACS 5-Year
+data set is the primary data set and the 2020 DECIA data set is only used for the
+territories of American Samoa, Guam, the Commonwealth of the Northern Mariana
+Islands, and the U.S. Virgin Islands for which ACS data is not available. The 25-percent
+limitation for a State is determined based on the 2020-2024 ACS 5-year and 2020
+DECIA data sets.
+(2) Areas within the boundaries of QOZs listed in Notice 2018-48 and Notice 201942 that are eligible for nomination as a 2027 QOZ. A population census tract that
+contains all or part of the geographic area of a QOZ listed in Notice 2018-48 and Notice
+2019-42 is eligible to be nominated as a 2027 QOZ only if the population census tract is
+an LIC under § 1400Z-1(c)(1) and without regard to whether all or part of the geographic
+- 11 area was designated as a QOZ under prior § 1.1400Z-1.
+(3) Boundaries of eligible population census tracts to be designated as 2027 QOZ.
+The 2020-2024 ACS 5-Year and 2020 DECIA data used in determining eligible
+population census tracts is collected from the geographic areas based on the population
+census tract numbers and boundaries established for the 2020 decennial census.
+Because these data are used to establish boundaries for eligible population census
+tracts that are designated as 2027 QOZs, such boundaries are controlling and not
+subject to change during the 2027 QOZ designation period.
+.02 Information Resource. The list of population census tracts eligible for nomination
+as a 2027 QOZ provided in the Appendix to this revenue procedure will also be included
+in a public, online resource (Information Resource). The Information Resource will
+include detailed mapping that makes it possible to see the exact location of every tract
+listed in the Appendix to this revenue procedure and to view a variety of demographic
+information for each eligible tract, including whether a tract is comprised entirely of a
+rural area.
+SECTION 4. SCOPE
+This revenue procedure applies to nominations of population census tracts by a
+State CEO to be certified and designated by the Secretary as 2027 QOZs.
+SECTION 5. PROCEDURE
+.01 The Treasury Department is developing a nomination tool, which will be
+accessible online and available for the benefit of State CEOs that are making
+nominations of census tracts for designation as 2027 QOZs (Nomination Tool).
+.02 Further information on the nomination process under § 1400Z-1, including how to
+- 12 access the online Nomination Tool, will be sent individually to each of the State CEOs.
+.03 State CEOs are permitted to nominate a population census tract within their
+State to be certified and designated as a QOZ for the QOZ designation period beginning
+January 1, 2027, and ending on December 31, 2036, and may make or modify such a
+nomination during the determination period (including extensions). Any request to
+modify such a nomination after October 28, 2026, will be denied. Instructions on how to
+make and modify nominations will be included with the information sent to each of the
+State CEOs.
+.04 Data set limitations. While the Appendix to this revenue procedure and the
+Information Resource provide a list of population census tracts that are eligible for
+nomination as a QOZ, there may be population census tracts that could be eligible for
+nomination as a QOZ that do not appear on this list. The Secretary will consider a State
+CEO’s nomination of a population census tract not listed in the Appendix or Information
+Resource to the extent that the nomination is accompanied by a detailed analysis,
+including current data collected at the census tract level, demonstrating the nominated
+population census tract satisfies the requirements under § 1400Z-1(c)(1).
+SECTION 6. EFFECTIVE DATE
+This revenue procedure is effective on April 6, 2026.
+SECTION 7. ADDITIONAL INFORMATION
+For further information, contact OpportunityZone@cdfi.treas.gov.
+APPENDIX
+https://www.irs.gov/pub/irs-drop/rp-26-14-appendix.xlsx

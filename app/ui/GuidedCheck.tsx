@@ -13,6 +13,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { lookupPlace, reportHref } from "@/lib/client/place";
+import type { RuleId } from "@/lib/content/rules";
+import { Cite } from "./Cite";
 import { longDate, NEW_RULES_START, windowEnd } from "@/lib/oz/timing";
 
 export interface GuidePersona {
@@ -115,45 +117,96 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
     setFund(null);
   }
 
-  const moneyNotes: Record<Money, string[]> = {
+  const moneyNotes: Record<Money, Line[]> = {
     gain: [
-      "Capital gains are what the program defers: for example, from selling stock, a business interest, or real estate held as an investment.",
-      "Generally, the gain has to go into a Qualified Opportunity Fund within 180 days of the sale. Only the gain needs to be invested.",
+      {
+        text: "Capital gains and qualified section 1231 gains are what the program defers: for example, from selling stock, a business interest, or real estate held as an investment.",
+        cite: ["eligibleGains"],
+      },
+      {
+        text: "Generally, the gain has to go into a Qualified Opportunity Fund within the 180 days beginning on the sale date. Only the gain needs to be invested.",
+        cite: ["window180", "gainOnly"],
+      },
+      {
+        text: "Which rules apply depends on when the gain is invested: from January 1, 2027, the new rules apply, including to a gain from a 2026 sale.",
+        cite: ["gain2026Invested2027"],
+      },
     ],
     ordinary: [
-      "Ordinary income, such as a business's operating profit or profit on selling homes built or bought to sell, is not a capital gain, so it generally cannot be deferred this way.",
-      "The program can still apply from the other side: a project or business located in a zone can take investment from a fund whose money comes from investors' gains.",
+      {
+        text: "Ordinary income is not eligible, and profit on property held for sale to customers (such as homes built or bought to sell) is not a capital gain, so it cannot be deferred this way.",
+        cite: ["eligibleGains"],
+      },
+      {
+        text: "The program can still apply from the other side: a project or business located in a zone can take investment from a fund whose money comes from investors' gains.",
+        cite: ["zoneBusiness", "equityNotLoan"],
+      },
     ],
     investors: [
-      "The fund's investors bring the capital gains. A fund must hold at least 90% of its assets in zone property or businesses, tested twice a year.",
-      "The places the fund invests in must be designated zones, which for 2027 depends on the list Treasury has not yet published.",
+      { text: "The fund's investors bring the capital gains. A fund must hold at least 90% of its assets in zone property, measured twice a year.", cite: ["fund"] },
+      {
+        text: "The places the fund invests in must be designated zones; property bought after December 31, 2026, must be in a 2027 zone, and Treasury has not yet published that list.",
+        cite: ["designatedNotEligible", "boughtAfterStart"],
+      },
     ],
     unsure: [
-      "Whether money counts depends on what kind of income it is. Capital gains qualify; ordinary income (wages, business profit, inventory sales) does not.",
-      "A tax adviser can say which applies. The checklist at the end includes the question.",
+      {
+        text: "Whether money counts depends on what kind of income it is. Capital gains and qualified section 1231 gains qualify; ordinary income does not.",
+        cite: ["eligibleGains"],
+      },
+      { text: "A tax adviser can say which applies. The checklist at the end includes the question." },
     ],
   };
 
-  function placeMeaning(pl: Place): string[] {
-    const lines = [pl.designation.text];
-    if (pl.rural) lines.push("The tract is rural under the 2027 rules: rural zones have a lower substantial-improvement bar, and rural funds a larger step-up.");
-    if (pl.zone2018 != null && pl.zone2018 >= 0.5) lines.push("It is also in a 2018 Opportunity Zone, which remains in effect through 2028.");
+  function placeMeaning(pl: Place): Line[] {
+    const lines: Line[] = [{ text: pl.designation.text, cite: ["designatedNotEligible"] }];
+    if (pl.rural)
+      lines.push({
+        text: "Treasury's 2027 list marks the tract as rural. Zones made up entirely of rural areas have a 50% substantial-improvement bar, and qualified rural opportunity funds a 30% step-up.",
+        cite: ["ruralImprovement", "ruralFund"],
+      });
+    if (pl.zone2018 != null && pl.zone2018 >= 0.5)
+      lines.push({
+        text: "It is also in a 2018 Opportunity Zone, designated through December 31, 2028. Property bought there after December 31, 2026, generally does not qualify, apart from narrow transition rules.",
+        cite: ["zones2018End", "boughtAfterStart"],
+      });
     return lines;
   }
 
-  const checklist: string[] = [];
+  const checklist: Line[] = [];
   if (money === "gain") {
-    checklist.push(end ? `Note the 180-day window: generally ends ${longDate(end)} for a sale on ${longDate(Date.parse(`${saleDate}T00:00:00Z`))}.` : "Note the sale date: the 180-day window generally runs from it.");
-    if (end && end < NEW_RULES_START) checklist.push("That window ends before January 1, 2027. Gains invested under the original rules have their deferral end on December 31, 2026.");
-    if (end && end >= NEW_RULES_START) checklist.push("Investments made from January 1, 2027 fall under the new rules (five-year deferral, 10% or 30% step-up, tax-free growth after ten years).");
+    checklist.push(
+      end
+        ? {
+            text: `Note the 180-day window: for a sale on ${longDate(Date.parse(`${saleDate}T00:00:00Z`))}, counting the sale date as day 1, it generally ends ${longDate(end)}.`,
+            cite: ["window180"],
+          }
+        : { text: "Note the sale date: the 180-day window generally begins on it.", cite: ["window180"] },
+    );
+    if (end && end < NEW_RULES_START)
+      checklist.push({
+        text: "That window closes before January 1, 2027, so the gain would be invested under the original rules: it is taxed no later than the tax year that includes December 31, 2026, though the ten-year benefit can still apply.",
+        cite: ["investedBy2026"],
+      });
+    if (end && end >= NEW_RULES_START)
+      checklist.push({
+        text: "That window reaches January 1, 2027. Amounts invested from that date fall under the new rules (deferral up to five years, a 10% or 30% step-up, tax-free growth after ten years), including for a gain from a 2026 sale.",
+        cite: ["gain2026Invested2027", "deferralFiveYears", "stepUp", "tenYears"],
+      });
+    checklist.push({ text: "Ask whether this gain has a different start date (for example, one passed through from a partnership).", cite: ["passThroughTiming", "installmentTiming"] });
   }
-  if (money === "ordinary") checklist.push("Confirm whether any of the money is a capital gain; ordinary income generally does not qualify.");
-  if (place) checklist.push(`Place: tract ${place.geoid}${place.county ? `, ${place.county}, ${place.state}` : ""}. ${place.designation.text}`);
-  else if (st) checklist.push(`State: ${st.name} may designate up to ${st.cap.toLocaleString("en-US")} of its ${st.eligible.toLocaleString("en-US")} eligible tracts. Watch for its 2027 list.`);
-  else checklist.push("Place: not chosen yet. Use the map or the property checker when you have candidates.");
-  if (fund === "existing") checklist.push("Fund: review any fund with the questions on the Funds page, and check its property addresses with Check properties.");
-  if (fund === "own") checklist.push("Fund: a fund of your own must be a partnership or corporation, certify on Form 8996, and hold 90% of its assets in zones.");
-  if (fund === "unsure") checklist.push("Fund: compare investing in an existing fund with setting one up for a project; both routes are on the Funds page.");
+  if (money === "ordinary") checklist.push({ text: "Confirm whether any of the money is a capital gain; ordinary income does not qualify.", cite: ["eligibleGains"] });
+  if (place) checklist.push({ text: `Place: tract ${place.geoid}${place.county ? `, ${place.county}, ${place.state}` : ""}. ${place.designation.text}` });
+  else if (st)
+    checklist.push({
+      text: `State: ${st.name} may designate up to ${st.cap.toLocaleString("en-US")} of its ${st.eligible.toLocaleString("en-US")} eligible tracts. Watch for its 2027 list.`,
+      cite: ["stateCap"],
+    });
+  else checklist.push({ text: "Place: not chosen yet. Use the map or the property checker when you have candidates." });
+  if (fund === "existing") checklist.push({ text: "Fund: review any fund with the questions on the Funds page, and check its property addresses with Check properties." });
+  if (fund === "own")
+    checklist.push({ text: "Fund: a fund of your own must be a partnership or corporation for tax purposes, certify on Form 8996, and hold 90% of its assets in zone property.", cite: ["fund"] });
+  if (fund === "unsure") checklist.push({ text: "Fund: compare investing in an existing fund with setting one up for a project; both routes are on the Funds page." });
 
   const questions = [
     ...(p?.ask ?? []),
@@ -205,7 +258,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
             <div className="callout">
               <ul>
                 {moneyNotes[money].map((l) => (
-                  <li key={l}>{l}</li>
+                  <CitedLi key={l.text} line={l} />
                 ))}
               </ul>
               {money === "gain" && (
@@ -217,7 +270,9 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
                   {end && (
                     <>
                       <br />
-                      Generally, 180 days from that sale ends on <strong>{longDate(end)}</strong>. Some gains have different start dates; a tax adviser can confirm yours.
+                      Counting the sale date as day 1, the 180-day window generally ends on <strong>{longDate(end)}</strong>
+                      {end >= NEW_RULES_START ? ", so the gain could be invested from January 1, 2027, under the new rules" : ", before the new rules begin on January 1, 2027"}. Some gains
+                      have different start dates; a tax adviser can confirm yours. <Cite rules={end >= NEW_RULES_START ? ["window180", "gain2026Invested2027"] : ["window180", "investedBy2026"]} />
                     </>
                   )}
                 </p>
@@ -248,7 +303,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
               </p>
               <ul>
                 {placeMeaning(place).map((l) => (
-                  <li key={l}>{l}</li>
+                  <CitedLi key={l.text} line={l} />
                 ))}
               </ul>
               <p>
@@ -316,7 +371,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
           )}
           <ol>
             {checklist.map((l) => (
-              <li key={l}>{l}</li>
+              <CitedLi key={l.text} line={l} />
             ))}
           </ol>
           <h3>Questions to take to a tax adviser or attorney</h3>
@@ -352,5 +407,24 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
         </div>
       )}
     </div>
+  );
+}
+
+interface Line {
+  text: string;
+  cite?: RuleId[];
+}
+
+function CitedLi({ line }: { line: Line }) {
+  return (
+    <li>
+      {line.text}
+      {line.cite && line.cite.length > 0 && (
+        <>
+          {" "}
+          <Cite rules={line.cite} />
+        </>
+      )}
+    </li>
   );
 }

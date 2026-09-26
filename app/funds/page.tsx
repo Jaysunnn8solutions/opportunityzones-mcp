@@ -16,7 +16,7 @@ const QUESTIONS: Array<[string, string[]]> = [
     "Where the money goes",
     [
       "A list of every property and business the fund owns or plans to buy, with street addresses. Check each one on the Check properties page.",
-      "Are those tracts designated zones? A 2018 zone runs through 2028; a tract that is only eligible for 2027 is not a zone until Treasury certifies it.",
+      "Are those tracts designated zones? A tract that is only eligible for 2027 is not a zone until Treasury certifies it, and property bought after December 31, 2026, generally has to be in a 2027 zone (see Rules and sources).",
       "If the assets are not chosen yet (a \"blind pool\"), how and by when will locations be picked?",
       "Does the fund intend to qualify as a rural opportunity fund, which carries a larger step-up under the 2027 rules?",
     ],

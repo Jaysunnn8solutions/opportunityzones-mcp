@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PERSONAS, personaBySlug } from "@/lib/content/personas";
+import { PERSONAS, personaBySlug, type Line } from "@/lib/content/personas";
+import { Cite } from "@/app/ui/Cite";
 
 export function generateStaticParams() {
   return PERSONAS.map((p) => ({ persona: p.slug }));
@@ -27,7 +28,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
         <h2>How the program fits</h2>
         <ul>
           {p.fit.map((l) => (
-            <li key={l}>{l}</li>
+            <CitedItem key={l.text} line={l} />
           ))}
         </ul>
       </section>
@@ -37,7 +38,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
           <h2>{p.example.title}</h2>
           <ol>
             {p.example.steps.map((l) => (
-              <li key={l}>{l}</li>
+              <CitedItem key={l.text} line={l} />
             ))}
           </ol>
           <h3>Things people weigh with an adviser</h3>
@@ -53,7 +54,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
         <h2>Rules that matter most here</h2>
         <ul>
           {p.rules.map((l) => (
-            <li key={l}>{l}</li>
+            <CitedItem key={l.text} line={l} />
           ))}
         </ul>
       </section>
@@ -81,8 +82,22 @@ export default async function PersonaPage({ params }: { params: Promise<{ person
 
       <p className="note">
         General information about the statute, not investment, tax or legal advice. Rules have details and exceptions not shown
-        here; see <Link href="/how-it-works#sources">sources</Link>.
+        here; every rule links to its source, and <Link href="/rules">Rules and sources</Link> quotes each one.
       </p>
     </main>
+  );
+}
+
+function CitedItem({ line }: { line: Line }) {
+  return (
+    <li>
+      {line.text}
+      {line.cite && line.cite.length > 0 && (
+        <>
+          {" "}
+          <Cite rules={line.cite} />
+        </>
+      )}
+    </li>
   );
 }
