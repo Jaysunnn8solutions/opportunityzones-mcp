@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
   push:
     branches: ["claude/**"]
-    paths: ["legal/sources.json", "scripts/fetch-legal-sources.ts"]
+    paths: ["legal/sources.json", "scripts/fetch-legal-sources.ts", ".github/workflows/fetch-legal-sources.yml"]
 
 permissions:
   contents: write
