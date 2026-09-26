@@ -64,12 +64,6 @@
     "url": "https://www.irs.gov/instructions/i8996"
   },
   {
-    "id": "irs-i8997",
-    "title": "Instructions for Form 8997, Initial and Annual Statement of Qualified Opportunity Fund (QOF) Investments",
-    "publisher": "Internal Revenue Service",
-    "url": "https://www.irs.gov/instructions/i8997"
-  },
-  {
     "id": "cdfi-oz",
     "title": "Opportunity Zones",
     "publisher": "CDFI Fund, U.S. Department of the Treasury",
@@ -101,5 +95,30 @@
     "title": "Invest in a Qualified Opportunity Fund",
     "publisher": "Internal Revenue Service",
     "url": "https://www.irs.gov/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund"
+  },
+  {
+    "id": "usc-42",
+    "title": "26 U.S.C. § 42, Low-income housing credit",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section42&num=0&edition=prelim"
+  },
+  {
+    "id": "usc-45D",
+    "title": "26 U.S.C. § 45D, New markets tax credit",
+    "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
+    "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section45D&num=0&edition=prelim"
+  },
+  {
+    "id": "irs-n-2025-50",
+    "title": "Notice 2025-50",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/pub/irs-drop/n-25-50.pdf",
+    "pdf": true
+  },
+  {
+    "id": "irs-certify-qof",
+    "title": "Certify and maintain a Qualified Opportunity Fund",
+    "publisher": "Internal Revenue Service",
+    "url": "https://www.irs.gov/credits-deductions/businesses/certify-and-maintain-a-qualified-opportunity-fund"
   }
 ]
