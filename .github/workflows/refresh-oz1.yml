@@ -42,6 +42,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Downloads (block files, LODES, ACS, HMDA, FHFA) are cached between
+      # runs, so a re-run only fetches what changed.
+      - uses: actions/cache@v4
+        with:
+          path: pipeline/cache
+          key: refresh-oz1-${{ hashFiles('pipeline/acs/vintages.ts', 'pipeline/hmda/lar.ts') }}
+          restore-keys: refresh-oz1-
       - name: Rebuild the OZ 1.0 analysis
         run: npx tsx pipeline/oz1/refresh.ts
       - name: Sizes and new columns
@@ -53,6 +60,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B data/oz1-refresh
+          # The 2010-2020 tract crosswalk too, so 2018-zone results can be drawn on 2020 tracts.
+          mkdir -p data/oz1/crosswalk && cp pipeline/clean/xwalk_t10_t20.csv data/oz1/crosswalk/
           git add data/oz1
           git commit -m "Refresh the OZ 1.0 analysis with the money measures, HMDA 2018/2024 and adjacency
 

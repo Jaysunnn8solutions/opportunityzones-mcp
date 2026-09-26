@@ -32,6 +32,7 @@ import { log } from "./lib/http";
 import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
 import { compare } from "./oz1/compare";
+import { buildGrowth } from "./oz1/growth";
 import { buildOz1Lists } from "./oz1/lists";
 import { buildMapBoundaries } from "./map/boundaries";
 import { buildOz2Designated } from "./oz2/designated";
@@ -66,6 +67,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
+  ["OZ 1.0 lift in money measures", buildGrowth],
 ];
 
 async function main(): Promise<void> {

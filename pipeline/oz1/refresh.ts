@@ -20,6 +20,7 @@ import { buildOz2Eligible } from "../oz2/eligible";
 import { buildAdjacency } from "./adjacency";
 import { assemble } from "./assemble";
 import { compare } from "./compare";
+import { buildGrowth } from "./growth";
 import { buildOz1Lists } from "./lists";
 
 const STAGES: Array<[string, () => Promise<unknown>]> = [
@@ -35,6 +36,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
+  ["OZ 1.0 lift in money measures, overall and by kind of tract", buildGrowth],
 ];
 
 async function main(): Promise<void> {
