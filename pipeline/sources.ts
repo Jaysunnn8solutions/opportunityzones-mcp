@@ -590,6 +590,23 @@ export const SOURCES = {
       "The current signal of whether anyone is building near a tract; the ACS 'built 2020 or later' share is tract-level but lags. BPS is the standard federal source; FRED only republishes it under stricter terms.",
     access: ["file-pipeline"],
   },
+  censusCartographic2024: {
+    id: "censusCartographic2024",
+    name: "2024 Cartographic Boundary Files: census tracts (1:500,000) and counties (1:20,000,000)",
+    publisher: "U.S. Census Bureau, Geography Division",
+    homepage: "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.2024.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, 2024 Cartographic Boundary Files",
+    geography: "2020 census tracts (Connecticut by planning region) and counties, generalised for mapping",
+    vintage: "2024 release",
+    notes:
+      "Two national shapefiles (cb_2024_us_tract_500k, cb_2024_us_county_20m). pipeline/map/boundaries.ts writes one GeoJSON file per state with every tract, plus a counties file, to public/boundaries, keeping only GEOID (and county NAME), with coordinates rounded to 4 decimals (~11 m). The tract file also places point sources in tracts (pipeline/lib/tractIndex.ts), which can misplace a point within ~100 m of a tract edge.",
+    purposes: ["statutory"],
+    rationale:
+      "Draws every tract in a state whose eligibility and designation the product reports, served by the app itself so the map neither waits on nor depends on a Census web service. The Bureau's own map-scale boundaries, with the same GEOIDs as the data.",
+    access: ["file-pipeline"],
+  },
   censusTigerweb: {
     id: "censusTigerweb",
     name: "TIGERweb map services (tract and county boundaries)",
@@ -601,7 +618,7 @@ export const SOURCES = {
     geography: "2020 census tract and county boundaries (Current vintage; Connecticut by planning region)",
     vintage: "Current TIGER at query time",
     notes:
-      "Tract and county outlines are fetched per map tile through /api/boundaries and cached at the CDN for 30 days (public data, identical for every viewer). Chosen by the owner over hosting a tile file. The basemap under them is openFreeMap or usgsNationalMap.",
+      "Fallback only: until pipeline/map/boundaries.ts has written public/boundaries (censusCartographic2024), tract and county outlines are fetched per map tile through /api/boundaries and cached at the CDN for 30 days (public data, identical for every viewer). The basemap under them is openFreeMap or usgsNationalMap.",
     purposes: ["statutory"],
     rationale:
       "Draws the tracts whose eligibility and designation the product reports, with the Census Bureau's own boundaries and cartography, at no cost and with no file to host.",

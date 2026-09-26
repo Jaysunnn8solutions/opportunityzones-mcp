@@ -33,6 +33,7 @@ import { buildAdjacency } from "./oz1/adjacency";
 import { assemble } from "./oz1/assemble";
 import { compare } from "./oz1/compare";
 import { buildOz1Lists } from "./oz1/lists";
+import { buildMapBoundaries } from "./map/boundaries";
 import { buildOz2Designated } from "./oz2/designated";
 import { buildOz2Eligible } from "./oz2/eligible";
 import { buildOz2Rural } from "./oz2/rural";
@@ -60,6 +61,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["Distance to the nearest Interstate", buildInterstateDistance],
   ["Building permits by county", buildBps],
   ["Publish per-tract data to data/", publish],
+  ["Map boundaries: per-state tract files and counties", buildMapBoundaries],
   ["2010 tract adjacency", buildAdjacency],
   ["OZ 1.0 analysis table", assemble],
   ["OZ 1.0 comparison and report", compare],
