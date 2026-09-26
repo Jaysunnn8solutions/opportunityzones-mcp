@@ -10,12 +10,17 @@
  * tool; it never recommends a place, fund or transaction and never computes a
  * tax outcome (AGENTS.md).
  *
- * Privacy: answers live only in this component's state. An address goes once
- * to /api/geocode in a POST body; nothing is put in the URL or stored.
+ * Answers survive reading another page: they are kept in this browser tab's
+ * sessionStorage (lib/guide/saved.ts), and each step has its own history entry
+ * (#step=...), so the browser's Back button moves back a step. Links out open
+ * in a new tab, and "quotes" opens a pop-up, so the check stays where it was.
+ *
+ * Privacy: answers never leave the browser and are gone when the tab closes or
+ * "Start over" is pressed. An address goes once to /api/geocode in a POST
+ * body; no answer is put in the URL.
  */
 
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { lookupPlace, reportHref } from "@/lib/client/place";
 import { legalSource, type RuleId } from "@/lib/content/rules";
 import {
@@ -31,6 +36,7 @@ import {
   type Step,
   type StepId,
 } from "@/lib/guide/steps";
+import { parseSaved, STORAGE_NAME, stepFromHash } from "@/lib/guide/saved";
 import { longDate, NEW_RULES_START, windowEnd } from "@/lib/oz/timing";
 import { Cite } from "./Cite";
 
@@ -91,15 +97,37 @@ async function checkPlace(input: string): Promise<Place | "no-match" | "error"> 
   };
 }
 
-export default function GuidedCheck({ personas, states }: { personas: GuidePersona[]; states: GuideState[] }) {
-  const [answers, setAnswers] = useState<Answers>(EMPTY_ANSWERS);
-  const [current, setCurrent] = useState<StepId>("who");
-  const [visited, setVisited] = useState<StepId[]>(["who"]);
-  const [place, setPlace] = useState<Place | null>(null);
-  const [placeInput, setPlaceInput] = useState("");
+const noop = () => () => {};
+
+function loadSaved() {
+  try {
+    return parseSaved<Place>(window.sessionStorage.getItem(STORAGE_NAME));
+  } catch {
+    return null;
+  }
+}
+
+/** Rendered only in the browser, where the saved answers and the step in the URL can be read. */
+export default function GuidedCheck(props: { personas: GuidePersona[]; states: GuideState[] }) {
+  const inBrowser = useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
+  if (!inBrowser) return <div className="wizard-loading" aria-busy="true">Loading the guided check…</div>;
+  return <Wizard {...props} />;
+}
+
+function Wizard({ personas, states }: { personas: GuidePersona[]; states: GuideState[] }) {
+  const [saved] = useState(loadSaved);
+  const [answers, setAnswers] = useState<Answers>(saved?.answers ?? EMPTY_ANSWERS);
+  const [current, setCurrent] = useState<StepId>(() => stepFromHash(window.location.hash) ?? saved?.current ?? "who");
+  const [visited, setVisited] = useState<StepId[]>(saved?.visited ?? ["who"]);
+  const [place, setPlace] = useState<Place | null>(saved?.place ?? null);
+  const [placeInput, setPlaceInput] = useState(saved?.placeInput ?? "");
   const [placeMsg, setPlaceMsg] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
-  const [stateFips, setStateFips] = useState("");
+  const [stateFips, setStateFips] = useState(saved?.stateFips ?? "");
   const heading = useRef<HTMLHeadingElement>(null);
   const moved = useRef(false);
 
@@ -118,10 +146,36 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
     if (top < 0) heading.current?.closest(".wizard")?.scrollIntoView({ block: "start" });
   }, [step.id]);
 
+  // Keep the answers in this tab, so reading another page and coming back loses nothing.
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(STORAGE_NAME, JSON.stringify({ answers, current, visited, place, placeInput, stateFips }));
+    } catch {
+      // Storage blocked (private mode, settings): the check still works, it just is not kept.
+    }
+  }, [answers, current, visited, place, placeInput, stateFips]);
+
+  // The browser's Back and Forward buttons move between steps.
+  useEffect(() => {
+    if (stepFromHash(window.location.hash) == null) window.history.replaceState(window.history.state, "", `#step=${current}`);
+    const onPop = () => {
+      const id = stepFromHash(window.location.hash);
+      if (id) {
+        moved.current = true;
+        setCurrent(id);
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+    // Registered once; `current` is only read for the first history entry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function go(id: StepId) {
     moved.current = true;
     setCurrent(id);
     setVisited((v) => (v.includes(id) ? v : [...v, id]));
+    if (stepFromHash(window.location.hash) !== id) window.history.pushState(window.history.state, "", `#step=${id}`);
   }
   const next = () => index < steps.length - 1 && go(steps[index + 1].id);
   const back = () => index > 0 && go(steps[index - 1].id);
@@ -146,6 +200,11 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
   }
 
   function restart() {
+    try {
+      window.sessionStorage.removeItem(STORAGE_NAME);
+    } catch {
+      // nothing saved
+    }
     setAnswers(EMPTY_ANSWERS);
     setPlace(null);
     setPlaceInput("");
@@ -334,7 +393,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
             { text: "Property held for sale to customers is not a capital asset.", cite: ["eligibleGains"] },
             { text: "The program can still help from the other side: a business or project in a zone can take investment from a fund.", cite: ["zoneBusiness", "equityNotLoan"] },
           ],
-          action: <Link href="/for/business">How it works for a business looking for a location</Link>,
+          action: <NewTab href="/for/business">How it works for a business looking for a location</NewTab>,
         };
 
       case "investors":
@@ -345,7 +404,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
             { text: "Property bought after December 31, 2026, generally has to be in a 2027 zone.", cite: ["boughtAfterStart"] },
             { text: "A tract that is only eligible is not a zone until Treasury certifies it.", cite: ["designatedNotEligible"] },
           ],
-          action: <Link href="/for/sponsor">How it works for a fund sponsor</Link>,
+          action: <NewTab href="/for/sponsor">How it works for a fund sponsor</NewTab>,
         };
 
       case "unsure":
@@ -391,10 +450,10 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
           facts,
           action: (
             <p className="wizard-links">
-              <Link className="button secondary" href={reportHref(place.geoid, place.point)}>
+              <NewTab className="button secondary" href={reportHref(place.geoid, place.point)}>
                 Open the place report
-              </Link>
-              <Link href={`/map#t=${place.geoid}`}>See it on the map</Link>
+              </NewTab>
+              <NewTab href={`/map#t=${place.geoid}`}>See it on the map</NewTab>
             </p>
           ),
         };
@@ -428,7 +487,7 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
               </div>
               {st?.view && (
                 <p className="wizard-links">
-                  <Link href={`/map#v=${st.view[0].toFixed(4)},${st.view[1].toFixed(4)},${st.view[2].toFixed(2)}`}>See {st.name}&apos;s tracts on the map</Link>
+                  <NewTab href={`/map#v=${st.view[0].toFixed(4)},${st.view[1].toFixed(4)},${st.view[2].toFixed(2)}`}>See {st.name}&apos;s tracts on the map</NewTab>
                 </p>
               )}
             </>
@@ -511,15 +570,15 @@ export default function GuidedCheck({ personas, states }: { personas: GuidePerso
           action: (
             <p className="wizard-links">
               {own ? (
-                <a className="button secondary" href={legalSource("irs-certify-qof").url} rel="noopener">
+                <NewTab className="button secondary" href={legalSource("irs-certify-qof").url}>
                   IRS: certify and maintain a fund
-                </a>
+                </NewTab>
               ) : (
-                <Link className="button secondary" href="/funds">
+                <NewTab className="button secondary" href="/funds">
                   Where to find funds, and what to ask
-                </Link>
+                </NewTab>
               )}
-              <Link href="/check">Check a list of properties</Link>
+              <NewTab href="/check">Check a list of properties</NewTab>
             </p>
           ),
           nextLabel: "See my checklist",
@@ -682,5 +741,18 @@ function CitedLi({ line }: { line: Line }) {
         </>
       )}
     </li>
+  );
+}
+
+/** A link that opens in a new tab, so the guided check stays where it was. */
+function NewTab({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) {
+  return (
+    <a href={href} className={className} target="_blank" rel="noopener noreferrer">
+      {children}
+      <span className="new-tab-icon" aria-label=" (opens in a new tab)" role="img">
+        {" "}
+        ↗
+      </span>
+    </a>
   );
 }
