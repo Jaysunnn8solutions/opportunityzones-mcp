@@ -594,10 +594,63 @@ const RULE_DEFS = {
   otherProgramsNmtc: {
     id: "otherProgramsNmtc",
     title: "New Markets Tax Credit low-income communities",
-    text: "The New Markets Tax Credit is a separate program with its own low-income community test: a poverty rate of at least 20%, or median family income at most 80% of the benchmark.",
+    text: "The New Markets Tax Credit is a separate program with its own low-income community test for a census tract: a poverty rate of at least 20%, or a median family income of at most 80% of the statewide median (in a metro area, 80% of the greater of the statewide and metro-area medians). The statute adds further cases not shown here.",
     cites: [
+      { source: "usc-45D", pin: "§ 45D(e)(1)", quote: 'The term "low-income community" means any population census tract if-' },
       { source: "usc-45D", pin: "§ 45D(e)(1)(A)", quote: "the poverty rate for such tract is at least 20 percent" },
       { source: "usc-45D", pin: "§ 45D(e)(1)(B)(i)", quote: "the median family income for such tract does not exceed 80 percent of statewide median family income" },
+      {
+        source: "usc-45D",
+        pin: "§ 45D(e)(1)(B)(ii)",
+        quote: "the median family income for such tract does not exceed 80 percent of the greater of statewide median family income or the metropolitan area median family income.",
+      },
+    ],
+  },
+  hudQct: {
+    id: "hudQct",
+    title: "HUD Qualified Census Tract (QCT)",
+    text: "A census tract designated by HUD where at least half of households have incomes below 60% of the area median gross income, or where the poverty rate is at least 25%. It is part of the low-income housing credit (LIHTC), not the Opportunity Zone program: a new building there can have its eligible basis counted at 130%, or an existing building its rehabilitation expenditures.",
+    cites: [
+      {
+        source: "usc-42",
+        pin: "§ 42(d)(5)(B)(ii)(I)",
+        quote:
+          'The term "qualified census tract" means any census tract which is designated by the Secretary of Housing and Urban Development and, for the most recent year for which census data are available on household income in such tract, either in which 50 percent or more of the households have an income which is less than 60 percent of the area median gross income for such year or which has a poverty rate of at least 25 percent.',
+      },
+      { source: "usc-42", pin: "§ 42(d)(5)(B)(i)(I)", quote: "in the case of a new building, the eligible basis of such building shall be 130 percent of such basis" },
+      { source: "usc-42", pin: "§ 42(d)(5)(B)(i)(II)", quote: "in the case of an existing building, the rehabilitation expenditures taken into account under subsection (e) shall be 130 percent of such expenditures" },
+    ],
+  },
+  hudDda: {
+    id: "hudDda",
+    title: "HUD Difficult Development Area (DDA)",
+    text: "An area designated by HUD as having high construction, land and utility costs relative to area median gross income. Like a QCT, it is part of the low-income housing credit (LIHTC), not the Opportunity Zone program, and brings the same 130% basis boost.",
+    cites: [
+      {
+        source: "usc-42",
+        pin: "§ 42(d)(5)(B)(iii)(I)",
+        quote:
+          'The term "difficult development areas" means any area designated by the Secretary of Housing and Urban Development as an area which has high construction, land, and utility costs relative to area median gross income.',
+      },
+      {
+        source: "usc-42",
+        pin: "§ 42(d)(5)(B)(i)",
+        quote: "In the case of any building located in a qualified census tract or difficult development area which is designated for purposes of this subparagraph-",
+      },
+    ],
+  },
+  zones2018: {
+    id: "zones2018",
+    title: "2018 Opportunity Zones",
+    text: "The zones certified and designated by Treasury in 2018 (plus the Puerto Rico tracts deemed designated), listed in IRS Notices 2018-48 and 2019-42. They remain designated through December 31, 2028, but property bought in them after December 31, 2026, generally does not qualify.",
+    cites: [
+      { source: "irs-n-2026-40", pin: "Notice 2026-40, § 2.04(2)(b)", quote: "provides a list of LICs certified and designated as QOZs by the Secretary in 2018" },
+      { source: "irs-n-2026-40", pin: "Notice 2026-40, § 2.04(2)(c)", quote: "(ii) December 31, 2028, for all other QOZs." },
+      {
+        source: "irs-n-2026-40",
+        pin: "Notice 2026-40, § 5.01(1)",
+        quote: "A previously designated QOZ does not have an “applicable start date” under § 1400Z-1(e)(2) because its designation took place before the date of enactment of OBBBA.",
+      },
     ],
   },
 } satisfies Record<string, Rule>;
@@ -620,9 +673,9 @@ export const RULE_GROUPS: Array<{ id: string; title: string; rules: RuleId[] }> 
   {
     id: "zones",
     title: "Zones and designation",
-    rules: ["designatedNotEligible", "eligibility", "noContiguous", "stateCap", "nominationTimeline", "zonePeriod", "zones2018End", "ruralFund"],
+    rules: ["designatedNotEligible", "eligibility", "noContiguous", "stateCap", "nominationTimeline", "zonePeriod", "zones2018", "zones2018End", "ruralFund"],
   },
-  { id: "other", title: "Other place-based programs", rules: ["otherProgramsHousing", "otherProgramsNmtc"] },
+  { id: "other", title: "Other place-based programs", rules: ["hudQct", "hudDda", "otherProgramsHousing", "otherProgramsNmtc"] },
 ];
 
 export function ruleById(id: RuleId): Rule {

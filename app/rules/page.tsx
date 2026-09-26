@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SOURCES from "@/legal/sources.json";
 import { retrievedOn } from "@/lib/content/legalRetrieved";
-import { citeLabel, legalSource, RULE_GROUPS, RULES, type LegalSource } from "@/lib/content/rules";
+import { RULE_GROUPS, type LegalSource } from "@/lib/content/rules";
+import { RuleBlock } from "../ui/RuleBlock";
 
 export const metadata: Metadata = { title: "Rules and sources" };
 
@@ -33,26 +34,9 @@ export default function RulesPage() {
       {RULE_GROUPS.map((g) => (
         <section key={g.id} id={g.id}>
           <h2>{g.title}</h2>
-          {g.rules.map((id) => {
-            const r = RULES[id];
-            return (
-              <article key={id} id={id} className="rule">
-                <h3>{r.title}</h3>
-                <p>{r.text}</p>
-                <ul className="quotes">
-                  {r.cites.map((c) => (
-                    <li key={`${c.source}|${c.pin}|${c.quote}`}>
-                      <a href={legalSource(c.source).url} rel="noopener">
-                        {citeLabel(c)}
-                      </a>
-                      <blockquote>{c.quote}</blockquote>
-                      {c.note && <span className="legend-note">{c.note}</span>}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            );
-          })}
+          {g.rules.map((id) => (
+            <RuleBlock key={id} id={id} />
+          ))}
         </section>
       ))}
 
