@@ -528,3 +528,28 @@ button.link {
   color: var(--muted);
   margin: 18px 0 8px;
 }
+
+/* On-map legend */
+.map-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 240px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.map-legend .swatch {
+  margin-right: 6px;
+}
+
+.legend-note {
+  color: var(--muted);
+}
