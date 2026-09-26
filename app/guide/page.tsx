@@ -12,8 +12,8 @@ export default function GuidePage() {
     <main className="page">
       <h1>Guided check</h1>
       <p className="lead">
-        A few questions, one at a time. At the end you get a checklist: how the rules apply to your situation in general terms,
-        what a place looks like, and the questions to take to a tax adviser. Nothing you enter is stored; it stays in this page.
+        Small steps, one thing at a time, ending in a checklist to take to a tax adviser. Use the outline to jump around.
+        Nothing you enter is stored.
       </p>
       <GuidedCheck personas={personas} states={states} />
       <p className="note">
