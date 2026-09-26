@@ -18,11 +18,14 @@ import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJS
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
+import { countyHasZones, type CountyCounts } from "@/lib/data/countyZones";
 import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
+/** Counties with zones, zoomed out. */
+const COUNTY_ZONE_COLOR = "#2563eb";
 const tractMinZoomFor = (index: BoundaryIndex | null | undefined) => (index ? STATE_TRACT_MIN_ZOOM : TILE_TRACT_MIN_ZOOM);
 
 const FLAGS = {
@@ -52,7 +55,8 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
         source: "counties",
         maxzoom: tractMinZoom,
         paint: {
-          "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
+          // One colour: blue where the county has zones (designated, or eligible while its state's list is unpublished).
+          "fill-color": ["case", ["==", ["get", "zones"], 1], COUNTY_ZONE_COLOR, "rgba(0, 0, 0, 0)"],
           "fill-opacity": fillOpacity + 0.1,
         },
       },
@@ -111,7 +115,7 @@ export default function MapApp() {
   const countyFeatures = useRef(new Map<string, Feature>());
   const loadedTiles = useRef(new Set<string>());
   const stateStatus = useRef(new Map<string, Record<string, number>>());
-  const countySummary = useRef<Record<string, [number, number]> | null>(null);
+  const countySummary = useRef<Record<string, CountyCounts> | null>(null);
   const marker = useRef<Marker | null>(null);
 
   const [flag, setFlag] = useState<FlagName>("eligible");
@@ -145,7 +149,7 @@ export default function MapApp() {
     });
     const counties = [...countyFeatures.current.values()].map((f) => {
       const s = countySummary.current?.[String(f.properties.GEOID)];
-      return { ...f, properties: { ...f.properties, share: s ? s[1] / s[0] : -1 } };
+      return { ...f, properties: { ...f.properties, zones: s ? (countyHasZones(s) ? 1 : 0) : -1 } };
     });
     (map.getSource("tracts") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: tracts } as never);
     (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
@@ -167,7 +171,7 @@ export default function MapApp() {
   const loadCountySummary = useCallback(async () => {
     if (countySummary.current) return;
     const r = await fetch("/api/counties");
-    if (r.ok) countySummary.current = (await r.json()) as Record<string, [number, number]>;
+    if (r.ok) countySummary.current = (await r.json()) as Record<string, CountyCounts>;
   }, []);
 
   /**
@@ -299,7 +303,7 @@ export default function MapApp() {
       container: container.current,
       center: initial.view ? [initial.view[0], initial.view[1]] : [-96, 38.5],
       zoom: initial.view?.[2] ?? 3.6,
-      attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau TIGERweb" },
+      attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau" },
       // Replaced at once by applyBasemap, which merges in the overlay layers.
       style: { version: 8, sources: {}, layers: [] },
     });
@@ -427,7 +431,11 @@ export default function MapApp() {
             </button>
           ))}
         </div>
-        <p className="hint">Zoomed out, counties show the share of their tracts eligible in 2027. Zoom in to see tracts; click one.</p>
+        <p className="hint">
+          <span className="swatch" style={{ background: COUNTY_ZONE_COLOR }} /> Zoomed out, a county is blue if it has at least one
+          2027-eligible tract (once its state&apos;s designations are published: at least one designated tract). Zoom in to see
+          tracts; click one.
+        </p>
 
         {selected && !profile && <p className="hint">Loading tract {selected}...</p>}
         {profile && m && (

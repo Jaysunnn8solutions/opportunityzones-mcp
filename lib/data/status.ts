@@ -4,6 +4,7 @@
  * published payload; public data about places.
  */
 
+import type { CountyCounts } from "./countyZones";
 import { loadTractData } from "./tracts";
 
 export const FLAGS = {
@@ -46,16 +47,23 @@ export function stateStatus(stateFips: string): Record<string, number> {
   return out;
 }
 
-/** County FIPS -> [tracts, eligible tracts], nationally. */
-export function countySummary(): Record<string, [number, number]> {
+/** County FIPS -> counts per lib/data/countyZones.ts, nationally. */
+export function countySummary(): Record<string, CountyCounts> {
   const { payload } = loadTractData();
   const eligible = payload.columns.get("eligible_2027")!;
-  const out: Record<string, [number, number]> = {};
+  const designated = payload.columns.get("designated_2027");
+  const out: Record<string, CountyCounts> = {};
   for (let i = 0; i < payload.count; i++) {
     const c = payload.geoids[i].slice(0, 5);
-    const row = (out[c] ??= [0, 0]);
+    const row = (out[c] ??= [0, 0, 0, 0]);
     row[0]++;
-    if (eligible.get(i) === 1) row[1]++;
+    const d = designated?.get(i) ?? null;
+    if (eligible.get(i) === 1) {
+      row[1]++;
+      if (d == null) row[3]++;
+    }
+    if (d === 1) row[2]++;
   }
   return out;
 }
+
