@@ -1,0 +1,125 @@
+Español	https://www.irs.gov/es/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+中文 (简体)	https://www.irs.gov/zh-hans/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+中文 (繁體)	https://www.irs.gov/zh-hant/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+한국어	https://www.irs.gov/ko/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+Русский	https://www.irs.gov/ru/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+Tiếng Việt	https://www.irs.gov/vi/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+Kreyòl ayisyen	https://www.irs.gov/ht/credits-deductions/businesses/invest-in-a-qualified-opportunity-fund
+Help	https://www.irs.gov/help/let-us-help-you
+News	https://www.irs.gov/newsroom
+Tax Pros	https://www.irs.gov/tax-professionals
+Individual	https://sa.www4.irs.gov/ola
+Business	https://sa.www4.irs.gov/bola
+Tax Pro	https://sa.www4.irs.gov/taxpro
+Create account	https://www.irs.gov/your-account
+File	https://www.irs.gov/filing
+Overview	https://www.irs.gov/filing
+Individuals	https://www.irs.gov/individual-tax-filing
+Business and self-employed	https://www.irs.gov/businesses
+Charities and nonprofits	https://www.irs.gov/charities-and-nonprofits
+International filers	https://www.irs.gov/individuals/international-taxpayers
+Retirement	https://www.irs.gov/retirement-plans
+Governments and tax-exempt bonds	https://www.irs.gov/government-entities
+Indian Tribal Governments	https://www.irs.gov/government-entities/indian-tribal-governments
+How to file	https://www.irs.gov/filing/individuals/how-to-file
+When to file	https://www.irs.gov/filing/individuals/when-to-file
+Where to file	https://www.irs.gov/filing/where-to-file-tax-returns-addresses-listed-by-return-type
+Update your information	https://www.irs.gov/filing/individuals/update-my-information
+Tax record (transcript)	https://www.irs.gov/individuals/get-transcript
+Apply for an Employer ID Number (EIN)	https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number
+Amend return	https://www.irs.gov/filing/file-an-amended-return
+Identity Protection PIN (IP PIN)	https://www.irs.gov/identity-theft-fraud-scams/get-an-identity-protection-pin
+Pay	https://www.irs.gov/payments
+Overview	https://www.irs.gov/payments
+Bank Account (Direct Pay)	https://www.irs.gov/payments/direct-pay-with-bank-account
+Payment Plan (Installment Agreement)	https://www.irs.gov/payments/online-payment-agreement-application
+Electronic Federal Tax Payment System (EFTPS)	https://www.irs.gov/payments/eftps-the-electronic-federal-tax-payment-system
+Your Online Account	https://www.irs.gov/your-account
+Tax Withholding Estimator	https://www.irs.gov/individuals/tax-withholding-estimator
+Estimated Taxes	https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes
+Penalties	https://www.irs.gov/payments/penalties
+Refunds	https://www.irs.gov/refunds
+Overview	https://www.irs.gov/refunds
+About refunds	https://www.irs.gov/refunds/about-refunds
+Direct deposit	https://www.irs.gov/refunds/get-your-refund-faster-tell-irs-to-direct-deposit-your-refund-to-one-two-or-three-accounts
+Reduced refunds	https://www.irs.gov/refunds/reduced-refund
+Where’s my amended return?	https://www.irs.gov/filing/wheres-my-amended-return
+Credits & Deductions	https://www.irs.gov/credits-and-deductions
+Overview	https://www.irs.gov/credits-and-deductions
+Individuals	https://www.irs.gov/credits-and-deductions-for-individuals
+Businesses & Self-Employed	https://www.irs.gov/credits-deductions/businesses
+Earned Income Credit (EITC)	https://www.irs.gov/credits-deductions/individuals/earned-income-tax-credit-eitc
+Child Tax Credit	https://www.irs.gov/credits-deductions/individuals/child-tax-credit
+Clean Energy and Vehicle Credits	https://www.irs.gov/credits-deductions/clean-vehicle-and-energy-credits
+Standard Deduction	https://www.irs.gov/help/ita/how-much-is-my-standard-deduction
+Retirement Plans	https://www.irs.gov/retirement-plans
+Forms	https://www.irs.gov/forms-instructions
+Overview	https://www.irs.gov/forms-instructions
+Form 1040	https://www.irs.gov/forms-pubs/about-form-1040
+Form 1040 Instructions	https://www.irs.gov/instructions/i1040gi
+Form W-9	https://www.irs.gov/forms-pubs/about-form-w-9
+Form 4506-T	https://www.irs.gov/forms-pubs/about-form-4506-t
+Form W-4	https://www.irs.gov/forms-pubs/about-form-w-4
+Form 941	https://www.irs.gov/forms-pubs/about-form-941
+Form W-2	https://www.irs.gov/forms-pubs/about-form-w-2
+Form 9465	https://www.irs.gov/forms-pubs/about-form-9465
+Form 1040-X	https://www.irs.gov/forms-pubs/about-form-1040x
+Form 2848	https://www.irs.gov/forms-pubs/about-form-2848
+Form W-7	https://www.irs.gov/forms-pubs/about-form-w-7
+Circular 230	https://www.irs.gov/tax-professionals/office-of-professional-responsibility-and-circular-230
+Report Fraud	https://www.irs.gov/help/report-fraud
+Overview	https://www.irs.gov/help/report-fraud
+Tax fraud and scams	https://www.irs.gov/help/report-fraud/report-tax-fraud-a-scam-or-law-violation
+Identity theft	https://www.irs.gov/identity-theft-central
+Fake IRS email or message	https://www.irs.gov/help/report-fraud/report-fake-irs-treasury-or-tax-related-emails-and-messages
+Tax return preparer	https://www.irs.gov/help/report-fraud/tax-return-preparer-misconduct
+Forms & Instructions	https://www.irs.gov/forms-instructions
+Charities & Nonprofits	https://www.irs.gov/charities-and-nonprofits
+Home	https://www.irs.gov/
+Business credits and deductions	https://www.irs.gov/credits-deductions/businesses
+Family, dependents and students	https://www.irs.gov/credits-deductions/family-dependents-and-students-credits
+Clean energy and vehicle credits and deductions	https://www.irs.gov/credits-deductions/clean-vehicle-and-energy-credits
+Individuals credits and deductions	https://www.irs.gov/credits-and-deductions-for-individuals
+Employee Retention Credit	https://www.irs.gov/coronavirus/employee-retention-credit
+Forms for business credits	https://www.irs.gov/businesses/small-businesses-self-employed/business-tax-credits
+Form 4797, Sales of Business Property	https://www.irs.gov/forms-pubs/about-form-4797
+Form 8997, Initial and Annual Statement of Qualified Opportunity Fund (QOF) Investments	https://www.irs.gov/forms-pubs/about-form-8997
+Form 8949, Sales and Other Dispositions of Capital Assets	https://www.irs.gov/forms-pubs/about-form-8949
+Form 8949	https://www.irs.gov/forms-pubs/about-form-8949
+Investing in Qualified Opportunity Funds - Final Regulations (TD 9889) PDF	https://www.irs.gov/pub/irs-drop/td-9889.pdf
+Sales and Others Dispositions of Assets, Publication 544	https://www.irs.gov/forms-pubs/about-publication-544
+Opportunity zones frequently asked questions: Investors	https://www.irs.gov/credits-deductions/opportunity-zones-frequently-asked-questions
+Sales and Other Dispositions of Assets, Publication 544	https://www.irs.gov/forms-pubs/about-publication-544
+About IRS	https://www.irs.gov/about-irs
+Careers	https://jobs.irs.gov/
+Financial and Budget Reports	https://www.irs.gov/about-irs/financial-and-budget-reports
+Tax Statistics	https://www.irs.gov/statistics
+Find a Local Office	https://www.irs.gov/help/contact-your-local-irs-office
+Taxpayer Bill of Rights	https://www.irs.gov/taxpayer-bill-of-rights
+Taxpayer Advocate Service	https://www.irs.gov/taxpayer-advocate
+Independent Office of Appeals	https://www.irs.gov/independent-office-of-appeals
+Civil Rights	https://www.irs.gov/about-irs/protecting-taxpayer-civil-rights
+FOIA	https://www.irs.gov/privacy-disclosure/irs-freedom-of-information
+No FEAR Act Data	https://home.treasury.gov/footer/no-fear-act
+Reliance on Guidance	https://www.irs.gov/newsroom/general-overview-of-taxpayer-reliance-on-guidance-published-in-the-internal-revenue-bulletin-and-faqs
+IRS Notices and Letters	https://www.irs.gov/individuals/understanding-your-irs-notice-or-letter
+Identity Theft	https://www.irs.gov/identity-theft-central
+Tax scams	https://www.irs.gov/help/tax-scams
+Tax Fraud	https://www.irs.gov/compliance/criminal-investigation/tax-fraud-alerts
+Criminal Investigation	https://www.irs.gov/compliance/criminal-investigation
+Whistleblower Office	https://www.irs.gov/compliance/whistleblower-office
+Español	https://www.irs.gov/es
+中文 (简体)	https://www.irs.gov/zh-hans
+中文 (繁體)	https://www.irs.gov/zh-hant
+한국어	https://www.irs.gov/ko
+Pусский	https://www.irs.gov/ru
+Tiếng Việt	https://www.irs.gov/vi
+Kreyòl ayisyen	https://www.irs.gov/ht
+English	https://www.irs.gov/
+U.S. Treasury	https://www.treasury.gov/
+Treasury Inspector General for Tax Administration	https://www.treasury.gov/tigta/
+USA.gov	https://www.usa.gov/
+USAspending.gov	https://www.usaspending.gov/
+Vote.gov	https://vote.gov/
+Privacy Policy	https://www.irs.gov/privacy-disclosure/irs-privacy-policy
+Accessibility	https://www.irs.gov/accessibility

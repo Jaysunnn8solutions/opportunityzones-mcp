@@ -1,4 +1,4 @@
-Source: 26 CFR § 1.1400Z2(f)-1, Administrative rules for penalties and anti-abuse
+Source: 26 CFR § 1.1400Z2(f)-1, Administrative rules: penalties, anti-abuse, etc.
 Publisher: Electronic Code of Federal Regulations (eCFR)
 URL: https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(f)-1
 Read from: https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(f)-1

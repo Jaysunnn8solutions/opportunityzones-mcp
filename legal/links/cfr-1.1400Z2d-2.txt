@@ -1,0 +1,4 @@
+42 U.S.C. 9601	https://www.govinfo.gov/link/uscode/42/9601
+§ 1.1400Z2(d)-1	https://www.ecfr.gov/current/title-26/section-1.1400Z2(d)-1
+85 FR 1986	https://www.federalregister.gov/citation/85-FR-1986
+85 FR 19085	https://www.federalregister.gov/citation/85-FR-19085
