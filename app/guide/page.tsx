@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PERSONAS } from "@/lib/content/personas";
+import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
 import { stateSummaries } from "@/lib/data/stateViews";
 import GuidedCheck, { type GuideState } from "../ui/GuidedCheck";
 
@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Guided check: Opportunity Zones" };
 
 export default function GuidePage() {
   const states: GuideState[] = stateSummaries();
-  const personas = PERSONAS.map(({ slug, who, title, ask }) => ({ slug, who, title, ask }));
+  const personas = PERSONAS.map(({ slug, group, who, title, summary, ask }) => ({ slug, group, who, title, summary, ask }));
   return (
     <main className="page">
       <h1>Guided check</h1>
@@ -16,7 +16,7 @@ export default function GuidePage() {
         Your answers stay in this browser tab, so you can open other pages and come back; they are cleared when you close
         the tab or start over, and never sent to a server.
       </p>
-      <GuidedCheck personas={personas} states={states} />
+      <GuidedCheck personas={personas} groups={PERSONA_GROUPS} states={states} />
       <p className="note">
         General information about the statute and public data about places. Not investment, tax or legal advice.
       </p>

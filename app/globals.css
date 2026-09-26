@@ -1807,3 +1807,44 @@ main [id] {
     min-width: 64px;
   }
 }
+
+/* Persona dropdown */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.persona-select select {
+  width: 100%;
+  max-width: 560px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.persona-panel {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.persona-panel h3 {
+  margin: 2px 0 6px;
+}
+
+.persona-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
