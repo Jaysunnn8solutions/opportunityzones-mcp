@@ -1,24 +1,21 @@
 "use client";
 
 /**
- * The screening map. Census TIGERweb draws the basemap (water, roads, labels)
- * and supplies tract and county outlines, fetched per tile through our cached
- * /api/boundaries route. Colours come from the published data.
+ * The screening map. The basemap is OpenFreeMap (streets, water, labels) or
+ * USGS aerial imagery (lib/geo/basemaps.ts); Census TIGERweb supplies tract and
+ * county outlines, fetched per tile through our cached /api/boundaries route.
+ * Colours come from the published data.
  *
  * Privacy: a searched address lives only in this component's state and is sent
  * once, in a POST body, to /api/geocode. It is never put in the URL; the hash
  * holds only the selected tract and the map view.
  */
 
-import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource, type MapMouseEvent } from "maplibre-gl";
+import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource, type GeoJSONSourceSpecification, type MapMouseEvent } from "maplibre-gl";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
-
-const TW = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb";
-const exportTiles = (service: string, layers?: string) =>
-  `${TW}/${service}/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=256,256&format=png32&transparent=true` +
-  `${layers ? `&layers=${encodeURIComponent(layers)}` : ""}&f=image`;
 
 const TRACT_MIN_ZOOM = 8;
 
@@ -31,6 +28,32 @@ const FLAGS = {
   nmtc: { bit: 32, label: "NMTC", color: "#33a02c" },
 } as const;
 type FlagName = keyof typeof FLAGS;
+
+const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"] as never;
+
+/** The map's own sources and layers, merged into whichever basemap is shown. */
+function overlay(flag: FlagName, fillOpacity: number, selected: string | null): Overlay {
+  const empty = (): GeoJSONSourceSpecification => ({ type: "geojson", data: { type: "FeatureCollection", features: [] } });
+  return {
+    sources: { counties: empty(), tracts: empty() },
+    layers: [
+      {
+        id: "county-fill",
+        type: "fill",
+        source: "counties",
+        maxzoom: TRACT_MIN_ZOOM,
+        paint: {
+          "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
+          "fill-opacity": fillOpacity + 0.1,
+        },
+      },
+      { id: "county-line", type: "line", source: "counties", maxzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#6b7682", "line-width": 0.4 } },
+      { id: "tract-fill", type: "fill", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity } },
+      { id: "tract-line", type: "line", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
+      { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], selected ?? ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
+    ],
+  };
+}
 
 interface Feature {
   type: "Feature";
@@ -47,18 +70,24 @@ interface Profile {
   rural: { treasury: boolean | null; explanation: string };
 }
 
-function readHash(): { geoid?: string; view?: [number, number, number] } {
+function readHash(): { geoid?: string; view?: [number, number, number]; basemap?: BasemapId } {
   const h = new URLSearchParams(window.location.hash.slice(1));
   const geoid = h.get("t") ?? undefined;
   const v = h.get("v")?.split(",").map(Number);
-  return { geoid: geoid && /^\d{11}$/.test(geoid) ? geoid : undefined, view: v && v.length === 3 && v.every(Number.isFinite) ? (v as [number, number, number]) : undefined };
+  const b = h.get("b");
+  return {
+    geoid: geoid && /^\d{11}$/.test(geoid) ? geoid : undefined,
+    view: v && v.length === 3 && v.every(Number.isFinite) ? (v as [number, number, number]) : undefined,
+    basemap: isBasemapId(b) ? b : undefined,
+  };
 }
 
-function writeHash(geoid: string | null, map: MapLibreMap) {
+function writeHash(geoid: string | null, map: MapLibreMap, basemap: BasemapId) {
   const c = map.getCenter();
   const h = new URLSearchParams();
   if (geoid) h.set("t", geoid);
   h.set("v", `${c.lng.toFixed(4)},${c.lat.toFixed(4)},${map.getZoom().toFixed(2)}`);
+  if (basemap !== DEFAULT_BASEMAP) h.set("b", basemap);
   window.history.replaceState(null, "", `#${h.toString()}`);
 }
 
@@ -76,7 +105,12 @@ export default function MapApp() {
   const marker = useRef<Marker | null>(null);
 
   const [flag, setFlag] = useState<FlagName>("eligible");
+  const [basemap, setBasemap] = useState<BasemapId>(DEFAULT_BASEMAP);
   const [selected, setSelected] = useState<string | null>(null);
+  // Read when a basemap switch rebuilds the style, so it keeps what is shown.
+  const flagRef = useRef(flag);
+  const basemapRef = useRef(basemap);
+  const selectedRef = useRef(selected);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [address, setAddress] = useState("");
   const [candidates, setCandidates] = useState<Array<{ geoid: string; lon: number; lat: number; label: string | null }>>([]);
@@ -151,12 +185,31 @@ export default function MapApp() {
     }
   }, [refreshSources]);
 
+  /** Swap the basemap, carrying the map's own layers and data across. */
+  const applyBasemap = useCallback(
+    (id: BasemapId) => {
+      const map = mapRef.current;
+      if (!map) return;
+      basemapRef.current = id;
+      const b = BASEMAPS[id];
+      map.setStyle(b.style, {
+        diff: false,
+        transformStyle: (_previous, next) => withOverlay(next, overlay(flagRef.current, b.fillOpacity, selectedRef.current)),
+      });
+      // The new style starts with empty overlay sources; refill them.
+      map.once("style.load", refreshSources);
+      writeHash(selectedRef.current, map, id);
+    },
+    [refreshSources]
+  );
+
   const selectTract = useCallback(async (geoid: string | null) => {
     setSelected(geoid);
+    selectedRef.current = geoid;
     const map = mapRef.current;
     if (map) {
-      map.setFilter("tract-selected", ["==", ["get", "GEOID"], geoid ?? ""]);
-      writeHash(geoid, map);
+      if (map.getLayer("tract-selected")) map.setFilter("tract-selected", ["==", ["get", "GEOID"], geoid ?? ""]);
+      writeHash(geoid, map, basemapRef.current);
     }
     if (!geoid) {
       setProfile(null);
@@ -176,46 +229,15 @@ export default function MapApp() {
       container: container.current,
       center: initial.view ? [initial.view[0], initial.view[1]] : [-96, 38.5],
       zoom: initial.view?.[2] ?? 3.6,
-      attributionControl: { compact: true, customAttribution: "U.S. Census Bureau TIGERweb" },
-      style: {
-        version: 8,
-        sources: {
-          hydro: { type: "raster", tiles: [exportTiles("Hydro", "show:1")], tileSize: 256 },
-          roads: { type: "raster", tiles: [exportTiles("Transportation")], tileSize: 256, minzoom: 6 },
-          labels: { type: "raster", tiles: [exportTiles("tigerWMS_Current", "show:81,83,29")], tileSize: 256 },
-          counties: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
-          tracts: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
-        },
-        layers: [
-          { id: "background", type: "background", paint: { "background-color": "#f4f3ef" } },
-          { id: "hydro", type: "raster", source: "hydro", paint: { "raster-opacity": 0.8 } },
-          {
-            id: "county-fill",
-            type: "fill",
-            source: "counties",
-            maxzoom: TRACT_MIN_ZOOM,
-            paint: {
-              "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
-              "fill-opacity": 0.65,
-            },
-          },
-          { id: "county-line", type: "line", source: "counties", maxzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#9aa3ad", "line-width": 0.4 } },
-          {
-            id: "tract-fill",
-            type: "fill",
-            source: "tracts",
-            minzoom: TRACT_MIN_ZOOM,
-            paint: { "fill-color": ["match", ["get", "eligible"], 1, FLAGS.eligible.color, 0, "#ffffff", "#dddddd"], "fill-opacity": 0.55 },
-          },
-          { id: "roads", type: "raster", source: "roads", paint: { "raster-opacity": 0.7 } },
-          { id: "tract-line", type: "line", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#6b7682", "line-width": 0.5 } },
-          { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
-          { id: "labels", type: "raster", source: "labels" },
-        ],
-      },
+      attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau TIGERweb" },
+      // Replaced at once by applyBasemap, which merges in the overlay layers.
+      style: { version: 8, sources: {}, layers: [] },
     });
     map.addControl(new NavigationControl({ showCompass: false }), "top-left");
     mapRef.current = map;
+    const initialBasemap = initial.basemap ?? DEFAULT_BASEMAP;
+    setBasemap(initialBasemap);
+    applyBasemap(initialBasemap);
     // Map errors (a tile that failed, a bad style value) carry no user data.
     map.on("error", (e) => console.warn("[map]", e.error?.message ?? "error"));
     if (process.env.NODE_ENV !== "production") (window as unknown as { __ozMap?: MapLibreMap }).__ozMap = map;
@@ -225,7 +247,7 @@ export default function MapApp() {
     });
     map.on("moveend", () => {
       void loadVisible();
-      writeHash(readHash().geoid ?? null, map);
+      writeHash(readHash().geoid ?? null, map, basemapRef.current);
     });
     map.on("click", "tract-fill", (e: MapMouseEvent & { features?: Array<{ properties: Record<string, unknown> }> }) => {
       const g = e.features?.[0]?.properties?.GEOID;
@@ -236,13 +258,20 @@ export default function MapApp() {
       map.remove();
       mapRef.current = null;
     };
-  }, [loadVisible, selectTract]);
+  }, [applyBasemap, loadVisible, selectTract]);
 
   useEffect(() => {
+    flagRef.current = flag;
     const map = mapRef.current;
     if (!map || !map.getLayer("tract-fill")) return;
-    map.setPaintProperty("tract-fill", "fill-color", ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"]);
+    map.setPaintProperty("tract-fill", "fill-color", tractFillColor(flag));
   }, [flag]);
+
+  function chooseBasemap(id: BasemapId) {
+    if (id === basemapRef.current) return;
+    setBasemap(id);
+    applyBasemap(id);
+  }
 
   async function search(e: React.FormEvent) {
     e.preventDefault();
@@ -320,6 +349,13 @@ export default function MapApp() {
           <span>
             <span className="swatch" style={{ background: "#dddddd" }} /> no data
           </span>
+        </div>
+        <div className="layer-picker" role="group" aria-label="Basemap">
+          {(Object.keys(BASEMAPS) as BasemapId[]).map((b) => (
+            <button key={b} type="button" aria-pressed={basemap === b} onClick={() => chooseBasemap(b)}>
+              {BASEMAPS[b].label}
+            </button>
+          ))}
         </div>
         <p className="hint">Zoomed out, counties show the share of their tracts eligible in 2027. Zoom in to see tracts; click one.</p>
 
