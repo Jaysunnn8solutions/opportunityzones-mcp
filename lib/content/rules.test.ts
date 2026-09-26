@@ -26,6 +26,13 @@ describe("rules and their sources", () => {
     expect([...listed].sort()).toEqual(Object.keys(RULES).sort());
   });
 
+  it("never cites the same quote twice in a rule (the pages key quotes on source, pin and text)", () => {
+    for (const r of Object.values(RULES)) {
+      const keys = r.cites.map((c) => `${c.source}|${c.pin}|${c.quote}`);
+      expect(new Set(keys).size, r.id).toBe(keys.length);
+    }
+  });
+
   for (const rule of Object.values(RULES)) {
     it(`${rule.id}: cited, and every quote is in its source word for word`, () => {
       expect(rule.cites.length).toBeGreaterThan(0);
