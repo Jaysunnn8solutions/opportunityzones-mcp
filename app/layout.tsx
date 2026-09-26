@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { designationNote } from "@/lib/data/tracts";
 import { versionLabel } from "@/lib/version";
+import McpHelper from "./ui/McpHelper";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           tract page for sources and vintages. Nothing you search is stored.
           <span className="version"> Version {versionLabel()}.</span>
         </footer>
+        <McpHelper />
       </body>
     </html>
   );
