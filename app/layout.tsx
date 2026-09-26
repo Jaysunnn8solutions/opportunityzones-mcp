@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { designationNote } from "@/lib/data/tracts";
+import { versionLabel } from "@/lib/version";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Basemap: OpenFreeMap, © OpenStreetMap contributors, or USGS The National Map. Boundaries: U.S. Census Bureau. Data: U.S.
           Treasury, Census Bureau, HUD, CDFI Fund, CFPB/FFIEC, EPA, FHWA, FEMA, USGS, USDA Forest Service, BLS, NCES, CMS; see each
           tract page for sources and vintages. Nothing you search is stored.
+          <span className="version"> Version {versionLabel()}.</span>
         </footer>
       </body>
     </html>

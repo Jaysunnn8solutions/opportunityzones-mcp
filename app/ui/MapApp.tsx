@@ -21,6 +21,7 @@ import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, ty
 import { countyHasZones, type CountyCounts } from "@/lib/data/countyZones";
 import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
+import { versionLabel } from "@/lib/version";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
@@ -491,6 +492,9 @@ export default function MapApp() {
         <div ref={container} className="map-canvas" />
         {loading > 0 && <div className="map-status">Loading boundaries...</div>}
         <MapLegend flag={flag} showTracts={zoom >= tractMinZoomFor(boundaryIndex.current)} />
+        <div className="map-version" title="Release · commit · build date">
+          {versionLabel()}
+        </div>
       </div>
     </div>
   );

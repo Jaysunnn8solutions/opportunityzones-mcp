@@ -1,6 +1,25 @@
+import { execSync } from "node:child_process";
 import type { NextConfig } from "next";
+import pkg from "./package.json";
+
+/** The commit being built, from git or the host's build variables; empty if neither is there. */
+function commit(): string {
+  const fromHost = process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.COMMIT_REF ?? process.env.GITHUB_SHA;
+  if (fromHost) return fromHost.slice(0, 7);
+  try {
+    return execSync("git rev-parse --short=7 HEAD", { stdio: ["ignore", "pipe", "ignore"] }).toString().trim();
+  } catch {
+    return "";
+  }
+}
 
 const nextConfig: NextConfig = {
+  // Shown on the map and in the footer (lib/version.ts).
+  env: {
+    APP_VERSION: pkg.version,
+    APP_COMMIT: commit(),
+    APP_BUILT: new Date().toISOString().slice(0, 10),
+  },
   // The committed pipeline outputs are read with fs at request time. Make sure
   // they are traced into every serverless function that needs them. The tract
   // payload is a columnar binary (.bin) plus small JSON sidecars, so both
