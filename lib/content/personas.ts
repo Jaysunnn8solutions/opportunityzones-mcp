@@ -139,7 +139,7 @@ export const PERSONAS: Persona[] = [
     ],
     tools: [
       { href: "/map", label: "Map", why: "Colour states by eligibility, rural status, 2018 zones, HUD QCT/DDA and NMTC." },
-      { href: "/", label: "Start: use it from Claude", why: "The MCP server lists, filters and compares tracts in a state by any published measure." },
+      { href: "/use-with-claude", label: "Use it from Claude", why: "The MCP server lists, filters and compares tracts in a state by any published measure." },
       { href: "/check", label: "Check properties", why: "Check a pipeline of sites in one table, and download it as CSV." },
     ],
   },
@@ -164,7 +164,7 @@ export const PERSONAS: Persona[] = [
     ],
     tools: [
       { href: "/map", label: "Map", why: "Search candidate addresses; tract pages show jobs, income, anchors and permits." },
-      { href: "/", label: "Start: use it from Claude", why: "The MCP nearby tool reports traffic counts, amenities, anchors, hazards and the county labor market around a site." },
+      { href: "/use-with-claude", label: "Use it from Claude", why: "The MCP nearby tool reports traffic counts, amenities, anchors, hazards and the county labor market around a site." },
       { href: "/check", label: "Check properties", why: "Compare several candidate sites at once." },
     ],
     example: {
@@ -232,7 +232,7 @@ export const PERSONAS: Persona[] = [
     tools: [
       { href: "/check", label: "Check properties", why: "Screen a pipeline of up to 25 sites at a time and download the results as CSV." },
       { href: "/map", label: "Map", why: "Colour a state by rural status, 2018 zones or 2027 eligibility." },
-      { href: "/", label: "Start: use it from Claude", why: "The MCP server compares tracts and reports flood, earthquake, wildfire and more around a site." },
+      { href: "/use-with-claude", label: "Use it from Claude", why: "The MCP server compares tracts and reports flood, earthquake, wildfire and more around a site." },
     ],
   },
   {
@@ -305,7 +305,7 @@ export const PERSONAS: Persona[] = [
     tools: [
       { href: "/map", label: "Map", why: "See every tract in your state coloured by eligibility, rural status and 2018 zones." },
       { href: "/how-it-works#designation", label: "Eligible vs designated", why: "How nomination and the state cap work." },
-      { href: "/", label: "Start: use it from Claude", why: "The MCP server lists and compares your tracts, and summarises how the 2018 zones fared." },
+      { href: "/use-with-claude", label: "Use it from Claude", why: "The MCP server lists and compares your tracts, and summarises how the 2018 zones fared." },
     ],
   },
 ];

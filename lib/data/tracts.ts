@@ -124,6 +124,14 @@ export function designationRoundTotals(data: TractData = loadTractData()): { eli
   return { eligible, maxDesignated, jurisdictions };
 }
 
+/** Every state and territory with eligible tracts: name, eligible count and cap, by FIPS. */
+export function designationRoundByState(data: TractData = loadTractData()): Array<{ fips: string; name: string; eligible: number; cap: number }> {
+  return Object.entries(data.lookups.states)
+    .map(([fips, name]) => ({ fips, name, eligible: stateEligibleCount(fips, data), cap: designationOutlook(1, null, stateEligibleCount(fips, data)).stateCap }))
+    .filter((s) => s.eligible > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 /** Eligible tracts per state or territory, from Treasury's 2027 list. */
 export function stateEligibleCount(stateFips: string, data: TractData = loadTractData()): number {
   let counts = eligibleByState.get(data);

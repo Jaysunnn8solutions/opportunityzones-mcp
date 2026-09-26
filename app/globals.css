@@ -553,3 +553,123 @@ button.link {
 .legend-note {
   color: var(--muted);
 }
+
+/* Guided check */
+.guide-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.guide-steps li span {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.guide-steps li[aria-current="step"] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.guide-steps li[aria-current="step"] span,
+.guide-steps li.done span {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.card.choice {
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.card.choice[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent) inset;
+}
+
+.guide-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.guide-row input,
+.guide-row select {
+  flex: 1 1 260px;
+  font: inherit;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.guide-nav,
+.guide-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.button.secondary {
+  background: var(--paper);
+  color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media print {
+  .disclaimer,
+  .site-header nav,
+  .site-footer,
+  .guide-steps,
+  .guide-actions,
+  .lead {
+    display: none;
+  }
+}
+
+/* Code blocks and example tables on content pages */
+.page pre {
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.examples {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.examples th,
+.examples td {
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  padding: 8px 6px;
+}
+
+.examples td:last-child {
+  white-space: nowrap;
+}

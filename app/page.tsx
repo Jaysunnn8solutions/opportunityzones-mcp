@@ -33,6 +33,12 @@ export default function StartPage() {
             <span>new or substantially improved property, or an operating business, in a designated tract</span>
           </li>
         </ol>
+        <p>
+          <Link className="button" href="/guide">
+            Start the guided check
+          </Link>{" "}
+          <span className="hint">A few questions, then a checklist of how the rules apply and what to ask an adviser.</span>
+        </p>
       </section>
 
       <section>
@@ -124,8 +130,9 @@ export default function StartPage() {
       <section>
         <h2>Use it from Claude</h2>
         <p>
-          The same data is available as an MCP server at <code>/mcp</code>: look up an address, profile a tract, list and compare
-          tracts in a state, and see flood, earthquake, wildfire and other context around a site. See the README for setup.
+          The same data is available to Claude as an MCP server: look up an address, profile a tract, list and compare tracts in a
+          state, and see flood, earthquake, wildfire and other context around a site.{" "}
+          <Link href="/use-with-claude">How to connect it and what to ask</Link>.
         </p>
       </section>
     </main>
