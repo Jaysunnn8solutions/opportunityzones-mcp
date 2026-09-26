@@ -26,6 +26,7 @@
     "pmtiles": "^4.5.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "topojson-client": "^3.1.0",
     "zod": "^4.6.1"
   },
   "optionalDependencies": {
@@ -40,10 +41,13 @@
     "@types/node": "^24.13.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-server": "^3.0.4",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "fflate": "^0.8.3",
     "geojson-vt": "^5.0.2",
+    "topojson-server": "^3.0.1",
     "tsx": "^4.23.13",
     "typescript": "^5",
     "vitest": "^5.0.0",

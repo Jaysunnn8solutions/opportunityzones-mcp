@@ -4,6 +4,8 @@
  * without a map.
  */
 
+import { feature } from "topojson-client";
+import type { Topology } from "topojson-specification";
 import type { Bounds } from "./tiles";
 
 export type BBox = [number, number, number, number];
@@ -18,6 +20,26 @@ export interface BoundaryIndex {
 export const STATE_TRACT_MIN_ZOOM = 6;
 /** At most this many state files are fetched for one view, largest overlap first. */
 export const MAX_STATES_PER_VIEW = 6;
+
+export interface BoundaryFeatureLike {
+  type: "Feature";
+  properties: Record<string, string | number>;
+  geometry: unknown;
+}
+
+/**
+ * Features from a boundary file: TopoJSON (what the pipeline writes; `object`
+ * names the layer inside it) or a plain GeoJSON FeatureCollection.
+ */
+export function featuresFrom(json: unknown, object: "tracts" | "counties"): BoundaryFeatureLike[] {
+  const j = json as { type?: string; objects?: Record<string, unknown>; features?: BoundaryFeatureLike[] };
+  if (j?.type === "Topology" && j.objects?.[object]) {
+    const fc = feature(json as Topology, (json as Topology).objects[object]) as unknown as { features?: BoundaryFeatureLike[] };
+    return fc.features ?? [];
+  }
+  if (j?.type === "FeatureCollection" && Array.isArray(j.features)) return j.features;
+  return [];
+}
 
 export function isBoundaryIndex(v: unknown): v is BoundaryIndex {
   if (!v || typeof v !== "object") return false;

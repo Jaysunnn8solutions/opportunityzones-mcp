@@ -2,8 +2,8 @@
  * Map geometry the app serves itself, so drawing tracts never waits on (or
  * depends on) a Census web service.
  *
- *   public/boundaries/tracts/{state FIPS}.json   one file per state: every tract
- *   public/boundaries/counties.json              every county, for zoomed-out views
+ *   public/boundaries/tracts/{state FIPS}.json   one TopoJSON file per state: every tract
+ *   public/boundaries/counties.json              every county (TopoJSON), for zoomed-out views
  *   public/boundaries/index.json                 vintage, source, and each state's
  *                                                 tract count and bounding box
  *
@@ -21,10 +21,18 @@
  * creates are dropped. Shapefile rings are regrouped into polygons (outer rings
  * clockwise, holes counter-clockwise in the shapefile) and rewound to the
  * GeoJSON convention (outer counter-clockwise), so holes render as holes.
+ *
+ * Files are TopoJSON: each border shared by neighbouring tracts is stored once,
+ * and coordinates are quantised to a 100,000-step grid over the state (finer
+ * than the 4-decimal rounding). Measured on the real 2024 files this is a third
+ * of the GeoJSON size (all states ~33 MB, ~9 MB gzipped; Georgia 1.2 MB, 0.37 MB
+ * gzipped), with no simplification, so no tract loses shape. The app decodes
+ * them with topojson-client (lib/geo/stateBoundaries.ts).
  */
 
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { topology } from "topojson-server";
 import { unzipBytes } from "../lib/archive";
 import { fetchCached, log } from "../lib/http";
 import { readDbfColumn, readShpPolygons } from "../lib/shapefile";
@@ -34,6 +42,8 @@ export const BOUNDARIES_DIR = path.resolve(import.meta.dirname, "..", "..", "pub
 export const COUNTY_BOUNDARY_URL = "https://www2.census.gov/geo/tiger/GENZ2024/shp/cb_2024_us_county_20m.zip";
 export const BOUNDARY_FILE_VINTAGE = 2024;
 export const COORD_DECIMALS = 4;
+/** TopoJSON quantisation: grid steps across each file's bounding box. */
+export const QUANTIZATION = 1e5;
 /** A state file over this is a sign something went wrong (California is the largest). */
 const MAX_STATE_BYTES = 12 * 1024 * 1024;
 
@@ -143,7 +153,15 @@ export function readBoundaryZip(zip: Uint8Array, withName = false): BoundaryFeat
 export interface BoundaryIndex {
   vintage: number;
   source: string;
+  /** Files are TopoJSON; tracts under objects.tracts, counties under objects.counties. */
+  format: "topojson";
   states: Record<string, { tracts: number; bbox: [number, number, number, number]; bytes: number }>;
+}
+
+/** A FeatureCollection as a TopoJSON string with one named object. */
+export function toTopoJson(name: "tracts" | "counties", features: readonly BoundaryFeature[]): string {
+  // The topojson-server types want a GeoJSON FeatureCollection; ours is one.
+  return JSON.stringify(topology({ [name]: { type: "FeatureCollection", features } } as never, QUANTIZATION));
 }
 
 /** Split tracts by state and serialise. Pure, so it is tested without files. */
@@ -159,7 +177,7 @@ export function stateFiles(tracts: readonly BoundaryFeature[]): Map<string, { js
   const out = new Map<string, { json: string; tracts: number; bbox: [number, number, number, number] }>();
   for (const [fips, features] of [...byState].sort(([a], [b]) => (a < b ? -1 : 1))) {
     features.sort((a, b) => (a.properties.GEOID < b.properties.GEOID ? -1 : 1));
-    out.set(fips, { json: JSON.stringify({ type: "FeatureCollection", features }), tracts: features.length, bbox: bbox(features) });
+    out.set(fips, { json: toTopoJson("tracts", features), tracts: features.length, bbox: bbox(features) });
   }
   return out;
 }
@@ -175,6 +193,7 @@ export async function buildMapBoundaries(): Promise<BoundaryIndex> {
   const index: BoundaryIndex = {
     vintage: BOUNDARY_FILE_VINTAGE,
     source: "U.S. Census Bureau, 2024 cartographic boundary files (tracts 1:500,000; counties 1:20,000,000)",
+    format: "topojson",
     states: {},
   };
   for (const [fips, f] of stateFiles(tracts)) {
@@ -183,7 +202,7 @@ export async function buildMapBoundaries(): Promise<BoundaryIndex> {
     writeFileSync(path.join(tractDir, `${fips}.json`), f.json);
     index.states[fips] = { tracts: f.tracts, bbox: f.bbox, bytes };
   }
-  writeFileSync(path.join(BOUNDARIES_DIR, "counties.json"), JSON.stringify({ type: "FeatureCollection", features: counties }));
+  writeFileSync(path.join(BOUNDARIES_DIR, "counties.json"), toTopoJson("counties", counties));
   writeFileSync(path.join(BOUNDARIES_DIR, "index.json"), JSON.stringify(index, null, 1));
 
   const total = Object.values(index.states).reduce((a, s) => a + s.bytes, 0);

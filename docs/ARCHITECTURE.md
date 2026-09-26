@@ -111,8 +111,9 @@ personal is stored" rule; client data never goes in.
 - Tract and county outlines (changed 2026-09-26, owner's choice): the Census
   Bureau's 2024 cartographic boundary files, served by the app itself from
   `public/boundaries/`, so drawing tracts neither waits on nor depends on a
-  Census web service. `pipeline/map/boundaries.ts` writes one GeoJSON file per
-  state with every tract (from the 1:500,000 file), a national counties file
+  Census web service. `pipeline/map/boundaries.ts` writes one TopoJSON file per
+  state with every tract (shared borders stored once; all states ~33 MB, ~9 MB
+  gzipped; Georgia 1.2 MB, 0.37 MB gzipped, measured on the real files) (from the 1:500,000 file), a national counties file
   (1:20,000,000), and `index.json` with each state's tract count and bounding
   box. Only GEOID (and county NAME) is kept; coordinates are rounded to 4
   decimals (~11 m). Counties show below zoom 6; from zoom 6 the client loads
@@ -129,8 +130,8 @@ personal is stored" rule; client data never goes in.
 - Colours come from our data: `/api/status/{state}` (flag bits per tract) and
   `/api/counties` (eligible share per county).
 
-Trade-offs accepted: the state files add to the repository (roughly 20-40 MB
-for every state, regenerated yearly), and there is no single nationwide
+Trade-offs accepted: the state files add to the repository (about 33 MB for
+every state, regenerated yearly), and there is no single nationwide
 tract-level view, by design: tracts appear once a state is in view.
 
 MapLibre's web worker must be served from `public/maplibre/` and set with

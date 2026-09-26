@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { bbox, roundRing, signedArea, stateFiles, toGeometry, type BoundaryFeature } from "./boundaries";
+import { feature as topoFeature } from "topojson-client";
+import type { Topology } from "topojson-specification";
+import { bbox, roundRing, signedArea, stateFiles, toGeometry, toTopoJson, type BoundaryFeature } from "./boundaries";
 
 /** A flat shapefile ring from [x, y] pairs. */
 const flat = (pts: Array<[number, number]>) => new Float64Array(pts.flat());
@@ -51,6 +53,31 @@ describe("toGeometry", () => {
   });
 });
 
+describe("toTopoJson", () => {
+  it("round-trips shapes, holes and properties within the quantisation step", () => {
+    const f: BoundaryFeature = { type: "Feature", properties: { GEOID: "13121003500" }, geometry: toGeometry([outerCw(0, 0, 10), holeCcw(4, 4, 2)])! };
+    const topo = JSON.parse(toTopoJson("tracts", [f])) as Topology;
+    const back = topoFeature(topo, topo.objects.tracts) as unknown as { features: BoundaryFeature[] };
+    expect(back.features[0].properties).toEqual({ GEOID: "13121003500" });
+    const g = back.features[0].geometry as { type: string; coordinates: Array<Array<[number, number]>> };
+    expect(g.type).toBe("Polygon");
+    expect(g.coordinates).toHaveLength(2);
+    for (const [x, y] of g.coordinates[0]) {
+      expect([0, 10].some((v) => Math.abs(x - v) < 1e-3)).toBe(true);
+      expect([0, 10].some((v) => Math.abs(y - v) < 1e-3)).toBe(true);
+    }
+  });
+
+  it("stores a border shared by two tracts once", () => {
+    const a: BoundaryFeature = { type: "Feature", properties: { GEOID: "13000000001" }, geometry: toGeometry([outerCw(0, 0, 1)])! };
+    const b: BoundaryFeature = { type: "Feature", properties: { GEOID: "13000000002" }, geometry: toGeometry([outerCw(1, 0, 1)])! };
+    const topo = JSON.parse(toTopoJson("tracts", [a, b])) as Topology;
+    // Two squares sharing an edge: the shared edge is one arc, used by both.
+    const used = (topo.objects.tracts as unknown as { geometries: Array<{ arcs: number[][] }> }).geometries.map((g) => g.arcs.flat().map((i) => (i < 0 ? ~i : i)));
+    expect(used[0].filter((i) => used[1].includes(i)).length).toBe(1);
+  });
+});
+
 describe("stateFiles", () => {
   const feature = (geoid: string, x: number): BoundaryFeature => ({
     type: "Feature",
@@ -64,7 +91,9 @@ describe("stateFiles", () => {
     const ga = files.get("13")!;
     expect(ga.tracts).toBe(2);
     expect(ga.bbox).toEqual([-85, 30, -83, 31]);
-    const parsed = JSON.parse(ga.json) as { features: BoundaryFeature[] };
+    const topo = JSON.parse(ga.json) as Topology;
+    expect(topo.type).toBe("Topology");
+    const parsed = topoFeature(topo, topo.objects.tracts) as unknown as { features: BoundaryFeature[] };
     expect(parsed.features.map((f) => f.properties.GEOID)).toEqual(["13089020100", "13121003500"]);
     expect(Object.keys(parsed.features[0].properties)).toEqual(["GEOID"]);
   });

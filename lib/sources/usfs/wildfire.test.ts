@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SourceError } from "../http";
-import { identifyUrl, oneIn, parseIdentify, wildfireLikelihoodAt } from "./wildfire";
+import { identifyUrl, oneIn, parseIdentify, SERVICES, VALUE_SCALE, wildfireLikelihoodAt } from "./wildfire";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -50,10 +50,39 @@ describe("wildfireLikelihoodAt", () => {
     expect(geometry).toEqual({ x: -116.54, y: 33.81, spatialReference: { wkid: 4326 } });
     expect(url.search).not.toContain("54321");
     expect(url.pathname).toMatch(/BurnProbability\/ImageServer\/identify$/);
+    expect(url.host).toBe("imagery.geoplatform.gov");
   });
 
-  it("fetches and parses", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(identify("0.0021")))));
-    expect((await wildfireLikelihoodAt(-116.54321, 33.81234)).oneInYears).toBe(480);
+  it("fetches and parses, reading the GeoPlatform copy's integers as ten-thousandths", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify(identify("21")))));
+    const r = await wildfireLikelihoodAt(-116.54321, 33.81234);
+    expect(r.burnProbability).toBeCloseTo(0.0021, 8);
+    expect(r.oneInYears).toBe(480);
+  });
+
+  it("reads the live Joshua Tree value (18) as 0.18% a year", () => {
+    const r = parseIdentify(identify("18"), VALUE_SCALE[SERVICES[0]]);
+    expect(r.burnProbability).toBeCloseTo(0.0018, 8);
+    expect(r.oneInYears).toBe(560);
+    // The service's own maximum stays a probability.
+    expect(parseIdentify(identify("1352"), VALUE_SCALE[SERVICES[0]]).burnProbability).toBeCloseTo(0.1352, 8);
+  });
+
+  it("falls back to the second host when the first refuses", async () => {
+    const f = vi
+      .fn()
+      .mockResolvedValueOnce(new Response("Forbidden", { status: 403 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(identify("0.0021"))));
+    vi.stubGlobal("fetch", f);
+    expect((await wildfireLikelihoodAt(-116.54, 33.81)).oneInYears).toBe(480);
+    expect(String(f.mock.calls[0][0])).toContain(new URL(SERVICES[0]).host);
+    expect(String(f.mock.calls[1][0])).toContain(new URL(SERVICES[1]).host);
+  });
+
+  it("does not paper over a malformed answer by trying the other host", async () => {
+    const f = vi.fn().mockResolvedValue(new Response(JSON.stringify({ value: "20000" })));
+    vi.stubGlobal("fetch", f);
+    await expect(wildfireLikelihoodAt(-116.54, 33.81)).rejects.toThrow(/not a probability/);
+    expect(f).toHaveBeenCalledTimes(1);
   });
 });

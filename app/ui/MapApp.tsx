@@ -18,7 +18,7 @@ import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJS
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
-import { isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
+import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
@@ -185,7 +185,7 @@ export default function MapApp() {
     }
     if (boundaryIndex.current) {
       const r = await fetch("/boundaries/counties.json");
-      if (r.ok) for (const f of ((await r.json()) as { features: Feature[] }).features) countyFeatures.current.set(String(f.properties.GEOID), f);
+      if (r.ok) for (const f of featuresFrom(await r.json(), "counties")) countyFeatures.current.set(String(f.properties.GEOID), f);
     }
     const map = mapRef.current;
     if (map) {
@@ -219,7 +219,7 @@ export default function MapApp() {
                 loadedStates.current.delete(s);
                 return;
               }
-              for (const f of ((await res.json()) as { features: Feature[] }).features) tractFeatures.current.set(String(f.properties.GEOID), f);
+              for (const f of featuresFrom(await res.json(), "tracts")) tractFeatures.current.set(String(f.properties.GEOID), f);
             })
           );
           await loadStatus(states);

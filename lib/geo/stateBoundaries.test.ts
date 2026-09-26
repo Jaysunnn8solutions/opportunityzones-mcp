@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { isBoundaryIndex, statesInView, type BoundaryIndex } from "./stateBoundaries";
+import { topology } from "topojson-server";
+import { featuresFrom, isBoundaryIndex, statesInView, type BoundaryIndex } from "./stateBoundaries";
 
 const index: BoundaryIndex = {
   vintage: 2024,
@@ -26,6 +27,25 @@ describe("statesInView", () => {
 
   it("caps the number of files per view", () => {
     expect(statesInView(index, { west: -130, south: 20, east: -70, north: 50 }, 2)).toHaveLength(2);
+  });
+});
+
+describe("featuresFrom", () => {
+  const fc = {
+    type: "FeatureCollection" as const,
+    features: [{ type: "Feature" as const, properties: { GEOID: "13121003500" }, geometry: { type: "Polygon" as const, coordinates: [[[0, 0], [1, 0], [1, 1], [0, 0]]] } }],
+  };
+
+  it("decodes the pipeline's TopoJSON by object name", () => {
+    const topo = JSON.parse(JSON.stringify(topology({ tracts: fc }, 1e5)));
+    expect(featuresFrom(topo, "tracts").map((f) => f.properties.GEOID)).toEqual(["13121003500"]);
+    expect(featuresFrom(topo, "counties")).toEqual([]);
+  });
+
+  it("still reads plain GeoJSON, and nothing from anything else", () => {
+    expect(featuresFrom(fc, "tracts")).toHaveLength(1);
+    expect(featuresFrom(null, "tracts")).toEqual([]);
+    expect(featuresFrom({ type: "Other" }, "tracts")).toEqual([]);
   });
 });
 
