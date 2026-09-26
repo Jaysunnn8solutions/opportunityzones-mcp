@@ -1422,3 +1422,125 @@ button.linkish {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Floating "Use with Claude" helper */
+.mcp-helper {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.mcp-fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: inherit;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.mcp-panel {
+  width: min(380px, calc(100vw - 32px));
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 8px 32px rgba(16, 24, 32, 0.18);
+  font-size: 14px;
+}
+
+.mcp-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mcp-close {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mcp-lead {
+  margin: 6px 0 10px;
+}
+
+.mcp-steps {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.mcp-steps li {
+  margin-bottom: 10px;
+}
+
+.mcp-steps li > span {
+  display: block;
+  margin-top: 4px;
+}
+
+.mcp-copy {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.mcp-copy code {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: var(--wash);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.mcp-copy button {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mcp-foot {
+  margin: 4px 0;
+}
+
+.mcp-note {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media print {
+  .mcp-helper {
+    display: none;
+  }
+}
+
+/* Room below the content so the floating button never covers the last control. */
+main.page {
+  padding-bottom: 80px;
+}
