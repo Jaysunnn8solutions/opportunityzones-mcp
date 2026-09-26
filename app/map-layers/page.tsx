@@ -49,6 +49,40 @@ export default function MapLayersPage() {
           </section>
         );
       })}
+      <section id="find-areas">
+        <h2>How Find areas works</h2>
+        <p>
+          The Find areas panel on the map narrows the map to tracts matching the facts you choose. It does not rank places or
+          predict outcomes, and a match is not a recommendation.
+        </p>
+        <ul>
+          <li>
+            <strong>Designations:</strong> tick any of the layers above; &quot;All of these&quot; keeps tracts that have every one,
+            &quot;Any of these&quot; keeps tracts that have at least one.
+          </li>
+          <li>
+            <strong>Surroundings:</strong> a tract&apos;s neighbours are the tracts that share a stretch of boundary with it in the
+            same state (touching at a single corner does not count, and tracts across a state line are not included). For each
+            measure, the neighbours&apos; published figures are averaged, weighted by their population.
+          </li>
+          <li>
+            <strong>Top half, quarter or tenth</strong> is measured among the tracts of the same state; for unemployment the lowest
+            rates count as the top.
+          </li>
+          <li>
+            Net worth and household wealth are not published for census tracts, so they are not offered. Averages of neighbours&apos;
+            medians are an approximation, not a median of the combined area.
+          </li>
+        </ul>
+        <p className="note">
+          Data:{" "}
+          <a href={SOURCES.acs5.homepage} target="_blank" rel="noopener noreferrer">
+            {SOURCES.acs5.name} ↗
+          </a>
+          , {SOURCES.acs5.publisher}, 2020-2024; tract boundaries from the U.S. Census Bureau&apos;s 2024 cartographic boundary
+          files.
+        </p>
+      </section>
       <p>
         All rules the site states are on <Link href="/rules">Rules and sources</Link>.
       </p>
