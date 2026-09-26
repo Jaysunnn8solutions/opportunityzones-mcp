@@ -52,7 +52,7 @@ export function RulePopupProvider({ children }: { children: React.ReactNode }) {
                 <p>{r.text}</p>
                 <ul className="quotes">
                   {r.cites.map((c) => (
-                    <li key={`${c.source}|${c.pin}|${c.quote.slice(0, 24)}`}>
+                    <li key={`${c.source}|${c.pin}|${c.quote}`}>
                       <a href={legalSource(c.source).url} target="_blank" rel="noopener noreferrer">
                         {citeLabel(c)} <span className="new-tab">(opens in a new tab)</span>
                       </a>

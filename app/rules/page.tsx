@@ -41,7 +41,7 @@ export default function RulesPage() {
                 <p>{r.text}</p>
                 <ul className="quotes">
                   {r.cites.map((c) => (
-                    <li key={`${c.source}|${c.pin}|${c.quote.slice(0, 20)}`}>
+                    <li key={`${c.source}|${c.pin}|${c.quote}`}>
                       <a href={legalSource(c.source).url} rel="noopener">
                         {citeLabel(c)}
                       </a>
