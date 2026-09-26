@@ -125,6 +125,8 @@ describe("nearby", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
     const body = textOf(await nearbyHandler({ lat: 33.749, lon: -84.388, radiusMiles: 1 }));
     expect(body).toMatch(/Flood zone: not available/);
+    expect(body).toMatch(/Seismic design category: not available/);
+    expect(body).toMatch(/Wildfire likelihood: not available/);
     expect(body).toMatch(/EPA sites: not available/);
     expect(body).toMatch(/Amenities: not available \(this server has no key/);
     // Anchor institutions come from bundled data and still answer.

@@ -94,7 +94,7 @@ export default async function TractPage({ params }: { params: Promise<{ geoid: s
         })}
       </ul>
       <p className="note">
-        Informational only, not investment, tax or legal advice. Live site context (flood zone, nearby EPA sites, traffic, county
+        Informational only, not investment, tax or legal advice. Live site context (flood zone, earthquake design category, wildfire likelihood, nearby EPA sites, traffic, county
         labor market) is available through the MCP <code>nearby</code> tool.
       </p>
     </main>

@@ -488,6 +488,40 @@ export const SOURCES = {
       "Flood zone bears directly on insurance, construction and financing of a project at a site. FEMA's effective flood maps are the authoritative record; the FEMA National Risk Index was rejected by the owner as too broad.",
     access: ["api-runtime"],
   },
+  usgsSeismicDesign: {
+    id: "usgsSeismicDesign",
+    name: "USGS Seismic Design Maps web service (ASCE 7-22)",
+    publisher: "U.S. Geological Survey, Earthquake Hazards Program",
+    homepage: "https://earthquake.usgs.gov/ws/designmaps/asce7-22.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Geological Survey, Seismic Design Maps (ASCE 7-22 design ground motions)",
+    geography: "Design ground motions at a point (no areal aggregation)",
+    vintage: "ASCE 7-22 (2023 USGS National Seismic Hazard Model), at query time",
+    notes:
+      "Seismic Design Category and design accelerations for Risk Category II on the default site class. USGS is sent the point rounded to two decimals (~1 km); design values vary over tens of km, so the rounding does not change the answer in practice. Not a structural determination, which needs the site's measured soil class.",
+    purposes: ["feasibility"],
+    rationale:
+      "The Seismic Design Category sets the building code's earthquake requirements at a site, so it bears on what a project costs to build there. USGS publishes the values the code adopts; the owner asked for hazard-specific sources in place of the National Risk Index.",
+    access: ["api-runtime"],
+  },
+  usfsWildfireRisk: {
+    id: "usfsWildfireRisk",
+    name: "Wildfire Risk to Communities: annual burn probability",
+    publisher: "USDA Forest Service, Rocky Mountain Research Station",
+    homepage: "https://wildfirerisk.org/",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "USDA Forest Service, Wildfire Risk to Communities (Scott et al., burn probability)",
+    geography: "270 m raster cells, looked up at a site (no areal aggregation)",
+    vintage: "2024 release; landscape as of end of 2020 (LANDFIRE 2020 fuels)",
+    notes:
+      "ImageServer identify on RMRS_WRC_BurnProbability at the point rounded to two decimals (~1 km). Reported as published (probability and '1 in N years'), with no classes of our own. Zero is reported as 'no wildland fire reached this area in the simulation', never as no risk; NoData as outside coverage.",
+    purposes: ["feasibility"],
+    rationale:
+      "Wildfire likelihood bears on insurability and construction standards at a site. The Forest Service's burn probability is the authoritative national model; the owner asked for hazard-specific sources in place of the National Risk Index.",
+    access: ["api-runtime"],
+  },
   censusQwi: {
     id: "censusQwi",
     name: "Quarterly Workforce Indicators (QWI)",
