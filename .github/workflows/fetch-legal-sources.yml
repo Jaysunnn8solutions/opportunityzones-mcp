@@ -1,0 +1,36 @@
+name: Fetch legal sources
+
+# Downloads the statutes, regulations and IRS pages in legal/sources.json as
+# plain text (scripts/fetch-legal-sources.ts) and pushes them to the
+# data/legal-sources branch, so the rules the app states can be quoted from,
+# and tested against, the actual sources. Runs on demand, and when the source
+# list changes on a claude/ branch. Needs no secrets; the texts are U.S.
+# government works.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["legal/sources.json", "scripts/fetch-legal-sources.ts"]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsx scripts/fetch-legal-sources.ts
+      - name: Push to data/legal-sources
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B data/legal-sources
+          git add legal/text
+          git commit -m "Legal source texts, fetched $(date -u +%F)"
+          git push --force origin data/legal-sources
