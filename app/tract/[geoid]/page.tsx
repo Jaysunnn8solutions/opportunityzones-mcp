@@ -44,7 +44,7 @@ export default async function TractPage({ params }: { params: Promise<{ geoid: s
   return (
     <main className="tract-page">
       <p>
-        <Link href={`/#t=${t.geoid}`}>Back to the map</Link>
+        <Link href={`/map#t=${t.geoid}`}>Back to the map</Link>
       </p>
       <h1>{placeLine(t)}</h1>
 
@@ -54,6 +54,14 @@ export default async function TractPage({ params }: { params: Promise<{ geoid: s
           <li key={l}>{l.replace(/^- /, "")}</li>
         ))}
       </ul>
+
+      <section className="next-steps">
+        <strong>What next</strong>
+        <Link href="/how-it-works">How a gain, a fund and a zone fit together</Link>
+        <Link href="/how-it-works#designation">Why eligible is not designated</Link>
+        <Link href="/funds">Finding and reviewing funds</Link>
+        <Link href="/check">Check a list of properties</Link>
+      </section>
 
       {GROUPS.map(([title, names]) => (
         <section key={title}>

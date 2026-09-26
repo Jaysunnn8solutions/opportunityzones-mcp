@@ -1,8 +1,21 @@
 # opportunityzones-mcp
 
-A screening tool for U.S. Opportunity Zones: an MCP server (and, next, a web
-map) that describes any census tract against the 2027 designation rules and the
-public data around it.
+A screening tool for U.S. Opportunity Zones: a website and an MCP server that
+explain how the program works, describe any census tract against the 2027
+designation rules and the public data around it, and check where a list of
+properties sits.
+
+## The website
+
+| Page | What it is for |
+|---|---|
+| `/` Start | The gain, the fund and the zone; four starting points (individual investor, home builder, corporate investor, business operator); where the 2027 round stands |
+| `/for/{individual,builder,corporate,business}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
+| `/how-it-works` | The statutory mechanics in general terms, eligible vs designated, timeline, sources |
+| `/map` | Address search and state-wide tract map, coloured by 2027 eligibility, rural, 2018 zone, HUD QCT/DDA or NMTC |
+| `/tract/{geoid}` | One tract's full profile, its place in the 2027 round, and its sources |
+| `/funds` | Where funds can be found and what to ask one (no fund is named, by rule) |
+| `/check` | Paste up to 25 addresses or tract numbers; get each one's zone status, and a CSV |
 
 > **Informational only, not investment, tax or legal advice.** It describes
 > places. It does not recommend any tract, fund or transaction, and it does not

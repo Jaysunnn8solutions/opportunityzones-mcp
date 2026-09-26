@@ -74,6 +74,7 @@ interface Profile {
   cbsa: string | null;
   measures: Record<string, { value: number | null }>;
   rural: { treasury: boolean | null; explanation: string };
+  designation2027: { status: string; text: string };
 }
 
 function readHash(): { geoid?: string; view?: [number, number, number]; basemap?: BasemapId } {
@@ -438,6 +439,7 @@ export default function MapApp() {
                 2027 eligibility: <strong>{m.eligible_2027.value === 1 ? "eligible" : m.eligible_2027.value === 0 ? "not eligible" : "n/a"}</strong>{" "}
                 (eligibility is not designation)
               </li>
+              <li>{profile.designation2027.text}</li>
               <li>
                 Income {m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(0)}%`} of area MFI; poverty {pct(m.poverty_rate.value)}
               </li>
@@ -454,6 +456,12 @@ export default function MapApp() {
             <p>
               <Link href={`/tract/${profile.geoid}`}>Full tract profile and sources</Link>
             </p>
+            <div className="next-steps">
+              <strong>What next</strong>
+              <Link href="/how-it-works">How a gain, a fund and a zone fit together</Link>
+              <Link href="/how-it-works#designation">Why eligible is not designated</Link>
+              <Link href="/funds">Finding and reviewing funds</Link>
+            </div>
           </section>
         )}
         <p className="note">Informational only, not investment, tax or legal advice.</p>
