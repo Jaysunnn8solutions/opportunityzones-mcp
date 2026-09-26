@@ -126,5 +126,12 @@
     "title": "26 U.S.C. § 1221, Capital asset defined",
     "publisher": "Office of the Law Revision Counsel, U.S. House of Representatives",
     "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section1221&num=0&edition=prelim"
+  },
+  {
+    "id": "cfr-1.1400Z2f-1",
+    "title": "26 CFR § 1.1400Z2(f)-1, Administrative rules for penalties and anti-abuse",
+    "publisher": "Electronic Code of Federal Regulations (eCFR)",
+    "url": "https://www.ecfr.gov/current/title-26/chapter-I/subchapter-A/part-1/section-1.1400Z2(f)-1",
+    "api": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-26?part=1&section=1.1400Z2(f)-1"
   }
 ]
