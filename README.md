@@ -1,8 +1,21 @@
 # opportunityzones-mcp
 
-A screening tool for U.S. Opportunity Zones: an MCP server (and, next, a web
-map) that describes any census tract against the 2027 designation rules and the
-public data around it.
+A screening tool for U.S. Opportunity Zones: a website and an MCP server that
+explain how the program works, describe any census tract against the 2027
+designation rules and the public data around it, and check where a list of
+properties sits.
+
+## The website
+
+| Page | What it is for |
+|---|---|
+| `/` Start | The gain, the fund and the zone; nine starting points in three groups; where the 2027 round stands |
+| `/for/{individual,corporate,builder,business,landowner,sponsor,adviser,lender,community}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
+| `/how-it-works` | The statutory mechanics in general terms, eligible vs designated, timeline, sources |
+| `/map` | Address search and state-wide tract map, coloured by 2027 eligibility, rural, 2018 zone, HUD QCT/DDA or NMTC |
+| `/tract/{geoid}` | One tract's full profile, its place in the 2027 round, and its sources |
+| `/funds` | Where funds can be found and what to ask one (no fund is named, by rule) |
+| `/check` | Paste up to 25 addresses or tract numbers; get each one's zone status, and a CSV |
 
 > **Informational only, not investment, tax or legal advice.** It describes
 > places. It does not recommend any tract, fund or transaction, and it does not
@@ -136,10 +149,13 @@ commercial use.
 | [TIGER/Line 2024 Primary Roads](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html) | U.S. Census Bureau, Geography Division | feasibility | offline (file) | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [Foursquare Open Source Places](https://docs.foursquare.com/data-products/docs/access-fsq-os-places) | Foursquare Labs, Inc. | feasibility | live | Apache License 2.0 |
 | [FEMA National Flood Hazard Layer (NFHL)](https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer) | Federal Emergency Management Agency | feasibility | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
+| [USGS Seismic Design Maps web service (ASCE 7-22)](https://earthquake.usgs.gov/ws/designmaps/asce7-22.html) | U.S. Geological Survey, Earthquake Hazards Program | feasibility | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
+| [Wildfire Risk to Communities: annual burn probability](https://wildfirerisk.org/) | USDA Forest Service, Rocky Mountain Research Station | feasibility | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [Quarterly Workforce Indicators (QWI)](https://www.census.gov/data/developers/data-sets/qwi.html) | U.S. Census Bureau, Center for Economic Studies (LEHD) | impact-baseline | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [Quarterly Census of Employment and Wages (QCEW), open data files](https://www.bls.gov/cew/additional-resources/open-data/) | U.S. Bureau of Labor Statistics | impact-baseline | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [Local Area Unemployment Statistics (LAUS), BLS Public Data API v2](https://www.bls.gov/lau/) | U.S. Bureau of Labor Statistics | impact-baseline | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [Building Permits Survey, annual county files](https://www.census.gov/construction/bps/) | U.S. Census Bureau | feasibility | offline (file) | U.S. federal work, no copyright (17 U.S.C. § 105) |
+| [2024 Cartographic Boundary Files: census tracts (1:500,000) and counties (1:20,000,000)](https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.2024.html) | U.S. Census Bureau, Geography Division | statutory | offline (file) | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [TIGERweb map services (tract and county boundaries)](https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb) | U.S. Census Bureau, Geography Division | statutory | live | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [OpenFreeMap vector basemap (Positron and Liberty styles)](https://openfreemap.org/) | OpenFreeMap, from OpenStreetMap contributors and OpenMapTiles | feasibility | live | Map data ODbL 1.0 (OpenStreetMap); tile schema and styles BSD/CC-BY (OpenMapTiles); service free, no key |
 | [USGS The National Map basemap: Imagery Topo](https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer) | U.S. Geological Survey, National Geospatial Program | feasibility | live | U.S. federal work, no copyright (17 U.S.C. § 105); imagery from USDA NAIP, public domain |

@@ -6,7 +6,8 @@
  *  - tracts.bin      one columnar payload (lib/data/columnar.ts): every numeric
  *                    per-tract measure, nulls kept distinct from zero;
  *  - lookups.json    names the payload refers to by code: states, counties,
- *                    CBSAs, rural-explanation places, and county permits;
+ *                    CBSAs, rural-explanation places, county permits, and
+ *                    which states' 2027 designations are certified, and when;
  *  - safmr_zip.json  HUD Small Area FMRs by ZIP, for the ZIP a geocoded site has;
  *  - anchor_points.json  colleges and hospitals with coordinates, for "nearby";
  *  - manifest.json   what each column means, its unit, and each source's vintage.
@@ -19,6 +20,7 @@ import path from "node:path";
 import { encodePayload, type ColumnSpec } from "../lib/data/columnar";
 import { CLEAN_DIR, DATA_DIR, STATES } from "./config";
 import { log } from "./lib/http";
+import { designationCode } from "./oz2/designated";
 import { readCsv, type Table } from "./lib/table";
 import { SOURCES } from "./sources";
 
@@ -173,9 +175,16 @@ export async function publish(): Promise<void> {
     source,
   });
 
+  // 2027 designations: absent files mean nothing is published yet, so every tract is pending.
+  const designatedFile = path.join(CLEAN_DIR, "oz2_designated.csv");
+  const statesFile = path.join(CLEAN_DIR, "oz2_designation_states.csv");
+  const designatedSet = new Set(existsSync(designatedFile) ? readCsv(designatedFile).rows.map((r) => r[0]) : []);
+  const certified = new Map<string, string>(existsSync(statesFile) ? readCsv(statesFile).rows.map((r) => [r[0], r[1]] as [string, string]) : []);
+
   const columns: Col[] = [
     // Statutory: 2027 eligibility and rural status (Treasury).
     code("eligible_2027", "1 if Treasury lists the tract as an eligible low-income community for the 2027 designations.", eligible("eligible", flag), "oz2Eligible"),
+    code("designated_2027", "1 a designated 2027 zone; 0 not designated (its state's list is published); null pending (not yet published for its state).", (g) => designationCode(g, designatedSet, certified), "oz2Designated"),
     code("rural_2027", "1 if Treasury classifies the tract as comprised entirely of a rural area.", eligible("rural", flag), "oz2Eligible"),
     share("poverty_rate", "Poverty rate, 2020-2024 ACS, as Treasury used it.", eligible("poverty_rate"), "oz2Eligible"),
     dollars("median_family_income", "Median family income, 2020-2024 ACS (Treasury's input).", eligible("mfi"), "oz2Eligible"),
@@ -272,7 +281,7 @@ export async function publish(): Promise<void> {
 
   mkdirSync(DATA_DIR, { recursive: true });
   writeFileSync(path.join(DATA_DIR, "tracts.bin"), payload);
-  writeFileSync(path.join(DATA_DIR, "lookups.json"), JSON.stringify({ states, counties, cbsas, ruralNames, permits }));
+  writeFileSync(path.join(DATA_DIR, "lookups.json"), JSON.stringify({ states, counties, cbsas, ruralNames, permits, designation: { certified: Object.fromEntries(certified) } }));
   writeFileSync(path.join(DATA_DIR, "safmr_zip.json"), JSON.stringify(zips));
   writeFileSync(path.join(DATA_DIR, "anchor_points.json"), JSON.stringify(anchorPoints));
 

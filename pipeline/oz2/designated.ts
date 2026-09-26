@@ -4,10 +4,12 @@
  *
  * NOT YET PUBLISHED. The nomination window closes 2026-09-28 (or 2026-10-28 if
  * extended) and Treasury certifies within 30 days after. This stage exists so
- * the list lands the day it appears: set `SOURCE.url` (and the expected counts
- * from Treasury's announcement) and re-run the pipeline. Until then it logs
- * that the list is pending and writes nothing, so nothing downstream can
- * mistake "not published" for "no tract designated".
+ * the list lands the day it appears: add each list Treasury publishes to
+ * `RELEASES` and re-run the pipeline. In 2018 Treasury certified states in
+ * batches over several weeks, so a release names the states it certifies (or
+ * "all" for a final national list). Until a state is certified its tracts stay
+ * pending: a tract is "not designated" only once its state's list is out, so
+ * nothing downstream can mistake "not published" for "not chosen".
  *
  * The 2018 list is the model: a workbook whose sheet has a title block above a
  * header row naming the census tract column. The parser finds that column by
@@ -22,10 +24,11 @@
  *  - Each jurisdiction's count must be within its cap (§ 1400Z-1(d)), computed
  *    by `stateCap` from its eligible-LIC count.
  *
- * Output: pipeline/clean/oz2_designated.csv
+ * Output: pipeline/clean/oz2_designated.csv (designated tracts) and
+ * pipeline/clean/oz2_designation_states.csv (certified states and when).
  */
 
-import { existsSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import path from "node:path";
 import { stateCap } from "../../lib/oz/eligibility";
 import { CLEAN_DIR } from "../config";
@@ -33,12 +36,29 @@ import { readWorkbook, type Sheet } from "../lib/archive";
 import { fetchCached, log } from "../lib/http";
 import { readCsv, tractGeoid, writeCsv } from "../lib/table";
 
-/** Set when Treasury publishes. `expected` guards against a changed file. */
-export const SOURCE: { url: string | null; cacheName: string; expected: { designated: number } | null } = {
-  url: null,
-  cacheName: "oz2-designated.xlsx",
-  expected: null,
-};
+export interface Release {
+  url: string;
+  cacheName: string;
+  /** Date Treasury published this list, YYYY-MM-DD. */
+  published: string;
+  /** States (FIPS) this list certifies, or "all" for a complete national list. */
+  states: "all" | readonly string[];
+  /** Treasury's own count for this list, which guards against a changed file. */
+  expected?: { designated: number };
+}
+
+/** Every list Treasury has published for the 2027 round, oldest first. Empty until the first one. */
+export const RELEASES: readonly Release[] = [];
+
+/**
+ * The published per-tract code: 1 designated, 0 not designated (its state's
+ * list is out and the tract is not on it), null pending (its state's list is
+ * not out yet).
+ */
+export function designationCode(geoid: string, designated: ReadonlySet<string>, certified: ReadonlyMap<string, string>): 1 | 0 | null {
+  if (designated.has(geoid)) return 1;
+  return certified.has(geoid.slice(0, 2)) ? 0 : null;
+}
 
 const TRACT_HEADER = /census\s*tract|tract\s*(number|id|geoid)|^geoid/i;
 
@@ -129,34 +149,72 @@ function loadEligible(): Map<string, boolean> {
   return new Map(t.rows.map((r) => [r[g], r[e] === "1"]));
 }
 
-export async function buildOz2Designated(): Promise<Oz2Designated | null> {
-  if (!SOURCE.url) {
-    log("oz2 designations: not yet published by Treasury; nothing written (set SOURCE.url in pipeline/oz2/designated.ts)");
+export async function buildOz2Designated(releases: readonly Release[] = RELEASES): Promise<Oz2Designated | null> {
+  const outDesignated = path.join(CLEAN_DIR, "oz2_designated.csv");
+  const outStates = path.join(CLEAN_DIR, "oz2_designation_states.csv");
+  if (releases.length === 0) {
+    // Remove any stale output so publish cannot report designations that were withdrawn.
+    rmSync(outDesignated, { force: true });
+    rmSync(outStates, { force: true });
+    log("oz2 designations: not yet published by Treasury; every eligible tract stays pending (add a release in pipeline/oz2/designated.ts)");
     return null;
   }
-  const buf = await fetchCached(SOURCE.url, SOURCE.cacheName);
-  const result = parseOz2Designated(readWorkbook(buf), loadEligible());
+  const eligible = loadEligible();
+  const allStates = [...new Set([...eligible.keys()].map((g) => g.slice(0, 2)))];
+  const certified = new Map<string, string>();
+  const seen = new Map<string, Oz2Designation>();
+  let duplicates = 0;
+  for (const release of releases) {
+    const result = parseOz2Designated(readWorkbook(await fetchCached(release.url, release.cacheName)), eligible);
+    if (release.expected && result.designations.length !== release.expected.designated) {
+      throw new Error(`OZ2 designations (${release.published}): expected ${release.expected.designated}, got ${result.designations.length}. The file has changed.`);
+    }
+    const states = release.states === "all" ? allStates : release.states;
+    const outside = result.designations.filter((d) => !states.includes(d.stateFips));
+    if (outside.length > 0) {
+      throw new Error(`OZ2 designations (${release.published}): ${outside.length} tracts in states the release does not list, e.g. ${outside[0].geoid20}`);
+    }
+    for (const st of states) if (!certified.has(st)) certified.set(st, release.published);
+    duplicates += result.duplicates;
+    for (const d of result.designations) {
+      if (seen.has(d.geoid20)) duplicates++;
+      else seen.set(d.geoid20, d);
+    }
+  }
+  const designations = [...seen.values()].sort((a, b) => (a.geoid20 < b.geoid20 ? -1 : 1));
+  const merged = parseMerged(designations, eligible, duplicates);
 
-  if (SOURCE.expected && result.designations.length !== SOURCE.expected.designated) {
-    throw new Error(
-      `OZ2 designations: expected ${SOURCE.expected.designated}, got ${result.designations.length}. The file has changed.`
-    );
+  if (merged.duplicates > 0) log(`oz2 designations: ${merged.duplicates} duplicate rows ignored`);
+  if (merged.notEligible.length > 0) {
+    log(`oz2 designations: ${merged.notEligible.length} NOT on Treasury's eligible list (kept, flagged): ${merged.notEligible.slice(0, 20).join(", ")}`);
   }
-  if (result.duplicates > 0) log(`oz2 designations: ${result.duplicates} duplicate rows ignored`);
-  if (result.notEligible.length > 0) {
-    log(`oz2 designations: ${result.notEligible.length} NOT on Treasury's eligible list (kept, flagged): ${result.notEligible.slice(0, 20).join(", ")}`);
-  }
-  for (const s of result.byState.filter((x) => x.overCap)) {
-    log(`oz2 designations: state ${s.stateFips} designated ${s.designated}, over its cap of ${s.cap} (${s.eligibleLics} eligible LICs)`);
+  for (const st of merged.byState.filter((x) => x.overCap)) {
+    log(`oz2 designations: state ${st.stateFips} designated ${st.designated}, over its cap of ${st.cap} (${st.eligibleLics} eligible LICs)`);
   }
 
-  writeCsv(
-    path.join(CLEAN_DIR, "oz2_designated.csv"),
-    ["geoid20", "state_fips", "on_eligible_list"],
-    result.designations.map((d) => [d.geoid20, d.stateFips, d.onEligibleList])
+  writeCsv(outDesignated, ["geoid20", "state_fips", "on_eligible_list"], merged.designations.map((d) => [d.geoid20, d.stateFips, d.onEligibleList]));
+  writeCsv(outStates, ["state_fips", "certified_on"], [...certified].sort(([a], [b]) => (a < b ? -1 : 1)));
+  log(
+    `oz2 designations: ${merged.designations.length.toLocaleString("en-US")} tracts; ` +
+      `${certified.size} of ${allStates.length} jurisdictions certified`
   );
-  log(`oz2 designations: ${result.designations.length.toLocaleString("en-US")} tracts in ${result.byState.length} jurisdictions`);
-  return result;
+  return merged;
+}
+
+/** Totals and checks over designations merged from several releases. */
+function parseMerged(designations: Oz2Designation[], eligible: ReadonlyMap<string, boolean>, duplicates: number): Oz2Designated {
+  const licsByState = new Map<string, number>();
+  for (const [geoid, isEligible] of eligible) if (isEligible) licsByState.set(geoid.slice(0, 2), (licsByState.get(geoid.slice(0, 2)) ?? 0) + 1);
+  const designatedByState = new Map<string, number>();
+  for (const d of designations) designatedByState.set(d.stateFips, (designatedByState.get(d.stateFips) ?? 0) + 1);
+  const byState = [...designatedByState.entries()]
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([stateFips, designated]) => {
+      const eligibleLics = licsByState.get(stateFips) ?? 0;
+      const cap = stateCap(eligibleLics);
+      return { stateFips, designated, eligibleLics, cap, overCap: designated > cap };
+    });
+  return { designations, byState, duplicates, notEligible: designations.filter((d) => !d.onEligibleList).map((d) => d.geoid20) };
 }
 
 if (process.argv[1] && import.meta.filename === path.resolve(process.argv[1])) {

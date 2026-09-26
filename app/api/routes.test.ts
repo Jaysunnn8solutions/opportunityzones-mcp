@@ -96,6 +96,14 @@ describe("/api/geocode", () => {
     expect(((await res.json()) as { matches: Array<{ geoid: string }> }).matches[0].geoid).toBe("13121003500");
   });
 
+  it("reports the geocoder refusing a request as unavailable, not as a bad address", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("Forbidden", { status: 403 })));
+    const res = await geocode(
+      new Request("http://localhost/api/geocode", { method: "POST", body: JSON.stringify({ address: "55 Trinity Ave SW, Atlanta, GA" }) })
+    );
+    expect(res.status).toBe(502);
+  });
+
   it("rejects a missing or oversized address", async () => {
     const bad = await geocode(new Request("http://localhost/api/geocode", { method: "POST", body: JSON.stringify({ address: "x" }) }));
     expect(bad.status).toBe(400);

@@ -80,7 +80,8 @@ export function statusLines(t: TractProfile): string[] {
   const dda = m.dda_2026.value;
   return [
     `- 2027 designation eligibility (Treasury): ${eligible === 1 ? "ELIGIBLE low-income community" : eligible === 0 ? "not eligible" : "n/a"}. ` +
-      "Actual 2027 designations are not yet published; eligibility is not designation.",
+      "Eligibility is not designation.",
+    `- 2027 designation: ${t.designation2027.text}`,
     `- Tract median family income ${fmt.usd(m.median_family_income.value)} = ${m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(1)}%`} of the applicable area MFI ${fmt.usd(m.area_median_family_income.value)}; poverty rate ${fmt.pct(m.poverty_rate.value)}.`,
     `- Rural (Treasury, for the 2027 rules): ${t.rural.treasury == null ? "n/a" : t.rural.treasury ? "yes" : "no"}. ${t.rural.explanation}`,
     `- 2018 Opportunity Zone: ${oz2018 == null ? "n/a" : oz2018 >= 0.999 ? "the tract lies in a 2018 zone" : oz2018 > 0 ? `${fmt.pct(oz2018, 0)} of its 2020 population lives in a 2018 zone` : "no"} (2018 zones run through 2028).`,

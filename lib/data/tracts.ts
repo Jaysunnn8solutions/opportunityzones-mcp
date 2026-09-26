@@ -8,6 +8,7 @@
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { designationOutlook, type DesignationOutlook } from "../oz/designation";
 import { ruralExplanation } from "../oz/ruralExplanation";
 import { decodePayload, type Payload } from "./columnar";
 
@@ -41,6 +42,8 @@ interface Lookups {
   cbsas: string[];
   ruralNames: string[];
   permits: Record<string, { year: number; units: number; units5plus: number; change: number | null }>;
+  /** States whose 2027 designations Treasury has certified, and when. Absent in data published before the list. */
+  designation?: { certified: Record<string, string> };
 }
 
 export interface TractData {
@@ -83,6 +86,58 @@ export interface TractProfile {
   measures: Record<string, Measure>;
   rural: { treasury: boolean | null; explanation: string; explanationStatus: string };
   countyPermits: Lookups["permits"][string] | null;
+  /** Where the tract stands in the 2027 designation round (lib/oz/designation.ts). */
+  designation2027: DesignationOutlook;
+}
+
+const eligibleByState = new WeakMap<TractData, Map<string, number>>();
+
+/** How far Treasury's 2027 designations have been published. */
+export function designationPublication(data: TractData = loadTractData()): { certified: number; jurisdictions: number; latest: string | null } {
+  const certified = Object.values(data.lookups.designation?.certified ?? {});
+  const jurisdictions = Object.keys(data.lookups.states).filter((f) => stateEligibleCount(f, data) > 0).length;
+  return { certified: certified.length, jurisdictions, latest: certified.length ? certified.sort().at(-1)! : null };
+}
+
+/** One sentence on the state of publication, for banners and summaries. */
+export function designationNote(data: TractData = loadTractData()): string {
+  const p = designationPublication(data);
+  if (p.certified === 0) return "The 2027 designations are not yet published.";
+  if (p.certified < p.jurisdictions) {
+    return `Treasury has certified 2027 designations for ${p.certified} of ${p.jurisdictions} states and territories; the rest are pending.`;
+  }
+  return "Treasury has certified the 2027 designations for every state and territory.";
+}
+
+/** Nationally: eligible tracts, and the most all states together may designate. */
+export function designationRoundTotals(data: TractData = loadTractData()): { eligible: number; maxDesignated: number; jurisdictions: number } {
+  let eligible = 0;
+  let maxDesignated = 0;
+  let jurisdictions = 0;
+  for (const fips of Object.keys(data.lookups.states)) {
+    const n = stateEligibleCount(fips, data);
+    if (n === 0) continue;
+    jurisdictions++;
+    eligible += n;
+    maxDesignated += designationOutlook(1, null, n).stateCap;
+  }
+  return { eligible, maxDesignated, jurisdictions };
+}
+
+/** Eligible tracts per state or territory, from Treasury's 2027 list. */
+export function stateEligibleCount(stateFips: string, data: TractData = loadTractData()): number {
+  let counts = eligibleByState.get(data);
+  if (!counts) {
+    counts = new Map();
+    const eligible = data.payload.columns.get("eligible_2027");
+    for (let i = 0; i < data.payload.count; i++) {
+      if (eligible?.get(i) !== 1) continue;
+      const s = data.payload.geoids[i].slice(0, 2);
+      counts.set(s, (counts.get(s) ?? 0) + 1);
+    }
+    eligibleByState.set(data, counts);
+  }
+  return counts.get(stateFips) ?? 0;
 }
 
 export const GEOID = /^\d{11}$/;
@@ -134,5 +189,12 @@ export function getTract(geoid: string, data: TractData = loadTractData()): Trac
       explanationStatus: explanation.status,
     },
     countyPermits: data.lookups.permits[county] ?? null,
+    designation2027: designationOutlook(
+      v("eligible_2027"),
+      data.lookups.states[geoid.slice(0, 2)] ?? null,
+      stateEligibleCount(geoid.slice(0, 2), data),
+      v("designated_2027"),
+      data.lookups.designation?.certified[geoid.slice(0, 2)] ?? null
+    ),
   };
 }

@@ -10,12 +10,15 @@ import { milesBetween, sitesNear } from "../sources/epa/client";
 import { floodZoneAt } from "../sources/fema/client";
 import { amenitiesNear } from "../sources/foursquare/places";
 import { busiestRoadsNear } from "../sources/hpms/client";
+import { wildfireLikelihoodAt } from "../sources/usfs/wildfire";
+import { seismicDesignAt } from "../sources/usgs/seismic";
 import { DESCRIPTION_SUFFIX, fmt, readOnlyLive, text, unavailable } from "./shared";
 
 export const nearbyConfig = {
   title: "What is near a site",
   description:
-    "Live context around a point (from check_address): FEMA flood zone at the point, EPA Superfund and brownfield sites, " +
+    "Live context around a point (from check_address): natural hazards (FEMA flood zone at the point, USGS seismic design " +
+    "category, Forest Service wildfire burn probability, each reported separately with no combined score), EPA Superfund and brownfield sites, " +
     "the busiest nearby roads (FHWA traffic counts), colleges and hospitals, everyday amenities (Foursquare, where " +
     "configured), and the county's labor market (BLS, Census QWI). Each source is reported separately; one that does not " +
     "answer is marked unavailable. Third parties receive only an approximate location, except the Census Bureau, which " +
@@ -51,10 +54,12 @@ export async function nearbyHandler({ lat, lon, radiusMiles = 1 }: { lat: number
     sitesNear(lon, lat, radiusMiles),
     busiestRoadsNear(lon, lat, radiusMiles),
     amenitiesNear(lon, lat, radiusMiles),
+    seismicDesignAt(lon, lat),
+    wildfireLikelihoodAt(lon, lat),
   ]);
   const tract = await tractAtPoint(lon, lat).catch(() => null);
   const county = tract?.countyFips ?? null;
-  const [[flood, epa, roads, places], [jobs, qwi, laus]] = await Promise.all([
+  const [[flood, epa, roads, places, seismic, wildfire], [jobs, qwi, laus]] = await Promise.all([
     pointLookups,
     Promise.allSettled([
       county ? countyJobs(county) : Promise.resolve(null),
@@ -72,6 +77,19 @@ export async function nearbyHandler({ lat, lon, radiusMiles = 1 }: { lat: number
     lines.push(`- ${f.zone ? `Zone ${f.zone}${f.subtype ? ` (${f.subtype.toLowerCase()})` : ""}: ` : ""}${f.description}${f.baseFloodElevationFt != null ? ` Base flood elevation ${f.baseFloodElevationFt} ft.` : ""}`);
     lines.push("- FEMA's mapped zone, not an official flood determination.");
   } else lines.push(`- ${unavailable("Flood zone", flood.reason)}`);
+
+  lines.push("", "## Earthquake (USGS)");
+  if (seismic.status === "fulfilled") {
+    const q = seismic.value;
+    lines.push(`- Seismic Design Category ${q.category}: ${q.description}${q.sds != null ? ` Design short-period acceleration S_DS ${q.sds.toFixed(2)} g` : ""}${q.sd1 != null ? `, S_D1 ${q.sd1.toFixed(2)} g` : ""}${q.sds != null || q.sd1 != null ? "." : ""}`);
+    lines.push("- For an ordinary building (Risk Category II) on the code's default soil, for the area around the site (ASCE 7-22). Not a structural determination.");
+  } else lines.push(`- ${unavailable("Seismic design category", seismic.reason)}`);
+
+  lines.push("", "## Wildfire (USDA Forest Service)");
+  if (wildfire.status === "fulfilled") {
+    lines.push(`- ${wildfire.value.description}`);
+    if (wildfire.value.status === "modelled") lines.push("- Annual burn probability for the area around the site (270 m model cells; landscape as of 2020).");
+  } else lines.push(`- ${unavailable("Wildfire likelihood", wildfire.reason)}`);
 
   lines.push("", "## EPA sites");
   if (epa.status === "fulfilled") {
@@ -125,6 +143,8 @@ export async function nearbyHandler({ lat, lon, radiusMiles = 1 }: { lat: number
   return text(lines.join("\n"), [
     "censusGeocoder",
     "femaNfhl",
+    "usgsSeismicDesign",
+    "usfsWildfireRisk",
     "epaSites",
     "fhwaHpms",
     "ncesPostsecondary",

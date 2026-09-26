@@ -2,9 +2,12 @@
 
 /**
  * The screening map. The basemap is OpenFreeMap (streets, water, labels) or
- * USGS aerial imagery (lib/geo/basemaps.ts); Census TIGERweb supplies tract and
- * county outlines, fetched per tile through our cached /api/boundaries route.
- * Colours come from the published data.
+ * USGS aerial imagery (lib/geo/basemaps.ts). Tract and county outlines are the
+ * Census cartographic boundary files the pipeline writes to public/boundaries
+ * (pipeline/map/boundaries.ts): the counties file for zoomed-out views, and one
+ * file per state with every tract, loaded as a state comes into view. Until
+ * those files exist, outlines come per tile from TIGERweb through our cached
+ * /api/boundaries route instead. Colours come from the published data.
  *
  * Privacy: a searched address lives only in this component's state and is sent
  * once, in a POST body, to /api/geocode. It is never put in the URL; the hash
@@ -15,9 +18,12 @@ import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJS
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
+import { isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 
-const TRACT_MIN_ZOOM = 8;
+/** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
+const TILE_TRACT_MIN_ZOOM = 8;
+const tractMinZoomFor = (index: BoundaryIndex | null | undefined) => (index ? STATE_TRACT_MIN_ZOOM : TILE_TRACT_MIN_ZOOM);
 
 const FLAGS = {
   eligible: { bit: 1, label: "2027 eligible", color: "#0b6e4f" },
@@ -26,13 +32,16 @@ const FLAGS = {
   qct: { bit: 8, label: "HUD QCT", color: "#1f78b4" },
   dda: { bit: 16, label: "HUD DDA", color: "#b15928" },
   nmtc: { bit: 32, label: "NMTC", color: "#33a02c" },
+  zone2027: { bit: 64, label: "2027 zone", color: "#c2410c" },
 } as const;
+/** Set with zone2027 unknown: eligible, its state's list not yet published. */
+const ZONE_2027_PENDING = 128;
 type FlagName = keyof typeof FLAGS;
 
 const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"] as never;
 
 /** The map's own sources and layers, merged into whichever basemap is shown. */
-function overlay(flag: FlagName, fillOpacity: number, selected: string | null): Overlay {
+function overlay(flag: FlagName, fillOpacity: number, selected: string | null, tractMinZoom: number): Overlay {
   const empty = (): GeoJSONSourceSpecification => ({ type: "geojson", data: { type: "FeatureCollection", features: [] } });
   return {
     sources: { counties: empty(), tracts: empty() },
@@ -41,15 +50,15 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null): 
         id: "county-fill",
         type: "fill",
         source: "counties",
-        maxzoom: TRACT_MIN_ZOOM,
+        maxzoom: tractMinZoom,
         paint: {
           "fill-color": ["case", ["<", ["get", "share"], 0], "#dddddd", ["interpolate", ["linear"], ["get", "share"], 0, "#f7fcf5", 0.3, "#74c476", 0.6, "#0b6e4f"]],
           "fill-opacity": fillOpacity + 0.1,
         },
       },
-      { id: "county-line", type: "line", source: "counties", maxzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#6b7682", "line-width": 0.4 } },
-      { id: "tract-fill", type: "fill", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity } },
-      { id: "tract-line", type: "line", source: "tracts", minzoom: TRACT_MIN_ZOOM, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
+      { id: "county-line", type: "line", source: "counties", maxzoom: tractMinZoom, paint: { "line-color": "#6b7682", "line-width": 0.4 } },
+      { id: "tract-fill", type: "fill", source: "tracts", minzoom: tractMinZoom, paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity } },
+      { id: "tract-line", type: "line", source: "tracts", minzoom: tractMinZoom, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
       { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], selected ?? ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
     ],
   };
@@ -68,6 +77,7 @@ interface Profile {
   cbsa: string | null;
   measures: Record<string, { value: number | null }>;
   rural: { treasury: boolean | null; explanation: string };
+  designation2027: { status: string; text: string };
 }
 
 function readHash(): { geoid?: string; view?: [number, number, number]; basemap?: BasemapId } {
@@ -111,6 +121,9 @@ export default function MapApp() {
   const flagRef = useRef(flag);
   const basemapRef = useRef(basemap);
   const selectedRef = useRef(selected);
+  // undefined until checked; null when the static files are absent (tile fallback).
+  const boundaryIndex = useRef<BoundaryIndex | null | undefined>(undefined);
+  const loadedStates = useRef(new Set<string>());
   const [profile, setProfile] = useState<Profile | null>(null);
   const [address, setAddress] = useState("");
   const [candidates, setCandidates] = useState<Array<{ geoid: string; lon: number; lat: number; label: string | null }>>([]);
@@ -125,7 +138,9 @@ export default function MapApp() {
       const g = String(f.properties.GEOID);
       const bits = stateStatus.current.get(g.slice(0, 2))?.[g];
       const props: Record<string, string | number> = { GEOID: g };
-      for (const [name, { bit }] of Object.entries(FLAGS)) props[name] = bits == null ? -1 : bits & bit ? 1 : 0;
+      for (const [name, { bit }] of Object.entries(FLAGS)) {
+        props[name] = bits == null || (name === "zone2027" && bits & ZONE_2027_PENDING) ? -1 : bits & bit ? 1 : 0;
+      }
       return { ...f, properties: props };
     });
     const counties = [...countyFeatures.current.values()].map((f) => {
@@ -136,19 +151,88 @@ export default function MapApp() {
     (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
   }, []);
 
-  /** Fetch the boundary tiles covering the view that are not loaded yet. */
+  /** Status flags for each state not yet fetched, for colouring its tracts. */
+  const loadStatus = useCallback(async (states: Iterable<string>) => {
+    await Promise.all(
+      [...new Set(states)]
+        .filter((s) => !stateStatus.current.has(s))
+        .map(async (s) => {
+          stateStatus.current.set(s, {});
+          const r = await fetch(`/api/status/${s}`);
+          if (r.ok) stateStatus.current.set(s, (await r.json()) as Record<string, number>);
+        })
+    );
+  }, []);
+
+  const loadCountySummary = useCallback(async () => {
+    if (countySummary.current) return;
+    const r = await fetch("/api/counties");
+    if (r.ok) countySummary.current = (await r.json()) as Record<string, [number, number]>;
+  }, []);
+
+  /**
+   * Whether the pipeline's static boundary files are published. Checked once;
+   * when they are, the county file is loaded at the same time.
+   */
+  const checkBoundaryFiles = useCallback(async (): Promise<BoundaryIndex | null> => {
+    if (boundaryIndex.current !== undefined) return boundaryIndex.current;
+    try {
+      const r = await fetch("/boundaries/index.json");
+      const body: unknown = r.ok ? await r.json() : null;
+      boundaryIndex.current = isBoundaryIndex(body) ? body : null;
+    } catch {
+      boundaryIndex.current = null;
+    }
+    if (boundaryIndex.current) {
+      const r = await fetch("/boundaries/counties.json");
+      if (r.ok) for (const f of ((await r.json()) as { features: Feature[] }).features) countyFeatures.current.set(String(f.properties.GEOID), f);
+    }
+    const map = mapRef.current;
+    if (map) {
+      const z = tractMinZoomFor(boundaryIndex.current);
+      for (const id of ["county-fill", "county-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, 0, z);
+      for (const id of ["tract-fill", "tract-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
+    }
+    return boundaryIndex.current;
+  }, []);
+
+  /** Load whatever outlines the view needs that are not loaded yet. */
   const loadVisible = useCallback(async () => {
     const map = mapRef.current;
     if (!map) return;
-    const z = map.getZoom();
-    const b = map.getBounds();
-    const bounds: Bounds = { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
-    const layer = z >= TRACT_MIN_ZOOM ? "tracts" : "counties";
-    const tz = layer === "tracts" ? Math.min(12, Math.max(TRACT_MIN_ZOOM, Math.floor(z))) : Math.min(7, Math.max(3, Math.floor(z)));
-    const tiles = tilesCovering(bounds, tz).filter((t) => !loadedTiles.current.has(`${layer}/${tz}/${t.x}/${t.y}`));
-    if (tiles.length === 0 || tiles.length > 40) return;
     setLoading((n) => n + 1);
     try {
+      const index = await checkBoundaryFiles();
+      const z = map.getZoom();
+      const b = map.getBounds();
+      const bounds: Bounds = { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
+      if (index) {
+        if (z < STATE_TRACT_MIN_ZOOM) {
+          await loadCountySummary();
+        } else {
+          const states = statesInView(index, bounds).filter((s) => !loadedStates.current.has(s));
+          await Promise.all(
+            states.map(async (s) => {
+              loadedStates.current.add(s);
+              const res = await fetch(`/boundaries/tracts/${s}.json`);
+              if (!res.ok) {
+                loadedStates.current.delete(s);
+                return;
+              }
+              for (const f of ((await res.json()) as { features: Feature[] }).features) tractFeatures.current.set(String(f.properties.GEOID), f);
+            })
+          );
+          await loadStatus(states);
+        }
+        refreshSources();
+        return;
+      }
+
+      // Fallback: per-tile outlines from TIGERweb through /api/boundaries.
+      const layer = z >= TILE_TRACT_MIN_ZOOM ? "tracts" : "counties";
+      const tz = layer === "tracts" ? Math.min(12, Math.max(TILE_TRACT_MIN_ZOOM, Math.floor(z))) : Math.min(7, Math.max(3, Math.floor(z)));
+      const tiles = tilesCovering(bounds, tz).filter((t) => !loadedTiles.current.has(`${layer}/${tz}/${t.x}/${t.y}`));
+      if (tiles.length === 0 || tiles.length > 40) return;
       await Promise.all(
         tiles.map(async (t) => {
           const key = `${layer}/${tz}/${t.x}/${t.y}`;
@@ -161,29 +245,15 @@ export default function MapApp() {
           const fc = (await res.json()) as { features: Feature[] };
           const store = layer === "tracts" ? tractFeatures.current : countyFeatures.current;
           for (const f of fc.features) if (!store.has(String(f.properties.GEOID))) store.set(String(f.properties.GEOID), f);
-          if (layer === "tracts") {
-            const states = new Set(fc.features.map((f) => String(f.properties.GEOID).slice(0, 2)));
-            await Promise.all(
-              [...states]
-                .filter((s) => !stateStatus.current.has(s))
-                .map(async (s) => {
-                  stateStatus.current.set(s, {});
-                  const r = await fetch(`/api/status/${s}`);
-                  if (r.ok) stateStatus.current.set(s, (await r.json()) as Record<string, number>);
-                })
-            );
-          }
+          if (layer === "tracts") await loadStatus(fc.features.map((f) => String(f.properties.GEOID).slice(0, 2)));
         })
       );
-      if (layer === "counties" && !countySummary.current) {
-        const r = await fetch("/api/counties");
-        if (r.ok) countySummary.current = (await r.json()) as Record<string, [number, number]>;
-      }
+      if (layer === "counties") await loadCountySummary();
       refreshSources();
     } finally {
       setLoading((n) => n - 1);
     }
-  }, [refreshSources]);
+  }, [checkBoundaryFiles, loadCountySummary, loadStatus, refreshSources]);
 
   /** Swap the basemap, carrying the map's own layers and data across. */
   const applyBasemap = useCallback(
@@ -194,7 +264,7 @@ export default function MapApp() {
       const b = BASEMAPS[id];
       map.setStyle(b.style, {
         diff: false,
-        transformStyle: (_previous, next) => withOverlay(next, overlay(flagRef.current, b.fillOpacity, selectedRef.current)),
+        transformStyle: (_previous, next) => withOverlay(next, overlay(flagRef.current, b.fillOpacity, selectedRef.current, tractMinZoomFor(boundaryIndex.current))),
       });
       // The new style starts with empty overlay sources; refill them.
       map.once("style.load", refreshSources);
@@ -253,7 +323,7 @@ export default function MapApp() {
       const g = e.features?.[0]?.properties?.GEOID;
       if (typeof g === "string") void selectTract(g);
     });
-    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: TRACT_MIN_ZOOM + 1 }));
+    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: Math.max(map.getZoom(), tractMinZoomFor(boundaryIndex.current)) + 1 }));
     return () => {
       map.remove();
       mapRef.current = null;
@@ -347,7 +417,7 @@ export default function MapApp() {
             <span className="swatch" style={{ background: "#ffffff" }} /> no
           </span>
           <span>
-            <span className="swatch" style={{ background: "#dddddd" }} /> no data
+            <span className="swatch" style={{ background: "#dddddd" }} /> {flag === "zone2027" ? "pending (list not published)" : "no data"}
           </span>
         </div>
         <div className="layer-picker" role="group" aria-label="Basemap">
@@ -374,6 +444,7 @@ export default function MapApp() {
                 2027 eligibility: <strong>{m.eligible_2027.value === 1 ? "eligible" : m.eligible_2027.value === 0 ? "not eligible" : "n/a"}</strong>{" "}
                 (eligibility is not designation)
               </li>
+              <li>{profile.designation2027.text}</li>
               <li>
                 Income {m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(0)}%`} of area MFI; poverty {pct(m.poverty_rate.value)}
               </li>
@@ -390,6 +461,12 @@ export default function MapApp() {
             <p>
               <Link href={`/tract/${profile.geoid}`}>Full tract profile and sources</Link>
             </p>
+            <div className="next-steps">
+              <strong>What next</strong>
+              <Link href="/how-it-works">How a gain, a fund and a zone fit together</Link>
+              <Link href="/how-it-works#designation">Why eligible is not designated</Link>
+              <Link href="/funds">Finding and reviewing funds</Link>
+            </div>
           </section>
         )}
         <p className="note">Informational only, not investment, tax or legal advice.</p>

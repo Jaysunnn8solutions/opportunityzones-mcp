@@ -13,6 +13,10 @@ export const FLAGS = {
   qct: 8,
   dda: 16,
   nmtc: 32,
+  /** A designated 2027 zone. */
+  zone2027: 64,
+  /** Eligible, with its state's 2027 list not yet published (so zone2027 is not yet known). */
+  zone2027Pending: 128,
 } as const;
 export type Flag = keyof typeof FLAGS;
 
@@ -21,6 +25,8 @@ export function stateStatus(stateFips: string): Record<string, number> {
   const { payload } = loadTractData();
   const col = (n: string) => payload.columns.get(n)!;
   const [eligible, rural, oz, qct, dda, nmtc] = ["eligible_2027", "rural_2027", "oz2018_population_share", "qct_2026", "dda_2026", "nmtc_lic"].map(col);
+  // Absent from data published before Treasury's list: then every eligible tract is pending.
+  const designated = payload.columns.get("designated_2027");
   const out: Record<string, number> = {};
   for (let i = 0; i < payload.count; i++) {
     const g = payload.geoids[i];
@@ -32,6 +38,9 @@ export function stateStatus(stateFips: string): Record<string, number> {
     if (qct.get(i) === 1) bits |= FLAGS.qct;
     if ((dda.get(i) ?? 0) > 0) bits |= FLAGS.dda;
     if (nmtc.get(i) === 1) bits |= FLAGS.nmtc;
+    const d = designated?.get(i) ?? null;
+    if (d === 1) bits |= FLAGS.zone2027;
+    else if (d == null && eligible.get(i) === 1) bits |= FLAGS.zone2027Pending;
     out[g] = bits;
   }
   return out;

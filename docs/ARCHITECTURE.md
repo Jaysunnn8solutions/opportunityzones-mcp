@@ -97,7 +97,7 @@ personal is stored" rule; client data never goes in.
 
 ## The national map
 
-**Decided 2026-09-25 by the owner: Census TIGERweb, no hosted tile file.**
+**Decided 2026-09-25 by the owner: Census boundaries, no hosted tile file.** Outlines moved from TIGERweb tiles to Census cartographic boundary files served by the app on 2026-09-26.
 
 - Basemap (changed 2026-09-26): TIGERweb's map images were too coarse, so the
   basemap is chosen in the panel from `lib/geo/basemaps.ts`: OpenFreeMap
@@ -108,19 +108,30 @@ personal is stored" rule; client data never goes in.
   out: they are metered past a free quota (the "free services only" rule in
   AGENTS.md), need an API key exposed in the browser, and are licensed under
   Esri's terms rather than an open licence.
-- Tract and county outlines: TIGERweb queries per web-mercator tile through
-  `/api/boundaries/{tracts|counties}/{z}/{x}/{y}`, cached at the CDN for 30
-  days, so the Census servers see each tile about once. Counties below zoom 8,
-  tracts from zoom 8. TIGERweb returns whole polygons, so the client merges
-  tiles and de-duplicates by GEOID.
+- Tract and county outlines (changed 2026-09-26, owner's choice): the Census
+  Bureau's 2024 cartographic boundary files, served by the app itself from
+  `public/boundaries/`, so drawing tracts neither waits on nor depends on a
+  Census web service. `pipeline/map/boundaries.ts` writes one GeoJSON file per
+  state with every tract (from the 1:500,000 file), a national counties file
+  (1:20,000,000), and `index.json` with each state's tract count and bounding
+  box. Only GEOID (and county NAME) is kept; coordinates are rounded to 4
+  decimals (~11 m). Counties show below zoom 6; from zoom 6 the client loads
+  the state files overlapping the view (at most six, largest overlap first,
+  `lib/geo/stateBoundaries.ts`), so a whole state such as Georgia is drawn at
+  once. Files are cached for a day at the CDN (`next.config.ts`).
+- Fallback: until those files are generated and committed (`npx tsx
+  pipeline/map/boundaries.ts`, the full pipeline, or the "Refresh map data"
+  GitHub workflow, which pushes them to `data/map-boundaries` for a pull
+  request), or if `index.json` is
+  missing, the map fetches outlines per web-mercator tile from TIGERweb through
+  `/api/boundaries/{tracts|counties}/{z}/{x}/{y}` as before (counties below zoom
+  8, tracts from zoom 8, cached at the CDN for 30 days).
 - Colours come from our data: `/api/status/{state}` (flag bits per tract) and
   `/api/counties` (eligible share per county).
 
-Trade-offs accepted: the map depends on TIGERweb being up (the CDN cache softens
-this), new areas take 0.5-2 s to fill in, and there is no nationwide tract-level
-view. A hosted PMTiles file (Vercel static via Git LFS or a build step, or
-Cloudflare R2, which needs a payment method) remains the upgrade path without
-changing the map's design.
+Trade-offs accepted: the state files add to the repository (roughly 20-40 MB
+for every state, regenerated yearly), and there is no single nationwide
+tract-level view, by design: tracts appear once a state is in view.
 
 MapLibre's web worker must be served from `public/maplibre/` and set with
 `setWorkerUrl`: the bundler does not emit it beside MapLibre's code, and the map
