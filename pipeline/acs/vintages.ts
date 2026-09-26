@@ -60,6 +60,24 @@ export const EXTENDED_VARS = {
   eduDoctorate: "B15003_025E",
   laborForce: "B23025_003E",
   unemployed: "B23025_005E",
+  // Measures of money in the tract's households, for the 2018-zone growth
+  // analysis (all published from 2012 on, on the same tables in 2016 and 2024).
+  perCapitaIncome: "B19301_001E",
+  hhIncomeUniverse: "B19001_001E",
+  hhIncome100to125k: "B19001_014E",
+  hhIncome125to150k: "B19001_015E",
+  hhIncome150to200k: "B19001_016E",
+  hhIncome200kPlus: "B19001_017E",
+  snapUniverse: "B22003_001E",
+  snapReceived: "B22003_002E",
+  publicAssistanceUniverse: "B19057_001E",
+  publicAssistanceReceived: "B19057_002E",
+  vehiclesUniverse: "B25044_001E",
+  ownerNoVehicle: "B25044_003E",
+  renterNoVehicle: "B25044_010E",
+  childrenUnder18: "B09001_001E",
+  mortgageUniverse: "B25081_001E",
+  withMortgage: "B25081_002E",
 } as const;
 
 export const VINTAGES = [

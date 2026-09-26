@@ -56,6 +56,7 @@ const STAGES: Array<[string, () => Promise<unknown>]> = [
   ["Housing age (ACS B25034)", buildHousingAge],
   ["EPA Superfund and brownfield sites by tract", buildEpaSites],
   ["HMDA mortgage lending by tract", () => buildHmda()],
+  ["HMDA 2018 home-purchase lending (2010 tracts), for the OZ 1.0 comparison", () => buildHmda(2018)],
   ["Anchor institutions: colleges and hospitals", buildAnchors],
   ["HUD Small Area Fair Market Rents", buildSafmr],
   ["Distance to the nearest Interstate", buildInterstateDistance],

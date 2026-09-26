@@ -108,7 +108,8 @@ export async function buildHmda(year = YEAR): Promise<void> {
   );
   writeCsv(
     path.join(CLEAN_DIR, `hmda_${year}.csv`),
-    ["geoid20", "applications", "originations", "denials", "denial_rate", "home_purchase_originations", "originated_dollars"],
+    // HMDA reports 2010 tracts through 2021 and 2020 tracts from 2022.
+    [year >= 2022 ? "geoid20" : "geoid10", "applications", "originations", "denials", "denial_rate", "home_purchase_originations", "originated_dollars"],
     [...tally.tracts.entries()]
       .sort(([a], [b]) => (a < b ? -1 : 1))
       .map(([g, t]) => [g, t.applications, t.originations, t.denials, denialRate(t), t.homePurchaseOriginations, t.originatedDollars])
