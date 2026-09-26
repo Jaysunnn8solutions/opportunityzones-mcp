@@ -22,10 +22,19 @@ Google imagery derivatives, no paid parcel feeds, nothing behind a ToS that forb
 `pipeline/sources.ts` is the single registry of what is fetched and under what licence; add a source
 there or not at all, and `npm test` fails if a source lacks a licence and attribution string.
 
-**Free services only.** Every data source, API, basemap and tile service must be free to use with
-no payment method on file: no paid tiers, no "free up to a quota, then billed" plans, no trials. A
-free signup key is fine (Census, BLS, Foursquare Places Portal). If the only way to get something
-costs money, leave it out and say so. Decided by the owner, 2026-09-26.
+**Free services only, with no path to cost.** Every data source, API, basemap, tile service,
+library and hosting dependency must be free to use with no payment method on file, and must stay
+free however much it is used. Specifically:
+- No paid APIs of any kind, including LLM/AI model APIs (no Anthropic, OpenAI or similar calls from
+  the app, the MCP server or the pipeline). People bring their own Claude to the MCP server; the
+  product never calls a model itself. Free, openly available models or services are fine only if
+  they have no paid tier behind them.
+- No free trials, no free tiers of paid products, no "free up to a quota, then billed" plans, and
+  nothing that needs a card to keep working, even if today's usage fits inside the free part.
+- A free signup key to a free public service is fine (Census, BLS, the Foursquare Places Portal for
+  the open OS Places data).
+If the only way to get something costs money, or could later, leave it out and say so. Decided by
+the owner, 2026-09-26.
 
 **Nothing personal is stored.** The app is authless and read-only. Gain amounts and searched
 addresses stay in client state and the URL hash. Never log tool arguments or geocode queries.
