@@ -1,3 +1,4 @@
+import { publicGeographyCache } from "../publicCache";
 /**
  * County unemployment rate from BLS Local Area Unemployment Statistics (LAUS),
  * via the BLS Public Data API v2.
@@ -73,7 +74,7 @@ export function summariseLaus(json: unknown, county: string): LausSummary | null
   };
 }
 
-export async function countyUnemployment(county: string, today = new Date()): Promise<LausSummary | null> {
+async function fetchCountyUnemployment(county: string, today = new Date()): Promise<LausSummary | null> {
   if (!/^\d{5}$/.test(county)) throw new SourceError(SOURCE_ID, "rejected", "county must be a 5-digit FIPS code");
   const key = process.env.BLS_API_KEY?.trim();
   if (!key) throw new SourceError(SOURCE_ID, "missing-key", "BLS_API_KEY is not set");
@@ -87,4 +88,8 @@ export async function countyUnemployment(county: string, today = new Date()): Pr
     },
   });
   return summariseLaus(json, county);
+}
+
+export async function countyUnemployment(county: string, today = new Date()): Promise<LausSummary | null> {
+  return (await publicGeographyCache(`laus:${county}:${today.getUTCFullYear()}`, 86_400_000, () => fetchCountyUnemployment(county, today))).value;
 }

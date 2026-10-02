@@ -65,7 +65,7 @@ export function parseQuoted(text: string, delim: string): string[][] {
   return rows;
 }
 
-/** Normalise a header cell: "OLD_COUNTYFP\n(INCITS31)" -> "OLD_COUNTYFP". */
+/** Normalize a header cell: "OLD_COUNTYFP\n(INCITS31)" -> "OLD_COUNTYFP". */
 function headerName(h: string): string {
   return h.split(/\s|\(/)[0].trim();
 }
@@ -98,7 +98,7 @@ export function buildCtMapping(townTractText: string, countyTownText: string): C
   if (iTown < 0 || iTract < 0 || iLand < 0) throw new Error(`CT town-tract file header changed: ${th.join("|")}`);
 
   // Old counties each new tract touches, weighted by LAND overlap, so neither a
-  // sliver of a neighbouring town nor a shared stretch of open water (the
+  // sliver of a neighboring town nor a shared stretch of open water (the
   // "County subdivisions not defined" water pseudo-towns) can outvote the
   // tract's real county. Water counts only for a tract with no land at all.
   const land = new Map<string, Map<string, number>>();

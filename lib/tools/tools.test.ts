@@ -1,3 +1,4 @@
+import { qualifiedTract } from "@/tests/research-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { checkAddressHandler } from "./checkAddress";
 import { compareTractHandler, ordinal, percentile } from "./compareTract";
@@ -26,12 +27,16 @@ function expectCompliant(body: string) {
 
 describe("get_tract", () => {
   it("describes a real tract with its status, measures and sources", () => {
-    const r = getTractHandler({ geoid: "13121003500" });
+    const r = getTractHandler({ geoid: qualifiedTract });
     const body = textOf(r);
     expect(body).toContain("Fulton");
     expect(body).toContain("2027 designation eligibility");
     expect(body).toContain("Sources:");
     expect(body).toContain("U.S. Department of the Treasury");
+    expect(r).toHaveProperty("structuredContent.analysis.outlook.probability", null);
+    expect(body).toContain("Leading/lagging labels: insufficient evidence");
+    expect(Buffer.byteLength(JSON.stringify(r))).toBeLessThan(128 * 1024);
+    expect(r).not.toHaveProperty("structuredContent.analysis.histories");
     expectCompliant(body);
   });
 
@@ -44,7 +49,7 @@ describe("get_tract", () => {
 
 describe("list_tracts", () => {
   it("filters by state and eligibility and sorts by one raw measure", () => {
-    const body = textOf(listTractsHandler({ state: "DE", eligible2027: true, sortBy: "poverty_rate", limit: 5 }));
+    const body = textOf(listTractsHandler({ state: "DE", eligible2027: true, sortBy: "poverty_rate", limit: 5, format: "table" }));
     expect(body).toMatch(/tracts match in Delaware/);
     const rows = body.split("\n").filter((l) => /^\| 10\d{9} /.test(l));
     expect(rows.length).toBe(5);
@@ -94,7 +99,7 @@ describe("check_address", () => {
                 {
                   matchedAddress: "55 TRINITY AVE SW, ATLANTA, GA, 30303",
                   coordinates: { x: -84.3907, y: 33.7486 },
-                  geographies: { "Census Tracts": [{ GEOID: "13121003500", NAME: "Census Tract 35" }] },
+                  geographies: { "Census Tracts": [{ GEOID: qualifiedTract, NAME: "Census Tract 35" }] },
                 },
               ],
             },
@@ -103,7 +108,7 @@ describe("check_address", () => {
       )
     );
     const body = textOf(await checkAddressHandler({ address: "55 Trinity Ave SW, Atlanta, GA 30303" }));
-    expect(body).toContain("13121003500");
+    expect(body).toContain(qualifiedTract);
     expect(body).toContain("2027 designation eligibility");
     expect(body).toContain("U.S. Census Bureau, Census Geocoder");
     expectCompliant(body);

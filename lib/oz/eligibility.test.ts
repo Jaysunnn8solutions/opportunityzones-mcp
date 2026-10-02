@@ -132,7 +132,7 @@ describe("the alternative poverty test", () => {
 
 describe("repealed and non-existent rules", () => {
   it("has no contiguous-tract pathway", () => {
-    // classifyTract takes one tract and no neighbours, by design. A tract that
+    // classifyTract takes one tract and no neighbors, by design. A tract that
     // fails on its own cannot be rescued by an adjacent eligible one.
     const r = classifyTract(tract({ mfi: 200_000, povertyRate: 0.01 }), DENOM);
     expect(r.status).toBe("not-eligible");

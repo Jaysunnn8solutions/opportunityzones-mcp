@@ -1,3 +1,4 @@
+import { publicGeographyCache } from "../publicCache";
 /**
  * County labor market from the Census Bureau's Quarterly Workforce Indicators
  * (QWI, LEHD program): employment, hires, separations and average monthly
@@ -77,7 +78,7 @@ export function summariseQwi(json: unknown): QwiSummary | null {
 }
 
 /** QWI summary for a county (5-digit FIPS). `fromYear` bounds the quarters requested. */
-export async function countyLaborMarket(countyFips: string, fromYear = new Date().getUTCFullYear() - 3): Promise<QwiSummary | null> {
+async function fetchCountyLaborMarket(countyFips: string, fromYear = new Date().getUTCFullYear() - 3): Promise<QwiSummary | null> {
   if (!/^\d{5}$/.test(countyFips)) throw new SourceError(SOURCE_ID, "rejected", "county must be a 5-digit FIPS code");
   const key = process.env.CENSUS_API_KEY?.trim();
   if (!key) throw new SourceError(SOURCE_ID, "missing-key", "CENSUS_API_KEY is not set");
@@ -96,4 +97,8 @@ export async function countyLaborMarket(countyFips: string, fromYear = new Date(
     throw err;
   });
   return summariseQwi(text);
+}
+
+export async function countyLaborMarket(countyFips: string, fromYear = new Date().getUTCFullYear() - 3): Promise<QwiSummary | null> {
+  return (await publicGeographyCache(`qwi:${countyFips}:${fromYear}`, 7 * 86_400_000, () => fetchCountyLaborMarket(countyFips, fromYear))).value;
 }

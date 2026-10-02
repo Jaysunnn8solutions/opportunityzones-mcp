@@ -6,6 +6,10 @@ against this document; change it deliberately, not by drift.
 > Informational only, not investment, tax or legal advice. The product
 > describes places. It never recommends an allocation, a fund or a deal.
 
+## Account and access update — September 27, 2026
+
+The owner authorized optional free accounts and controlled exports. SQLite stores minimal account/security records and shared quotas on one persistent host. Prepared public-data exports expire after one hour. Addresses, exact searched coordinates, financial profiles, and research arguments are not logged. See [the implemented access model](ACCESS_IMPLEMENTATION.md), which supersedes earlier authless/storage assumptions below. Public hosted MCP exposes bounded cached-data tools only.
+
 ## Where data comes from: live per place, bundled nationally
 
 The product answers two kinds of question, and each has its own data path.
@@ -38,9 +42,9 @@ Use the pipeline when:
    slow or failing source yields "unavailable right now" for that measure, never
    a failed report.
 4. **Each measure carries its source, vintage and geography**, and every
-   county- or metro-level figure is labelled as such.
+   county- or metro-level figure is labeled as such.
 5. **The report is assembled in the browser.** The user downloads or prints it;
-   the server keeps nothing.
+   the server retains prepared public-data exports for up to one hour for authenticated retries. Exact searched addresses and coordinates are excluded.
 
 ## What may be cached, and what may not
 
@@ -48,7 +52,7 @@ Use the pipeline when:
 |---|---|---|
 | Results keyed by **tract GEOID** (public data about a public area) | Yes, shared (CDN / server), for as long as the source takes to change: ACS weeks, flood monthly, unemployment monthly, 2018 zones indefinitely | Fast, and spares the sources' rate limits |
 | Results keyed by **exact coordinates** of a searched site | **No shared cache.** At most the lifetime of one request | Exact coordinates of a searched address identify the address |
-| Addresses, gain amounts, tool arguments, reports | **Never** stored, cached or logged | AGENTS.md: nothing personal is stored |
+| Addresses, gain amounts, exact site queries, tool arguments | **Never** stored, cached or logged | No research-query logging; minimal account exception is documented in AGENTS.md |
 
 Serving a stale cached value while refreshing in the background is fine for
 GEOID-keyed data.
@@ -62,12 +66,12 @@ A source is added to `pipeline/sources.ts` only if it:
 1. serves a named purpose: **statutory**, **feasibility** or **impact
    baseline** (`purposes`, with a `rationale` saying how);
 2. is tract-level, or honestly allocable to tracts; otherwise its coarser
-   geography is labelled in every output;
+   geography is labeled in every output;
 3. is authoritative and maintained;
 4. is license-clean for commercial use (see AGENTS.md);
 5. is not a weaker duplicate of a source already in.
 
-`npm test` fails if an entry lacks a purpose, rationale, access method, licence
+`npm test` fails if an entry lacks a purpose, rationale, access method, license
 or attribution.
 
 ## Keys
@@ -75,25 +79,16 @@ or attribution.
 | Where | Who puts them there |
 |---|---|
 | `.env.local` (gitignored) for local runs | The owner |
-| Vercel project environment variables for runtime sources | The owner |
+| Confirmed persistent host environment for runtime sources | The owner |
 | GitHub Actions secrets for the data-refresh workflow | The owner |
 
 Keyed APIs are called only from the server, never the browser. Keyless APIs
 may later be called from the browser directly where they allow it, so the
 server never sees the location at all.
 
-## When to add a database
+## Persistent operational storage
 
-Not yet. The trigger is not traffic but one of: cross-place queries that
-outgrow the bundled tables (Vercel functions cap at 250 MB), joins over many
-years, reproducible reports that must show the data as of a date, or
-reliability promised to paying clients.
-
-In order of cost: Parquet files queried by DuckDB (about $0, and DuckDB is
-already planned for Foursquare); Postgres/PostGIS on a free tier; BigQuery only
-if analysts or clients need SQL at terabyte scale. **Anything billable needs the
-owner's approval first.** Stored public data does not breach the "nothing
-personal is stored" rule; client data never goes in.
+The published dataset remains bundled. Node SQLite is used for optional passkey accounts, sessions, atomic quotas, provider cooldowns, public geography caches, and short-lived prepared exports. All server processes must share one persistent disk on one host. Production requires explicit configuration and fails closed if it is absent. No hosted database is introduced. The October 1 policy now permits provider free plans with no payment method and a hard stop without charges; using a managed PostgreSQL service would require a separate migration and verification.
 
 ## The national map
 
@@ -107,7 +102,7 @@ personal is stored" rule; client data never goes in.
   label layer so names stay readable. Esri basemaps were considered and left
   out: they are metered past a free quota (the "free services only" rule in
   AGENTS.md), need an API key exposed in the browser, and are licensed under
-  Esri's terms rather than an open licence.
+  Esri's terms rather than an open license.
 - Tract and county outlines (changed 2026-09-26, owner's choice): the Census
   Bureau's 2024 cartographic boundary files, served by the app itself from
   `public/boundaries/`, so drawing tracts neither waits on nor depends on a
@@ -127,7 +122,7 @@ personal is stored" rule; client data never goes in.
   missing, the map fetches outlines per web-mercator tile from TIGERweb through
   `/api/boundaries/{tracts|counties}/{z}/{x}/{y}` as before (counties below zoom
   8, tracts from zoom 8, cached at the CDN for 30 days).
-- Colours come from our data: `/api/status/{state}` (flag bits per tract) and
+- Colors come from our data: `/api/status/{state}` (flag bits per tract) and
   `/api/counties` (eligible share per county).
 
 Trade-offs accepted: the state files add to the repository (about 33 MB for

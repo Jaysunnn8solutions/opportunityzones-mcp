@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { getTract } from "../data/tracts";
-import { DESCRIPTION_SUFFIX, error, fmt, geoidSchema, placeLine, readOnly, STATUS_SOURCES, statusLines, text } from "./shared";
+import { canResearchTract } from "../data/researchScope";
+import { RESEARCH_SCOPE_NOTICE } from "../oz/researchScope";
+import { tractIndicators } from "../data/indicators";
+import { DESCRIPTION_SUFFIX, error, fmt, geoidSchema, placeLine, readOnly, STATUS_SOURCES, statusLines, text, websiteLink } from "./shared";
 
 export const getTractConfig = {
   title: "Get a tract profile",
@@ -8,13 +11,14 @@ export const getTractConfig = {
     "Everything published for one 2020 census tract: Opportunity Zone status (2027 eligibility, rural status with the reason, " +
     "2018 zone), stacking designations (QCT, DDA, NMTC), the 2020-2024 ACS profile, housing age, jobs located in the tract, " +
     "mortgage lending, EPA sites, anchor institutions, HUD rent benchmark, distance to an Interstate, and county building " +
-    "permits. Every figure names its source and vintage." +
+    "permits, historical cohort comparisons, and experimental indicator-model evidence. A 2037 selection probability is unavailable; do not infer one from eligibility or historical associations. Every figure names its source and vintage." +
     DESCRIPTION_SUFFIX,
   inputSchema: z.object({ geoid: geoidSchema }).strict(),
   annotations: readOnly,
 };
 
 export function getTractHandler({ geoid }: { geoid: string }) {
+  if (!canResearchTract(geoid)) return error(RESEARCH_SCOPE_NOTICE);
   const t = getTract(geoid);
   if (!t) return error(`No tract ${geoid} in Treasury's 2027 tract list.`);
   const m = t.measures;
@@ -24,11 +28,23 @@ export function getTractHandler({ geoid }: { geoid: string }) {
       ? ` (${fmt.pct((v("jobs_2023")! - v("jobs_2017")!) / v("jobs_2017")!)} since 2017)`
       : "";
   const permits = t.countyPermits;
+  const analysis = tractIndicators(t);
   const body = [
     `# ${placeLine(t)}`,
+    `Open this place report on the research website: ${websiteLink(`/tract/${t.geoid}`)}. Relative paths use the same origin as this MCP server. Website terms acceptance is required.`,
     "",
     "## Opportunity Zone status",
     ...statusLines(t),
+    "",
+    "## Historical patterns and 2037 outlook",
+    analysis.eligibility.reason,
+    ...analysis.eligibility.checks.map((check) => `- ${check.label}: ${check.detail}`),
+    `2037 selection likelihood: insufficient evidence. ${analysis.outlook.reason}`,
+    `Historical cohort (at least 50% population overlap with 2018 zones): ${analysis.cohort.ineligibleCount} not eligible for 2027; ${analysis.cohort.eligibleCount} eligible. This is not a finding that an existing designation was revoked.`,
+    ...analysis.cohort.metrics.map((m) => `- ${m.label} (${m.period}): this tract ${m.value ?? "unavailable"}; ineligible-group median ${m.ineligibleMedian ?? "unavailable"} (n=${m.ineligibleN}); eligible-group median ${m.eligibleMedian ?? "unavailable"} (n=${m.eligibleN}). Unit: ${m.unit}; shares are 0–1.`),
+    `Indicator models: ${analysis.modelStatus}. Leading/lagging labels: insufficient evidence. Geographic validation covers one historical interval and does not validate future selection.`,
+    ...analysis.models.map((model) => `- ${model.outcome}: ${model.rows} comparable tract histories; model ${model.selectedModel ?? "unavailable"}; relative reduction in historical error versus the better simple baseline ${model.skill == null ? "unavailable" : `${(model.skill * 100).toFixed(1)}%`}. Earlier predictors with highest measured importance: ${model.indicators.slice(0, 3).map((i) => i.label).join("; ") || "unavailable"}. Model-wide associations, not causal or tract-specific explanations.`),
+    ...analysis.limitations.map((limitation) => `- Limitation: ${limitation}`),
     "",
     "## People and housing (2020-2024 ACS)",
     `- Population ${fmt.int(v("population"))}; housing units ${fmt.int(v("housing_units"))}; vacancy ${fmt.pct(v("vacancy_rate"))}; owner-occupied ${fmt.pct(v("owner_occupied_share"))}.`,
@@ -60,5 +76,7 @@ export function getTractHandler({ geoid }: { geoid: string }) {
     "hudSafmr",
     "tigerPrimaryRoads",
     "censusBps",
-  ]);
+    "decennialPl",
+    "blsCpi",
+  ], { analysis });
 }

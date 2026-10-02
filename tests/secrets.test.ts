@@ -30,6 +30,25 @@ const PATTERNS: Array<[string, RegExp]> = [
 const ASSIGNMENT =
   /(?<![A-Za-z])(?:api[_-]?key|apikey|key|access[_-]?token|token|secret|password)\b["']?\s*[:=]\s*["']?([A-Za-z0-9_\-./+]{16,})/gi;
 
+// Exact public column identifiers, only in their known data/schema files.
+// Do not exempt the whole artifact or API-key/token assignments.
+function publicMetric(file: string, match: RegExpMatchArray, line: string): boolean {
+  const names = file === "data/research-indicators.json"
+    ? ["log_density_2016", "vacancy_rate_2016", "owner_share_2016", "median_year_built_2016"]
+    : file === "lib/data/indicators.ts" ? ["share_built_2010_or_later"] : [];
+  return /^key["']?\s*:\s*["']/.test(match[0]) && names.includes(match[1])
+    && /["']/.test(line[(match.index ?? 0) + match[0].length] ?? "");
+}
+
+it("exempts only exact public metric keys in the known analysis files", () => {
+  const allowed = '"key":"vacancy_rate_2016"';
+  expect(publicMetric("data/research-indicators.json", [...allowed.matchAll(ASSIGNMENT)][0], allowed)).toBe(true);
+  for (const line of ['"token":"vacancy_rate_2016"', '"key":"vacancy_rate_2016_extra"']) {
+    expect(publicMetric("data/research-indicators.json", [...line.matchAll(ASSIGNMENT)][0], line)).toBe(false);
+  }
+  expect(publicMetric("config.json", [...allowed.matchAll(ASSIGNMENT)][0], allowed)).toBe(false);
+});
+
 function candidateFiles(): string[] {
   // Tracked files plus untracked ones .gitignore does not exclude, so a key in
   // a new file is caught before it is ever added.
@@ -73,6 +92,7 @@ describe("files git would commit", () => {
           if (re.test(line)) hits.push(`${file}:${i + 1} ${label}`);
         }
         for (const m of line.matchAll(ASSIGNMENT)) {
+          if (publicMetric(file, m, line)) continue;
           if (!PLACEHOLDER.test(m[1]) && /\d/.test(m[1]) && /[A-Za-z]/.test(m[1])) {
             hits.push(`${file}:${i + 1} value assigned to a key/token name`);
           }

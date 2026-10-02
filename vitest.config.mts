@@ -4,6 +4,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "node",
+    setupFiles: ["./tests/access-setup.ts"],
     include: ["lib/**/*.test.ts", "pipeline/**/*.test.ts", "tests/**/*.test.ts", "app/**/*.test.ts"],
     env: {
       // Let the integration tests find the committed data regardless of cwd.

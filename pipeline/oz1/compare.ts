@@ -9,7 +9,7 @@
  * not see — and the report says so next to the numbers.
  *
  * Every estimate is recomputed on each run. Figures taken from published sources
- * (the 2020 Census count, the Urban Institute's tract means, CPI-U) are labelled
+ * (the 2020 Census count, the Urban Institute's tract means, CPI-U) are labeled
  * as references, and every check's text depends on whether it passed.
  *
  * Output:
@@ -682,7 +682,7 @@ export async function compare(): Promise<void> {
   // Balance
   p(`## Balance (main specification)`);
   p();
-  p(`Standardised mean differences. Below 0.1 in absolute value is the conventional bar for good balance.`);
+  p(`Standardized mean differences. Below 0.1 in absolute value is the conventional bar for good balance.`);
   p();
   p(`| Covariate | Designated | All controls | Matched controls | SMD before | SMD after |`);
   p(`|---|---:|---:|---:|---:|---:|`);
@@ -702,7 +702,7 @@ export async function compare(): Promise<void> {
   const preTrend = [placebo, placeboEarly].filter((x): x is Effect => !!x && significant(x));
   p(
     preTrend.length
-      ? `At least one window shows designated tracts' prices already rising faster before designation. That is consistent with governors favouring tracts already on the move, and it means part of any post-2018 gap may be a continuing pre-trend rather than something designation brought.`
+      ? `At least one window shows designated tracts' prices already rising faster before designation. That is consistent with governors favoring tracts already on the move, and it means part of any post-2018 gap may be a continuing pre-trend rather than something designation brought.`
       : `Neither window shows a significant pre-designation price gap.`
   );
   p();
@@ -769,7 +769,7 @@ export async function compare(): Promise<void> {
   p(`- **No leakage.** Features use only data describing the world before nomination (March-April 2018) that could not have been revised with later information: ACS 2006-10 and 2012-16 (released Dec 2017), LODES 2012 and 2015. The 2013-17 ACS was released in Dec 2018, after designation, so it appears only as a sensitivity baseline. FHFA prices are excluded from features because the index is revised with later sales, and FHFA coverage splits use pre-designation years only.`);
   p(`- **Real terms.** Dollar changes are deflated with annual CPI-U.`);
   p(`- **Censoring.** A top- or bottom-coded median in 2012-16 (or 2006-10) nulls that tract's change. In 2020-24, a censored 2020 piece of a split or complex tract is dropped from the weighted mean, and the tract keeps a value only if at least half its weight remains.`);
-  p(`- **Matching.** Nearest neighbours (k=5, with replacement) within state on ${COVARIATES.length} standardised covariates. Intervals come from ${fmt(REPS)} county-cluster bootstrap draws and condition on the matches and the outcome regression, so they understate total uncertainty somewhat.`);
+  p(`- **Matching.** Nearest neighbors (k=5, with replacement) within state on ${COVARIATES.length} standardized covariates. Intervals come from ${fmt(REPS)} county-cluster bootstrap draws and condition on the matches and the outcome regression, so they understate total uncertainty somewhat.`);
   p(
     `- **Late designations.** ${fmt(late.length)} designations used 2012-2016 ACS data instead of the 2011-2015 data the eligible list was built from. The ${fmt(lateLic.length)} designated as low-income communities are treated (${fmt(lateInScope.length)} of them in the 50 states + DC); ${fmt(late.length - lateLic.length)} contiguous designation${late.length - lateLic.length === 1 ? " is" : "s are"} excluded with the other contiguous zones.`
   );

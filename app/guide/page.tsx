@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { PERSONA_GROUPS, PERSONAS } from "@/lib/content/personas";
-import { stateSummaries } from "@/lib/data/stateViews";
-import GuidedCheck, { type GuideState } from "../ui/GuidedCheck";
+import GuidedCheck from "../ui/GuidedCheck";
+import OfficialSources from "../ui/OfficialSources";
 
-export const metadata: Metadata = { title: "Guided check: Opportunity Zones" };
+export const metadata: Metadata = { title: "Understand the rules: Opportunity Zones" };
 
 export default function GuidePage() {
-  const states: GuideState[] = stateSummaries();
-  const personas = PERSONAS.map(({ slug, group, who, title, summary, ask }) => ({ slug, group, who, title, summary, ask }));
   return (
     <main className="page">
-      <h1>Guided check</h1>
+      <p className="eyebrow">A little context, when you need it</p>
+      <h1>Understand the rules</h1>
       <p className="lead">
-        Small steps, one thing at a time, ending in a checklist to take to a tax adviser. Use the outline to jump around.
-        Your answers stay in this browser tab, so you can open other pages and come back; they are cleared when you close
-        the tab or start over, and never sent to a server.
+        Explore the published rules by topic, follow the original sources, and return to the research tools whenever you need them.
       </p>
-      <GuidedCheck personas={personas} groups={PERSONA_GROUPS} states={states} />
+      <GuidedCheck />
+      <OfficialSources />
       <p className="note">
         General information about the statute and public data about places. Not investment, tax or legal advice.
       </p>

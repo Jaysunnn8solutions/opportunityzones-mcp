@@ -31,7 +31,7 @@ export interface TractMatch {
   tractName: string;
   lon: number;
   lat: number;
-  /** The Census Bureau's normalised form of the address; absent for point lookups. */
+  /** The Census Bureau's normalized form of the address; absent for point lookups. */
   matchedAddress?: string;
 }
 

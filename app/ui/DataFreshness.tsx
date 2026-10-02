@@ -1,0 +1,5 @@
+import { dateLabel } from "@/lib/client/presentation";
+export type FreshnessSource = { name: string; vintage: string; url: string; released?: string };
+export default function DataFreshness({ version, sources }: { version: string; sources: FreshnessSource[] }) {
+  return <details className="data-freshness"><summary>Data dates & freshness</summary><p>Dataset built {dateLabel(version)}. This is when the site assembled its data, not when conditions were measured.</p><div className="table-wrap"><table className="rules"><caption>Observation periods and release dates are separate.</caption><thead><tr><th scope="col">Source</th><th scope="col">Observation period / published vintage</th><th scope="col">Agency release date</th></tr></thead><tbody>{sources.map((s) => <tr key={`${s.name}:${s.vintage}`}><th scope="row"><a href={s.url}>{s.name}</a></th><td>{s.vintage}</td><td>{s.released ?? "Not recorded; check the official source"}</td></tr>)}</tbody></table></div><p className="hint">A newer build does not establish that every source changed. Estimates may cover overlapping years; differences alone do not establish statistical significance.</p></details>;
+}

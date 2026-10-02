@@ -16,7 +16,7 @@
  *     universe with their own basis rather than dropped.
  *  2. 26 tracts were renumbered after 2010 (Shannon County SD became Oglala
  *     Lakota, 46113 -> 46102, and similar) and states "may use either set of
- *     numbers". Every GEOID is normalised to the ORIGINAL 2010 Census number,
+ *     numbers". Every GEOID is normalized to the ORIGINAL 2010 Census number,
  *     which is what the block relationship file and 2010-vintage geography use.
  *     The CDFI table is not trusted blindly: one of its 26 rows maps Staten
  *     Island tract 36085000900 onto 36085008900, but both are real, distinct

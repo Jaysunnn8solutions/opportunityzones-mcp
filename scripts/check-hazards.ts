@@ -1,7 +1,7 @@
 /**
  * Live check of the natural-hazard clients against the real services, at
  * public landmarks chosen to exercise each answer (high and low seismic
- * category; wildfire modelled, zero in a dense core, and outside coverage).
+ * category; wildfire modeled, zero in a dense core, and outside coverage).
  *
  *   npx tsx scripts/check-hazards.ts
  *

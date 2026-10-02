@@ -52,7 +52,7 @@ describe("busiestRoadsNear", () => {
     for (const u of calls) {
       expect(u.searchParams.get("geometryType")).toBe("esriGeometryEnvelope");
       const [xmin, ymin, xmax, ymax] = u.searchParams.get("geometry")!.split(",").map(Number);
-      // Centred on the rounded point, not the exact one.
+      // Centered on the rounded point, not the exact one.
       expect((xmin + xmax) / 2).toBeCloseTo(-77.04, 4);
       expect((ymin + ymax) / 2).toBeCloseTo(38.9, 4);
       expect(u.toString()).not.toContain("036512");

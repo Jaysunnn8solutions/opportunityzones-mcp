@@ -1,5 +1,5 @@
 /**
- * Compact per-tract status for colouring the map: one integer of flags per
+ * Compact per-tract status for coloring the map: one integer of flags per
  * tract, and per-county counts for the zoomed-out view. Derived from the
  * published payload; public data about places.
  */

@@ -11,8 +11,8 @@ import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { crc32, deflateSync } from "node:zlib";
 
-/** Ink colour of the hatch lines (RGBA). Keep in step with HATCH_INK in app/ui/MapApp.tsx. */
-const INK: [number, number, number, number] = [6, 40, 29, 217];
+/** Ink color of the hatch lines (RGBA). Keep in step with HATCH_INK in app/ui/MapApp.tsx. */
+const INK: [number, number, number, number] = [32, 24, 16, 217];
 
 function png(width: number, height: number, rgba: Uint8Array): Buffer {
   const chunk = (type: string, data: Buffer) => {

@@ -1,5 +1,5 @@
 /**
- * Basemaps the screening map can draw under the tract colours.
+ * Basemaps the screening map can draw under the tract colors.
  *
  * All of them are free for commercial use with no API key, and each is
  * registered in pipeline/sources.ts:
@@ -10,7 +10,7 @@
  *
  * The map's own layers (county and tract fills and outlines) are merged into
  * whichever basemap is chosen, just beneath its first label layer, so street
- * and place names stay readable on top of the colours.
+ * and place names stay readable on top of the colors.
  */
 
 import type { LayerSpecification, SourceSpecification, StyleSpecification } from "maplibre-gl";
@@ -63,7 +63,7 @@ export const BASEMAPS: Record<BasemapId, Basemap> = {
       },
       layers: [{ id: "usgs-imagery", type: "raster", source: "usgs-imagery" }],
     },
-    fillOpacity: 0.35,
+    fillOpacity: 0.5,
     sourceId: "usgsNationalMap",
   },
 };

@@ -14,7 +14,7 @@
  * which is plenty for a national view.
  *
  * Only geometry and the GEOID (plus county NAME) are kept: every attribute the
- * map colours by comes from data/ through the API, joined on GEOID.
+ * map colors by comes from data/ through the API, joined on GEOID.
  *
  * Coordinates are rounded to COORD_DECIMALS (about 11 m at 4 decimals), well
  * inside the accuracy of a 1:500,000 file, and repeated points the rounding
@@ -22,7 +22,7 @@
  * clockwise, holes counter-clockwise in the shapefile) and rewound to the
  * GeoJSON convention (outer counter-clockwise), so holes render as holes.
  *
- * Files are TopoJSON: each border shared by neighbouring tracts is stored once,
+ * Files are TopoJSON: each border shared by neighboring tracts is stored once,
  * and coordinates are quantised to a 100,000-step grid over the state (finer
  * than the 4-decimal rounding). Measured on the real 2024 files this is a third
  * of the GeoJSON size (all states ~33 MB, ~9 MB gzipped; Georgia 1.2 MB, 0.37 MB

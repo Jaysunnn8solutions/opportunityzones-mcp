@@ -66,8 +66,8 @@ export default function FundsPage() {
             point. A Form D shows who is raising money and how much, but not where it will be invested.
           </li>
           <li>
-            <strong>Financial advisers and broker-dealers.</strong> Many funds are private offerings, often limited to accredited
-            investors and sold through advisers, broker-dealers or investment platforms.
+            <strong>Financial advisors and broker-dealers.</strong> Many funds are private offerings, often limited to accredited
+            investors and sold through advisors, broker-dealers or investment platforms.
           </li>
           <li>
             <strong>Sponsors and directories.</strong> Fund sponsors and commercial directories publish offerings. Treat these as
@@ -114,7 +114,7 @@ export default function FundsPage() {
       </section>
 
       <p className="note">
-        General information, not investment, tax or legal advice. An independent adviser should review any offering before you
+        General information, not investment, tax or legal advice. An independent advisor should review any offering before you
         invest.
       </p>
     </main>

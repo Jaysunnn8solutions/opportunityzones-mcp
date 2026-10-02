@@ -2,7 +2,7 @@
  * Wildfire likelihood around a site, from the USDA Forest Service's Wildfire
  * Risk to Communities burn probability (FSim simulation, 270 m cells).
  *
- * Reports the annual burn probability: the modelled chance, in a given year,
+ * Reports the annual burn probability: the modeled chance, in a given year,
  * that a wildfire reaches the location, as a probability and as "about 1 in N
  * years". It is the authoritative national measure of wildfire likelihood, so
  * it is reported as published, with no classes or scoring of our own.
@@ -15,7 +15,7 @@
  *
  * Privacy: the service is asked for the cell at the point rounded to two
  * decimals (~1 km), as for the other live sources, so the answer describes the
- * area around the site. At 270 m cells the modelled probability is itself an
+ * area around the site. At 270 m cells the modeled probability is itself an
  * area measure.
  */
 
@@ -89,7 +89,7 @@ export function parseIdentify(body: IdentifyResponse, scale = 1): WildfireLikeli
     description:
       oneInYears == null
         ? NONE_MODELLED
-        : `Modelled annual chance of wildfire reaching this area: ${(bp * 100).toPrecision(2)}%, about 1 in ${oneInYears.toLocaleString("en-US")} years.`,
+        : `Modeled annual chance of wildfire reaching this area: ${(bp * 100).toPrecision(2)}%, about 1 in ${oneInYears.toLocaleString("en-US")} years.`,
   };
 }
 

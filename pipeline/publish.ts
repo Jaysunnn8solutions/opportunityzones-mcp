@@ -23,6 +23,7 @@ import { log } from "./lib/http";
 import { designationCode } from "./oz2/designated";
 import { readCsv, type Table } from "./lib/table";
 import { SOURCES } from "./sources";
+import { publishResearchContext } from "../scripts/publish-research-context";
 
 type Getter = (geoid: string) => number | null;
 
@@ -303,6 +304,7 @@ export async function publish(): Promise<void> {
       1
     )
   );
+  publishResearchContext();
   log(
     `publish: ${universe.length.toLocaleString("en-US")} tracts x ${columns.length} columns, ` +
       `tracts.bin ${(payload.length / 1024 / 1024).toFixed(1)} MB; ${Object.keys(zips).length.toLocaleString("en-US")} ZIPs; ${anchorPoints.length.toLocaleString("en-US")} anchor points`

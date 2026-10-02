@@ -1,3 +1,5 @@
+import { qualifiedTract } from "@/tests/research-fixtures";
+import { tractPoint } from "@/lib/geo/tractPoint";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET as boundaries } from "./boundaries/[layer]/[z]/[x]/[y]/route";
 import { GET as counties } from "./counties/route";
@@ -5,6 +7,9 @@ import { POST as geocode } from "./geocode/route";
 import { POST as site } from "./site/route";
 import { GET as status } from "./status/[state]/route";
 import { GET as tract } from "./tract/[geoid]/route";
+
+// Existing source/shape tests isolate access checks; access.test.ts exercises the real boundaries.
+vi.mock("@/lib/access/http", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/access/http")>(), sameOrigin: () => {}, limitRequest: () => {} }));
 
 // Route handlers against the committed data/; outbound calls stubbed.
 afterEach(() => {
@@ -21,7 +26,7 @@ describe("/api/boundaries", () => {
         JSON.stringify({
           type: "FeatureCollection",
           features: [
-            { type: "Feature", properties: { GEOID: "13121003500", EXTRA: "x" }, geometry: { type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 0]]] } },
+            { type: "Feature", properties: { GEOID: qualifiedTract, EXTRA: "x" }, geometry: { type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 0]]] } },
             { type: "Feature", properties: { GEOID: "bad" }, geometry: { type: "Polygon", coordinates: [] } },
           ],
         })
@@ -30,10 +35,10 @@ describe("/api/boundaries", () => {
     vi.stubGlobal("fetch", fetchMock);
     const res = await boundaries(req, params({ layer: "tracts", z: "12", x: "1083", y: "1638" }));
     expect(res.status).toBe(200);
-    expect(res.headers.get("Cache-Control")).toMatch(/public/);
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store");
     const body = (await res.json()) as { features: Array<{ properties: Record<string, string> }> };
     expect(body.features).toHaveLength(1);
-    expect(body.features[0].properties).toEqual({ GEOID: "13121003500" });
+    expect(body.features[0].properties).toEqual({ GEOID: qualifiedTract });
     expect(String(fetchMock.mock.calls[0][0])).toMatch(/tigerweb\.geo\.census\.gov/);
   });
 
@@ -72,7 +77,7 @@ describe("/api/status and /api/counties", () => {
 
 describe("/api/tract", () => {
   it("returns a profile with the disclaimer, and 404 for an unknown tract", async () => {
-    const ok = await tract(req, params({ geoid: "13121003500" }));
+    const ok = await tract(req, params({ geoid: qualifiedTract }));
     expect(((await ok.json()) as { disclaimer: string }).disclaimer).toMatch(/not investment/);
     expect((await tract(req, params({ geoid: "00000000000" }))).status).toBe(404);
   });
@@ -87,7 +92,7 @@ describe("/api/geocode", () => {
           JSON.stringify({
             result: {
               addressMatches: [
-                { matchedAddress: "X", coordinates: { x: -84.39, y: 33.75 }, geographies: { "Census Tracts": [{ GEOID: "13121003500" }] } },
+                { matchedAddress: "X", coordinates: { x: -84.39, y: 33.75 }, geographies: { "Census Tracts": [{ GEOID: qualifiedTract }] } },
               ],
             },
           })
@@ -98,7 +103,7 @@ describe("/api/geocode", () => {
       new Request("http://localhost/api/geocode", { method: "POST", body: JSON.stringify({ address: "55 Trinity Ave SW, Atlanta, GA" }) })
     );
     expect(res.headers.get("Cache-Control")).toBe("no-store");
-    expect(((await res.json()) as { matches: Array<{ geoid: string }> }).matches[0].geoid).toBe("13121003500");
+    expect(((await res.json()) as { matches: Array<{ geoid: string }> }).matches[0].geoid).toBe(qualifiedTract);
   });
 
   it("reports the geocoder refusing a request as unavailable, not as a bad address", async () => {
@@ -117,11 +122,24 @@ describe("/api/geocode", () => {
 
 describe("/api/site", () => {
   const post = (body: unknown) => new Request("http://localhost/api/site", { method: "POST", body: JSON.stringify(body) });
+  const [lon, lat] = tractPoint(qualifiedTract)!;
+
+  it("can load one source without calling the other providers", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response("", { status: 503 }));
+    vi.stubGlobal("fetch", fetcher);
+    const response = await site(post({ geoid: qualifiedTract, lat, lon, source: "earthquake" }));
+    const body = await response.json();
+    expect(body.items.map((item: { key: string }) => item.key)).toEqual(["earthquake"]);
+    expect(body.basis).toBe("address");
+    expect(fetcher.mock.calls.every(([url]) => String(url).includes("usgs.gov"))).toBe(true);
+    expect((await site(post({ geoid: qualifiedTract, source: "invalid" }))).status).toBe(400);
+    expect((await site(post(null))).status).toBe(400);
+  });
 
   it("finds a tract's interior point from the boundary files and reports each source on its own", async () => {
     // Every live source fails: each item says so, and the response still succeeds.
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
-    const res = await site(post({ geoid: "13121003500" }));
+    const res = await site(post({ geoid: qualifiedTract }));
     expect(res.status).toBe(200);
     expect(res.headers.get("Cache-Control")).toBe("no-store");
     const body = (await res.json()) as { basis: string; items: Array<{ key: string; headline: string | null; unavailable?: string }> };
@@ -132,8 +150,10 @@ describe("/api/site", () => {
 
   it("uses an exact point when one is given, and rejects anything else", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 503 })));
-    expect(((await (await site(post({ lat: 33.749, lon: -84.388 }))).json()) as { basis: string }).basis).toBe("address");
-    expect((await site(post({ geoid: "13" }))).status).toBe(400);
-    expect((await site(post({ geoid: "99999999999" }))).status).toBe(404);
+    expect(((await (await site(post({ geoid: qualifiedTract, lat, lon }))).json()) as { basis: string }).basis).toBe("address");
+    expect((await site(post({ geoid: "13" }))).status).toBe(403);
+    expect((await site(post({ geoid: "99999999999" }))).status).toBe(403);
+    expect((await site(post({ geoid: qualifiedTract, lat: 0, lon: 0 }))).status).toBe(403);
+    expect((await site(post({ lat, lon }))).status).toBe(403);
   });
 });

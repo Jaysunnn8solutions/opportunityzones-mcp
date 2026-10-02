@@ -1,9 +1,10 @@
+import { publicGeographyCache } from "../publicCache";
 /**
  * County jobs and wages from the BLS Quarterly Census of Employment and Wages
  * (QCEW) open data files: no key.
  *
  * The most complete count of jobs covered by unemployment insurance, by county,
- * about six months behind. County-level and labelled so: it describes the
+ * about six months behind. County-level and labeled so: it describes the
  * economy around a tract, not the tract.
  *
  * Reads the county total (all ownership, all industries) and, for industry mix,
@@ -102,7 +103,7 @@ export function summariseQcew(csv: string, county: string): QcewSummary | null {
 }
 
 /** The newest published QCEW quarter for a county, trying back up to six quarters. */
-export async function countyJobs(county: string, today = new Date()): Promise<QcewSummary | null> {
+async function fetchCountyJobs(county: string, today = new Date()): Promise<QcewSummary | null> {
   if (!/^\d{5}$/.test(county)) throw new SourceError(SOURCE_ID, "rejected", "county must be a 5-digit FIPS code");
   let year = today.getUTCFullYear();
   let qtr = Math.floor(today.getUTCMonth() / 3) + 1;
@@ -120,4 +121,8 @@ export async function countyJobs(county: string, today = new Date()): Promise<Qc
     }
   }
   return null;
+}
+
+export async function countyJobs(county: string, today = new Date()): Promise<QcewSummary | null> {
+  return (await publicGeographyCache(`qcew:${county}:${today.getUTCFullYear()}-${Math.floor(today.getUTCMonth() / 3) + 1}`, 86_400_000, () => fetchCountyJobs(county, today))).value;
 }

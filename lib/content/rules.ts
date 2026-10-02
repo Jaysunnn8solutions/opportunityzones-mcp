@@ -503,7 +503,7 @@ const RULE_DEFS = {
   },
   noContiguous: {
     id: "noContiguous",
-    title: "No more neighbouring tracts",
+    title: "No more neighboring tracts",
     text: "The 2025 law removed the rule that let states designate some tracts that were not low-income communities because they bordered one.",
     cites: [
       {
@@ -696,7 +696,7 @@ export function citeLabel(c: Citation): string {
   return c.pin;
 }
 
-/** Normalise text for quote matching: straight quotes, single spaces. */
+/** Normalize text for quote matching: straight quotes, single spaces. */
 export function normaliseForMatch(s: string): string {
   return s
     .replace(/[‘’‛]/g, "'")

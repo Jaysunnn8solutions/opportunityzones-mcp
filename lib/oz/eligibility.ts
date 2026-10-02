@@ -22,7 +22,7 @@
  *     MFI ≤ 125 percent of the applicable MFI. A 20 percent poverty rate alone
  *     does not qualify a tract, which it effectively did before.
  *  4. The **contiguous-tract exception is repealed**. A tract qualifies on its
- *     own or not at all, so there is deliberately no neighbour logic here.
+ *     own or not at all, so there is deliberately no neighbor logic here.
  *
  * And one thing that is widely misreported: there is **no rural set-aside** in
  * the enacted text. § 1400Z-1(d) contains the 25 percent cap and the small-state

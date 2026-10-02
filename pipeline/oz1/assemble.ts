@@ -224,11 +224,11 @@ export async function assemble(): Promise<void> {
   const oz2Eligible = harmonizeCt(oz2Raw, ctMap, known2020, (a, b) => Math.max(a, b), "Treasury OZ 2.0");
 
   const adjT = readCsv(need("tract2010_adjacency.csv"));
-  const neighbours = new Map<string, string[]>();
+  const neighbors = new Map<string, string[]>();
   for (const [a, b] of adjT.rows) {
-    const list = neighbours.get(a);
+    const list = neighbors.get(a);
     if (list) list.push(b);
-    else neighbours.set(a, [b]);
+    else neighbors.set(a, [b]);
   }
 
   const lodesCov = readCsv(need("lodes_coverage.csv"));
@@ -361,7 +361,7 @@ export async function assemble(): Promise<void> {
   const hpi17to22 = hpiLog(2017, 2022);
   const hpi13to17 = hpiLog(2013, 2017);
   const hpi12to16 = hpiLog(2012, 2016);
-  // Aligned with the ACS outcome's midpoints (2012-16 -> 2020-24 is centred on
+  // Aligned with the ACS outcome's midpoints (2012-16 -> 2020-24 is centered on
   // 2014 -> 2022), so ACS and FHFA can be compared over the same span.
   const hpi14to22 = hpiLog(2014, 2022);
   const hpiInflation = (a: number, b: number) => Math.log(cpi(b) / cpi(a));
@@ -418,7 +418,7 @@ export async function assemble(): Promise<void> {
           ? "eligible_contiguous_not_designated"
           : "not_eligible";
 
-    const nbrs = neighbours.get(g) ?? [];
+    const nbrs = neighbors.get(g) ?? [];
     const designatedNeighbours = nbrs.filter((n) => status.get(n)?.designated === "1").length;
 
     // Pre-period (2012-2016) levels.

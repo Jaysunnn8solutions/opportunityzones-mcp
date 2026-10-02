@@ -10,7 +10,7 @@
  *
  * Adjacency is queen contiguity (a shared vertex is enough), found by hashing
  * rounded vertex coordinates. Cartographic boundary files are generalised from
- * one topology, so neighbouring tracts carry identical vertices along their
+ * one topology, so neighboring tracts carry identical vertices along their
  * shared edge, which makes this exact and linear-time rather than a pairwise
  * polygon intersection over 74,000 tracts.
  *
@@ -100,8 +100,8 @@ export async function buildAdjacency(): Promise<void> {
   );
   const crossState = rows.filter((r) => r[0].slice(0, 2) !== r[1].slice(0, 2)).length / 2;
   log(
-    `adjacency: ${tracts.length.toLocaleString("en-US")} tracts, ${(rows.length / 2).toLocaleString("en-US")} neighbour pairs ` +
-      `(${crossState.toLocaleString("en-US")} across state lines), ${isolated} with no neighbour`
+    `adjacency: ${tracts.length.toLocaleString("en-US")} tracts, ${(rows.length / 2).toLocaleString("en-US")} neighbor pairs ` +
+      `(${crossState.toLocaleString("en-US")} across state lines), ${isolated} with no neighbor`
   );
 }
 

@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { percentile, statePositions } from "../data/compare";
 import { getTract } from "../data/tracts";
+import { canResearchTract } from "../data/researchScope";
+import { RESEARCH_SCOPE_NOTICE } from "../oz/researchScope";
 
 export { percentile };
 import { DESCRIPTION_SUFFIX, error, geoidSchema, readOnly, text } from "./shared";
@@ -34,28 +36,29 @@ export const compareTractConfig = {
     "(percentile: the share of those tracts with a lower value). Each measure stands alone; no composite or investability " +
     "score is computed." +
     DESCRIPTION_SUFFIX,
-  inputSchema: z.object({ geoid: geoidSchema }).strict(),
+  inputSchema: z.object({ geoid: geoidSchema, format: z.enum(["list", "table"]).optional().describe("Default list supports linear reading and voice; table is optional.") }).strict(),
   annotations: readOnly,
 };
 
-export function compareTractHandler({ geoid }: { geoid: string }) {
+export function compareTractHandler({ geoid, format }: { geoid: string; format?: "list" | "table" }) {
+  if (!canResearchTract(geoid)) return error(RESEARCH_SCOPE_NOTICE);
   const t = getTract(geoid);
   if (!t) return error(`No tract ${geoid} in Treasury's 2027 tract list.`);
   const positions = statePositions(geoid, Object.keys(COMPARED));
   const peers = Math.max(0, ...Object.values(positions).map((p) => p.peers));
   const lines = [
     `# Tract ${geoid} against the ${peers.toLocaleString("en-US")} eligible tracts in ${t.state}`,
-    "Percentile = share of those tracts with a lower value. A description of where the tract sits, not a judgement.",
+    "Percentile = share of those tracts with a lower value. A description of where the tract sits, not a judgment.",
     "",
-    "| Measure | This tract | Percentile | Compared with |",
-    "|---|---|---|---|",
+    ...(format === "table" ? ["| Measure | This tract | Percentile | Compared with |", "|---|---|---|---|"] : []),
   ];
   for (const [name, label] of Object.entries(COMPARED)) {
     const m = t.measures[name];
     const pos = positions[name];
     const shown =
       m.value == null ? "n/a" : m.unit === "share" ? `${(m.value * 100).toFixed(1)}%` : m.unit === "USD" ? `$${Math.round(m.value).toLocaleString("en-US")}` : m.value.toLocaleString("en-US", { maximumFractionDigits: 2 });
-    lines.push(`| ${label} | ${shown} | ${pos.percentile == null ? "n/a" : ordinal(Math.round(pos.percentile * 100))} | ${pos.peers.toLocaleString("en-US")} tracts with data |`);
+    const position = pos.percentile == null ? "Not available" : ordinal(Math.round(pos.percentile * 100));
+    lines.push(format === "table" ? `| ${label} | ${shown} | ${position} | ${pos.peers.toLocaleString("en-US")} tracts with data |` : `- ${label}: ${shown === "n/a" ? "Not available" : shown}. Percentile: ${position}. Compared with ${pos.peers.toLocaleString("en-US")} tracts with data.`);
   }
   return text(lines.join("\n"), ["oz2Eligible", "acs5", "lodesWac", "hmdaLar"]);
 }

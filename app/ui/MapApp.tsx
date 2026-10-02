@@ -7,26 +7,24 @@
  * (pipeline/map/boundaries.ts): the counties file for zoomed-out views, and one
  * file per state with every tract, loaded as a state comes into view. Until
  * those files exist, outlines come per tile from TIGERweb through our cached
- * /api/boundaries route instead. Colours come from the published data.
+ * /api/boundaries route instead. Colors come from the published data.
  *
- * Privacy: a searched address lives only in this component's state and is sent
- * once, in a POST body, to /api/geocode. It is never put in the URL; the hash
- * holds only the selected tract and the map view.
+ * Privacy: search inputs live in the research session's browser memory.
+ * Exact coordinates are carried in the URL fragment, never its path or query.
  */
 
 import { Map as MapLibreMap, Marker, NavigationControl, setWorkerUrl, type GeoJSONSource, type GeoJSONSourceSpecification, type MapMouseEvent } from "maplibre-gl";
-import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { BASEMAPS, DEFAULT_BASEMAP, isBasemapId, withOverlay, type BasemapId, type Overlay } from "@/lib/geo/basemaps";
 import { countyHasZones, type CountyCounts } from "@/lib/data/countyZones";
 import { featuresFrom, isBoundaryIndex, STATE_TRACT_MIN_ZOOM, statesInView, type BoundaryIndex } from "@/lib/geo/stateBoundaries";
 import { tilesCovering, type Bounds } from "@/lib/geo/tiles";
 import { versionLabel } from "@/lib/version";
-import type { MapLayerId } from "@/lib/content/mapLayers";
-import { LayerInfoCard } from "./LayerInfo";
-import { FindAreas } from "./FindAreas";
-import { filtersActive, matchingTracts, NO_FILTERS, type Filters } from "@/lib/explore/filter";
-import type { ExploreState } from "@/lib/explore/measures";
+import { mapFeaturesForMatches } from "@/lib/geo/mapMatches";
+import { useResearchState } from "./ResearchSession";
+import { researchFlagsAllowed, RESEARCH_SCOPE_NOTICE } from "@/lib/oz/researchScope";
+import { legendFilters, withLayerVisibility, type LegendItem } from "@/lib/geo/mapLayerVisibility";
+import MapLegendItem from "./MapLayerControls";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
@@ -35,8 +33,8 @@ const COUNTY_ZONE_COLOR = "#2563eb";
 const tractMinZoomFor = (index: BoundaryIndex | null | undefined) => (index ? STATE_TRACT_MIN_ZOOM : TILE_TRACT_MIN_ZOOM);
 
 const FLAGS = {
-  eligible: { bit: 1, label: "2027 eligible", color: "#0b6e4f" },
-  // Not a colour choice of its own: shown as hatching over eligible and 2027-zone tracts.
+  eligible: { bit: 1, label: "2027 eligible", color: "#00bfff" },
+  // Not a color choice of its own: shown as hatching over eligible and 2027-zone tracts.
   rural: { bit: 2, label: "Rural (2027 rules)", color: "#8c6d1f" },
   oz2018: { bit: 4, label: "2018 zone", color: "#6a3d9a" },
   qct: { bit: 8, label: "HUD QCT", color: "#1f78b4" },
@@ -47,24 +45,25 @@ const FLAGS = {
 /** Set with zone2027 unknown: eligible, its state's list not yet published. */
 const ZONE_2027_PENDING = 128;
 type FlagName = keyof typeof FLAGS;
-/** The colour-by choices offered; rural status is drawn as hatching on the two views where it matters. */
+/** The color-by choices offered; rural status is drawn as hatching on the two views where it matters. */
 const PICKER: FlagName[] = ["eligible", "zone2027", "oz2018", "qct", "dda", "nmtc"];
 const HATCHES_RURAL = new Set<FlagName>(["eligible", "zone2027"]);
 /** Pattern from public/sprites/oz (scripts/make-sprite.ts), merged into every basemap's sprites. */
 const RURAL_HATCH = "oz:rural-hatch";
 /** Matches the sprite's ink (scripts/make-sprite.ts), for the legend swatch. */
-const HATCH_INK = "rgba(6, 40, 29, 0.85)";
+const HATCH_INK = "rgba(32, 24, 16, 0.85)";
+const UNAVAILABLE_COLOR = "#6b7280";
 
 /** Legend wording per view: [yes, yes and rural, no, no data]. */
 const LEGEND: Partial<Record<FlagName, [string, string, string, string]>> = {
-  eligible: ["Eligible for 2027", "Eligible, rural", "Not eligible", "No data"],
+  eligible: ["Eligible for 2027", "Eligible, rural", "Not eligible", "Status unavailable"],
   zone2027: ["Designated 2027 zone", "Designated, rural", "Not designated", "Pending (list not published)"],
 };
 
 const ruralHatchFilter = (flag: FlagName) =>
   (HATCHES_RURAL.has(flag) ? ["all", ["==", ["get", flag], 1], ["==", ["get", "rural"], 1]] : ["==", ["get", "GEOID"], "__none__"]) as never;
 
-const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, "#ffffff", "#dddddd"] as never;
+const tractFillColor = (flag: FlagName) => ["match", ["get", flag], 1, FLAGS[flag].color, 0, flag === "eligible" ? "rgba(0, 0, 0, 0)" : "#ffffff", UNAVAILABLE_COLOR] as never;
 
 /** The map's own sources and layers, merged into whichever basemap is shown. */
 function overlay(flag: FlagName, fillOpacity: number, selected: string | null, tractMinZoom: number): Overlay {
@@ -79,7 +78,7 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
         source: "counties",
         maxzoom: tractMinZoom,
         paint: {
-          // One colour: blue where the county has zones (designated, or eligible while its state's list is unpublished).
+          // One color: blue where the county has zones (designated, or eligible while its state's list is unpublished).
           "fill-color": ["case", ["==", ["get", "zones"], 1], COUNTY_ZONE_COLOR, "rgba(0, 0, 0, 0)"],
           "fill-opacity": fillOpacity + 0.1,
         },
@@ -90,12 +89,10 @@ function overlay(flag: FlagName, fillOpacity: number, selected: string | null, t
         type: "fill",
         source: "tracts",
         minzoom: tractMinZoom,
-        // With Find areas filters on, tracts that do not match are faded (match 0); -1 means no filter.
-        paint: { "fill-color": tractFillColor(flag), "fill-opacity": ["case", ["==", ["get", "match"], 0], fillOpacity * 0.2, fillOpacity] as never },
+        paint: { "fill-color": tractFillColor(flag), "fill-opacity": fillOpacity },
       },
-      { id: "tract-rural-hatch", type: "fill", source: "tracts", minzoom: tractMinZoom, filter: ruralHatchFilter(flag), paint: { "fill-pattern": RURAL_HATCH, "fill-opacity": ["case", ["==", ["get", "match"], 0], 0.2, 1] as never } },
+      { id: "tract-rural-hatch", type: "fill", source: "tracts", minzoom: tractMinZoom, filter: ruralHatchFilter(flag), paint: { "fill-pattern": RURAL_HATCH, "fill-opacity": 1 } },
       { id: "tract-line", type: "line", source: "tracts", minzoom: tractMinZoom, paint: { "line-color": "#4b5563", "line-width": 0.6 } },
-      { id: "tract-match", type: "line", source: "tracts", minzoom: tractMinZoom, filter: ["==", ["get", "match"], 1], paint: { "line-color": "#f59e0b", "line-width": 2.2 } },
       { id: "tract-selected", type: "line", source: "tracts", filter: ["==", ["get", "GEOID"], selected ?? ""], paint: { "line-color": "#d7191c", "line-width": 3 } },
     ],
   };
@@ -105,16 +102,6 @@ interface Feature {
   type: "Feature";
   properties: Record<string, string | number>;
   geometry: unknown;
-}
-
-interface Profile {
-  geoid: string;
-  state: string | null;
-  county: string | null;
-  cbsa: string | null;
-  measures: Record<string, { value: number | null }>;
-  rural: { treasury: boolean | null; explanation: string };
-  designation2027: { status: string; text: string };
 }
 
 function readHash(): { geoid?: string; view?: [number, number, number]; basemap?: BasemapId } {
@@ -131,18 +118,17 @@ function readHash(): { geoid?: string; view?: [number, number, number]; basemap?
 
 function writeHash(geoid: string | null, map: MapLibreMap, basemap: BasemapId) {
   const c = map.getCenter();
-  const h = new URLSearchParams();
-  if (geoid) h.set("t", geoid);
+  const h = new URLSearchParams(window.location.hash.slice(1));
+  if (geoid) h.set("t", geoid); else h.delete("t");
   h.set("v", `${c.lng.toFixed(4)},${c.lat.toFixed(4)},${map.getZoom().toFixed(2)}`);
-  if (basemap !== DEFAULT_BASEMAP) h.set("b", basemap);
-  window.history.replaceState(null, "", `#${h.toString()}`);
+  if (basemap !== DEFAULT_BASEMAP) h.set("b", basemap); else h.delete("b");
+  window.history.replaceState(window.history.state, "", `#${h.toString()}`);
 }
 
-const pct = (v: number | null | undefined) => (v == null ? "n/a" : `${(v * 100).toFixed(1)}%`);
-const usd = (v: number | null | undefined) => (v == null ? "n/a" : `$${Math.round(v).toLocaleString("en-US")}`);
-
-export default function MapApp() {
+export interface MapFocus { geoid: string; point: [number, number] | null; exact?: boolean }
+export default function MapApp({ view, focus, matches, onSelect, viewControls }: { view?: [number, number, number] | null; focus?: MapFocus | null; matches: string[] | null; onSelect: (geoid: string) => void; viewControls?: ReactNode }) {
   const container = useRef<HTMLDivElement>(null);
+  const toolbar = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const tractFeatures = useRef(new Map<string, Feature>());
   const countyFeatures = useRef(new Map<string, Feature>());
@@ -151,103 +137,79 @@ export default function MapApp() {
   const countySummary = useRef<Record<string, CountyCounts> | null>(null);
   const marker = useRef<Marker | null>(null);
 
-  const [flag, setFlag] = useState<FlagName>("eligible");
-  // Layer explanations: shown while hovering or focusing a layer, or kept open by clicking its "i".
-  const [hoverInfo, setHoverInfo] = useState<MapLayerId | null>(null);
-  const [pinnedInfo, setPinnedInfo] = useState<MapLayerId | null>(null);
-  const [zoom, setZoom] = useState(0);
-  const [basemap, setBasemap] = useState<BasemapId>(DEFAULT_BASEMAP);
-  const [selected, setSelected] = useState<string | null>(null);
-  // Read when a basemap switch rebuilds the style, so it keeps what is shown.
+  const [flag, setFlag] = useResearchState<FlagName>("map-color", () => { const value = new URLSearchParams(window.location.hash.slice(1)).get("color"); return PICKER.includes(value as FlagName) ? value as FlagName : "eligible"; });
   const flagRef = useRef(flag);
+  const [rememberedView, rememberView] = useResearchState<[number, number, number] | null>("map-view", null);
+  const [basemap, setBasemap] = useResearchState<BasemapId>("map-basemap", DEFAULT_BASEMAP);
+  const [hiddenLayers, setHiddenLayers] = useResearchState<LegendItem[]>("map-hidden-legend-items", []);
+  const hiddenLayersRef = useRef(hiddenLayers);
+  const applyLayerVisibility = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    for (const [id, filter] of Object.entries(legendFilters(flagRef.current, hiddenLayersRef.current))) if (map.getLayer(id)) map.setFilter(id, filter);
+  }, []);
+  useEffect(() => { hiddenLayersRef.current = hiddenLayers; applyLayerVisibility(); }, [hiddenLayers, applyLayerVisibility]);
+  const [initialView] = useState(() => { const hash = readHash(); const explicitScope = hash.geoid || new URLSearchParams(window.location.hash.slice(1)).has("s"); return { ...hash, view: hash.view ?? (explicitScope ? undefined : rememberedView ?? undefined), basemap: hash.basemap ?? basemap }; });
+  const appliedView = useRef(false);
+  const appliedFocus = useRef(false);
+  const [zoom, setZoom] = useState(0);
+  // Read when a basemap switch rebuilds the style, so it keeps what is shown.
   const basemapRef = useRef(basemap);
-  const selectedRef = useRef(selected);
+  const selectedRef = useRef<string | null>(null);
   // undefined until checked; null when the static files are absent (tile fallback).
   const boundaryIndex = useRef<BoundaryIndex | null | undefined>(undefined);
   const loadedStates = useRef(new Set<string>());
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [address, setAddress] = useState("");
-  const [candidates, setCandidates] = useState<Array<{ geoid: string; lon: number; lat: number; label: string | null }>>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(0);
-  // Find areas: the filters, each state's data for them, and the matching tracts (null when no filter is on).
-  const [filters, setFilters] = useState<Filters>(NO_FILTERS);
-  const filtersRef = useRef(filters);
-  const exploreData = useRef(new Map<string, ExploreState | null>());
-  const matchRef = useRef<Set<string> | null>(null);
-  const [matchCount, setMatchCount] = useState<number | null>(null);
-  const [finding, setFinding] = useState(false);
-
+  const [mapError, setMapError] = useState(false);
+  const [unavailableLegend, setUnavailableLegend] = useState<{ flag: FlagName; visible: boolean }>({ flag, visible: false });
+  const [ready, setReady] = useState(false);
+  const [tractMinZoom, setTractMinZoom] = useState(TILE_TRACT_MIN_ZOOM);
+  const matchRef = useRef<Set<string> | null>(matches === null ? null : new Set(matches));
+  const onSelectRef = useRef(onSelect);
+  useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
+  // Inspect only rendered tracts after map updates, not every animation frame
+  // or all cached states. Clearing filters or panning can change this entry.
+  const updateLegendAvailability = useCallback(() => {
+    const map = mapRef.current;
+    if (!map?.getLayer("tract-fill")) return;
+    const currentFlag = flagRef.current;
+    const visible = map.queryRenderedFeatures({ layers: ["tract-fill"] }).some((feature) => feature.properties[currentFlag] === -1);
+    setUnavailableLegend((previous) => previous.flag === currentFlag && previous.visible === visible ? previous : { flag: currentFlag, visible });
+  }, []);
   /** Re-attach status flags and push merged features to the map. */
   const refreshSources = useCallback(() => {
     const map = mapRef.current;
     if (!map) return;
-    const tracts = [...tractFeatures.current.values()].map((f) => {
+    const tracts = mapFeaturesForMatches(tractFeatures.current.values(), matchRef.current, "tract").map((f) => {
       const g = String(f.properties.GEOID);
       const bits = stateStatus.current.get(g.slice(0, 2))?.[g];
-      const props: Record<string, string | number> = { GEOID: g, match: matchRef.current == null ? -1 : matchRef.current.has(g) ? 1 : 0 };
+      const props: Record<string, string | number> = { GEOID: g };
       for (const [name, { bit }] of Object.entries(FLAGS)) {
         props[name] = bits == null || (name === "zone2027" && bits & ZONE_2027_PENDING) ? -1 : bits & bit ? 1 : 0;
       }
       return { ...f, properties: props };
     });
-    const counties = [...countyFeatures.current.values()].map((f) => {
+    const counties = mapFeaturesForMatches(countyFeatures.current.values(), matchRef.current, "county").map((f) => {
       const s = countySummary.current?.[String(f.properties.GEOID)];
-      return { ...f, properties: { ...f.properties, zones: s ? (countyHasZones(s) ? 1 : 0) : -1 } };
+      return { ...f, properties: { ...f.properties, zones: matchRef.current !== null ? 1 : s ? (countyHasZones(s) ? 1 : 0) : -1 } };
     });
     (map.getSource("tracts") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: tracts } as never);
     (map.getSource("counties") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: counties } as never);
+    if (marker.current) marker.current.getElement().hidden = matchRef.current !== null && !matchRef.current.has(selectedRef.current ?? "");
   }, []);
 
-  /** Work out which tracts in the loaded states pass the Find areas filters, then redraw. */
-  const recomputeMatches = useCallback(async () => {
-    const f = filtersRef.current;
-    if (!filtersActive(f)) {
-      matchRef.current = null;
-      setMatchCount(null);
-      refreshSources();
-      return;
-    }
-    const states = [...stateStatus.current.keys()];
-    if (states.length === 0) {
-      matchRef.current = new Set();
-      setMatchCount(null);
-      refreshSources();
-      return;
-    }
-    setFinding(true);
-    try {
-      await Promise.all(
-        states
-          .filter((s) => !exploreData.current.has(s))
-          .map(async (s) => {
-            const r = await fetch(`/api/explore/${s}`);
-            exploreData.current.set(s, r.ok ? ((await r.json()) as ExploreState) : null);
-          })
-      );
-      if (filtersRef.current !== f) return; // changed while loading; the newer call wins
-      const all = new Set<string>();
-      for (const s of states) {
-        const d = exploreData.current.get(s);
-        if (d) for (const g of matchingTracts(d, f)) all.add(g);
-      }
-      matchRef.current = all;
-      setMatchCount(all.size);
-      refreshSources();
-    } finally {
-      setFinding(false);
-    }
-  }, [refreshSources]);
-
-  /** Status flags for each state not yet fetched, for colouring its tracts. */
+  /** Status flags for each state not yet fetched, for coloring its tracts. */
   const loadStatus = useCallback(async (states: Iterable<string>) => {
     await Promise.all(
       [...new Set(states)]
         .filter((s) => !stateStatus.current.has(s))
         .map(async (s) => {
           stateStatus.current.set(s, {});
-          const r = await fetch(`/api/status/${s}`);
-          if (r.ok) stateStatus.current.set(s, (await r.json()) as Record<string, number>);
+          try {
+            const r = await fetch(`/api/status/${s}`);
+            if (!r.ok) throw new Error("Status unavailable");
+            stateStatus.current.set(s, (await r.json()) as Record<string, number>);
+          } catch (error) { stateStatus.current.delete(s); throw error; }
         })
     );
   }, []);
@@ -278,8 +240,9 @@ export default function MapApp() {
     const map = mapRef.current;
     if (map) {
       const z = tractMinZoomFor(boundaryIndex.current);
+      setTractMinZoom(z);
       for (const id of ["county-fill", "county-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, 0, z);
-      for (const id of ["tract-fill", "tract-rural-hatch", "tract-line", "tract-match"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
+      for (const id of ["tract-fill", "tract-rural-hatch", "tract-line"]) if (map.getLayer(id)) map.setLayerZoomRange(id, z, 24);
     }
     return boundaryIndex.current;
   }, []);
@@ -305,13 +268,13 @@ export default function MapApp() {
               const res = await fetch(`/boundaries/tracts/${s}.json`);
               if (!res.ok) {
                 loadedStates.current.delete(s);
+                setMapError(true);
                 return;
               }
               for (const f of featuresFrom(await res.json(), "tracts")) tractFeatures.current.set(String(f.properties.GEOID), f);
             })
           );
           await loadStatus(states);
-          if (states.length > 0 && filtersActive(filtersRef.current)) await recomputeMatches();
         }
         refreshSources();
         return;
@@ -329,6 +292,7 @@ export default function MapApp() {
           const res = await fetch(`/api/boundaries/${key}`);
           if (!res.ok) {
             loadedTiles.current.delete(key);
+            setMapError(true);
             return;
           }
           const fc = (await res.json()) as { features: Feature[] };
@@ -339,10 +303,13 @@ export default function MapApp() {
       );
       if (layer === "counties") await loadCountySummary();
       refreshSources();
+    } catch {
+      setMapError(true);
+      refreshSources();
     } finally {
       setLoading((n) => n - 1);
     }
-  }, [checkBoundaryFiles, loadCountySummary, loadStatus, recomputeMatches, refreshSources]);
+  }, [checkBoundaryFiles, loadCountySummary, loadStatus, refreshSources]);
 
   /** Swap the basemap, carrying the map's own layers and data across. */
   const applyBasemap = useCallback(
@@ -353,7 +320,10 @@ export default function MapApp() {
       const b = BASEMAPS[id];
       map.setStyle(b.style, {
         diff: false,
-        transformStyle: (_previous, next) => withOverlay(next, overlay(flagRef.current, b.fillOpacity, selectedRef.current, tractMinZoomFor(boundaryIndex.current))),
+        transformStyle: (_previous, next) => {
+          const overlays = overlay(flagRef.current, b.fillOpacity, selectedRef.current, tractMinZoomFor(boundaryIndex.current));
+          return withOverlay(next, { ...overlays, layers: withLayerVisibility(overlays.layers, hiddenLayersRef.current, flagRef.current) });
+        },
       });
       // The new style starts with empty overlay sources; refill them.
       map.once("style.load", refreshSources);
@@ -362,20 +332,15 @@ export default function MapApp() {
     [refreshSources]
   );
 
-  const selectTract = useCallback(async (geoid: string | null) => {
-    setSelected(geoid);
+  const selectTract = useCallback((geoid: string | null) => {
+    if (geoid && !researchFlagsAllowed(stateStatus.current.get(geoid.slice(0, 2))?.[geoid])) return;
+    const hash = new URLSearchParams(window.location.hash.slice(1)); hash.delete("at");
+    window.history.replaceState(window.history.state, "", `#${hash}`);
     selectedRef.current = geoid;
     const map = mapRef.current;
-    if (map) {
-      if (map.getLayer("tract-selected")) map.setFilter("tract-selected", ["==", ["get", "GEOID"], geoid ?? ""]);
-      writeHash(geoid, map, basemapRef.current);
-    }
-    if (!geoid) {
-      setProfile(null);
-      return;
-    }
-    const r = await fetch(`/api/tract/${geoid}`);
-    setProfile(r.ok ? ((await r.json()) as Profile) : null);
+    if (map?.getLayer("tract-selected")) map.setFilter("tract-selected", ["==", ["get", "GEOID"], geoid ?? ""]);
+    if (map) writeHash(geoid, map, basemapRef.current);
+    if (geoid) onSelectRef.current(geoid);
   }, []);
 
   useEffect(() => {
@@ -383,29 +348,47 @@ export default function MapApp() {
     // The bundler does not emit MapLibre's worker next to its code; serve our
     // copy (scripts/copy-maplibre-worker.ts) or the map never loads.
     setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
-    const initial = readHash();
+    const initial = initialView;
+    selectedRef.current = initial.geoid ?? null;
     const map = new MapLibreMap({
       container: container.current,
       center: initial.view ? [initial.view[0], initial.view[1]] : [-96, 38.5],
       zoom: initial.view?.[2] ?? 3.6,
       attributionControl: { compact: true, customAttribution: "Boundaries: U.S. Census Bureau" },
+      // MapLibre consumes wheel events over the map canvas. Outside the map,
+      // the results and filter panes retain their native scrolling.
+      cooperativeGestures: false,
+      scrollZoom: true,
       // Replaced at once by applyBasemap, which merges in the overlay layers.
       style: { version: 8, sources: {}, layers: [] },
     });
+    // MapLibre 6 starts compact attribution expanded. Close it once at creation;
+    // the native info disclosure still opens normally by mouse or keyboard.
+    const attribution = map.getContainer().querySelector<HTMLDetailsElement>("details.maplibregl-ctrl-attrib");
+    if (attribution) {
+      attribution.open = false;
+      attribution.classList.remove("maplibregl-compact-show");
+    }
+    map.getCanvas().setAttribute("aria-label", "Interactive tract map. Use the List view to select tracts without the map.");
+    map.getCanvas().setAttribute("aria-describedby", "map-keyboard-help");
     map.addControl(new NavigationControl({ showCompass: false }), "top-left");
     mapRef.current = map;
     const initialBasemap = initial.basemap ?? DEFAULT_BASEMAP;
     setBasemap(initialBasemap);
     applyBasemap(initialBasemap);
     // Map errors (a tile that failed, a bad style value) carry no user data.
-    map.on("error", (e) => console.warn("[map]", e.error?.message ?? "error"));
+    map.on("error", () => setMapError(true));
+    map.on("idle", updateLegendAvailability);
+    map.on("style.load", applyLayerVisibility);
     if (process.env.NODE_ENV !== "production") (window as unknown as { __ozMap?: MapLibreMap }).__ozMap = map;
     map.on("load", () => {
+      setReady(true);
       setZoom(map.getZoom());
       void loadVisible();
-      if (initial.geoid) void selectTract(initial.geoid);
     });
     map.on("moveend", () => {
+      const center = map.getCenter();
+      rememberView([center.lng, center.lat, map.getZoom()]);
       setZoom(map.getZoom());
       void loadVisible();
       writeHash(readHash().geoid ?? null, map, basemapRef.current);
@@ -414,218 +397,125 @@ export default function MapApp() {
       const g = e.features?.[0]?.properties?.GEOID;
       if (typeof g === "string") void selectTract(g);
     });
-    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: Math.max(map.getZoom(), tractMinZoomFor(boundaryIndex.current)) + 1 }));
+    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: Math.max(map.getZoom(), tractMinZoomFor(boundaryIndex.current)) + 1, duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 350 }));
     return () => {
       map.remove();
       mapRef.current = null;
     };
-  }, [applyBasemap, loadVisible, selectTract]);
+  }, [applyBasemap, applyLayerVisibility, loadVisible, selectTract, initialView, rememberView, setBasemap, updateLegendAvailability]);
 
   useEffect(() => {
     flagRef.current = flag;
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    hash.set("color", flag);
+    window.history.replaceState(window.history.state, "", `#${hash}`);
     const map = mapRef.current;
     if (!map || !map.getLayer("tract-fill")) return;
     map.setPaintProperty("tract-fill", "fill-color", tractFillColor(flag));
-    if (map.getLayer("tract-rural-hatch")) map.setFilter("tract-rural-hatch", ruralHatchFilter(flag));
-  }, [flag]);
+    applyLayerVisibility();
+    updateLegendAvailability();
+  }, [flag, applyLayerVisibility, updateLegendAvailability]);
 
-  function changeFilters(f: Filters) {
-    filtersRef.current = f;
-    setFilters(f);
-    void recomputeMatches();
-  }
+  useEffect(() => {
+    matchRef.current = matches ? new Set(matches) : null;
+    refreshSources();
+  }, [matches, refreshSources]);
 
-  function chooseBasemap(id: BasemapId) {
-    if (id === basemapRef.current) return;
-    setBasemap(id);
-    applyBasemap(id);
-  }
+  useEffect(() => {
+    if (!ready || !view) return;
+    if (!appliedView.current && initialView.view) { appliedView.current = true; return; }
+    appliedView.current = true;
+    mapRef.current?.jumpTo({ center: [view[0], view[1]], zoom: view[2] });
+  }, [view, ready, initialView]);
 
-  async function search(e: React.FormEvent) {
-    e.preventDefault();
-    setMessage(null);
-    setCandidates([]);
-    const res = await fetch("/api/geocode", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address }),
-    });
-    if (!res.ok) {
-      setMessage(res.status === 400 ? "Enter a full U.S. street address (5-200 characters)." : "Address lookup is unavailable right now.");
-      return;
-    }
-    const { matches } = (await res.json()) as { matches: typeof candidates };
-    if (matches.length === 0) {
-      setMessage("No match found. Try the full street address with city, state and ZIP.");
-      return;
-    }
-    setCandidates(matches);
-    goTo(matches[0]);
-  }
-
-  function goTo(m: { geoid: string; lon: number; lat: number }) {
+  useEffect(() => {
+    if (!ready) return;
     const map = mapRef.current;
     if (!map) return;
+    if (!focus) {
+      marker.current?.remove();
+      selectedRef.current = null;
+      if (map.getLayer("tract-selected")) map.setFilter("tract-selected", ["==", ["get", "GEOID"], ""]);
+      return;
+    }
+    selectedRef.current = focus.geoid;
+    if (map.getLayer("tract-selected")) map.setFilter("tract-selected", ["==", ["get", "GEOID"], focus.geoid]);
     marker.current?.remove();
-    marker.current = new Marker({ color: "#d7191c" }).setLngLat([m.lon, m.lat]).addTo(map);
-    map.flyTo({ center: [m.lon, m.lat], zoom: 13 });
-    void selectTract(m.geoid);
-  }
+    if (focus.point) {
+      if (focus.exact) marker.current = new Marker({ color: "#d7191c" }).setLngLat(focus.point).addTo(map);
+      if (marker.current) marker.current.getElement().hidden = matchRef.current !== null && !matchRef.current.has(focus.geoid);
+      if (appliedFocus.current || !initialView.view || initialView.geoid !== focus.geoid) map.jumpTo({ center: focus.point, zoom: focus.exact ? 13 : 11 });
+    }
+    appliedFocus.current = true;
+    writeHash(focus.geoid, map, basemapRef.current);
+  }, [focus, ready, initialView]);
 
-  const m = profile?.measures;
-  return (
-    <div className="map-screen">
-      <aside className="panel">
-        <form className="search" onSubmit={search}>
-          <input
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Street address, city, state ZIP"
-            aria-label="Address"
-            autoComplete="off"
-          />
-          <button type="submit">Find</button>
-        </form>
-        <p className="hint">Sent once to the U.S. Census Geocoder to find the tract. Not stored.</p>
-        {message && <p className="error">{message}</p>}
-        {candidates.length > 1 && (
-          <ul>
-            {candidates.map((c) => (
-              <li key={`${c.geoid}-${c.lon}`}>
-                <button type="button" className="link" onClick={() => goTo(c)}>
-                  {c.label ?? c.geoid}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+  useEffect(() => {
+    const element = container.current;
+    if (!element) return;
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.resize();
+      element.closest<HTMLElement>(".screening-map")?.style.setProperty("--map-toolbar-height", `${toolbar.current?.getBoundingClientRect().height ?? 60}px`);
+    });
+    observer.observe(element);
+    if (toolbar.current) observer.observe(toolbar.current);
+    return () => observer.disconnect();
+  }, []);
 
-        <div onMouseLeave={() => setHoverInfo(null)}>
-          <div className="layer-picker" role="group" aria-label="Colour tracts by">
-            {PICKER.map((f) => (
-              <span key={f} className="layer-choice" onMouseEnter={() => setHoverInfo(f as MapLayerId)}>
-                <button type="button" aria-pressed={flag === f} onClick={() => setFlag(f)}>
-                  {FLAGS[f].label}
-                </button>
-                <button
-                  type="button"
-                  className="layer-info-toggle"
-                  aria-label={`What is ${FLAGS[f].label}?`}
-                  aria-expanded={pinnedInfo === f}
-                  onClick={() => setPinnedInfo(pinnedInfo === f ? null : (f as MapLayerId))}
-                  onFocus={() => setHoverInfo(f as MapLayerId)}
-                >
-                  i
-                </button>
-              </span>
-            ))}
-          </div>
-          {(hoverInfo ?? pinnedInfo) && <LayerInfoCard id={(hoverInfo ?? pinnedInfo)!} onClose={pinnedInfo ? () => setPinnedInfo(null) : undefined} />}
+  return <div className="screening-map">
+    <p id="map-keyboard-help" className="visually-hidden">Scroll over the map to zoom in or out, or use its zoom buttons. Scroll outside the map to move through the results or filters. On a touchscreen, drag to move the map and pinch with two fingers to zoom. Arrow keys pan the focused map. Plus and minus zoom. Tab moves out of the map. The List view uses the same search filters and offers text results.</p>
+    <div className="map-toolbar" ref={toolbar}>
+      <details className="map-controls">
+        <summary>Map controls</summary>
+        <div className="map-controls-options">
+      {viewControls}
+      <label>Color by <select value={flag} onChange={(event) => setFlag(event.target.value as FlagName)}>{PICKER.map((key) => <option key={key} value={key}>{FLAGS[key].label}</option>)}</select></label>
+      <label>Basemap <select value={basemap} onChange={(event) => { const id = event.target.value as BasemapId; setBasemap(id); applyBasemap(id); }}>{Object.entries(BASEMAPS).map(([id, base]) => <option key={id} value={id}>{base.label}</option>)}</select></label>
         </div>
-        <FindAreas filters={filters} onChange={changeFilters} matches={matchCount} busy={finding} />
-        <div className="layer-picker" role="group" aria-label="Basemap">
-          {(Object.keys(BASEMAPS) as BasemapId[]).map((b) => (
-            <button key={b} type="button" aria-pressed={basemap === b} onClick={() => chooseBasemap(b)}>
-              {BASEMAPS[b].label}
-            </button>
-          ))}
-        </div>
-        <p className="hint">Zoomed out, counties show where zones are; zoom in to a state to see its tracts, and click one.</p>
-
-        {selected && !profile && <p className="hint">Loading tract {selected}...</p>}
-        {profile && m && (
-          <section>
-            <h2>
-              Tract {profile.geoid}
-              <br />
-              <span className="hint">
-                {profile.county}, {profile.state}
-              </span>
-            </h2>
-            <ul>
-              <li>
-                2027 eligibility: <strong>{m.eligible_2027.value === 1 ? "eligible" : m.eligible_2027.value === 0 ? "not eligible" : "n/a"}</strong>{" "}
-                (eligibility is not designation)
-              </li>
-              <li>{profile.designation2027.text}</li>
-              <li>
-                Income {m.mfi_ratio.value == null ? "n/a" : `${(m.mfi_ratio.value * 100).toFixed(0)}%`} of area MFI; poverty {pct(m.poverty_rate.value)}
-              </li>
-              <li>Rural: {profile.rural.treasury == null ? "n/a" : profile.rural.treasury ? "yes" : "no"}. {profile.rural.explanation}</li>
-              <li>2018 zone: {m.oz2018_population_share.value == null ? "n/a" : m.oz2018_population_share.value >= 0.5 ? "yes" : m.oz2018_population_share.value > 0 ? "partly" : "no"}</li>
-              <li>
-                QCT {m.qct_2026.value === 1 ? "yes" : "no"}; DDA {m.dda_2026.value === 2 ? "yes" : m.dda_2026.value === 1 ? "partly" : "no"}; NMTC{" "}
-                {m.nmtc_lic.value === 1 ? "yes" : m.nmtc_lic.value === 0 ? "no" : "n/a"}
-              </li>
-              <li>
-                Population {m.population.value?.toLocaleString("en-US") ?? "n/a"}; median household income {usd(m.median_household_income.value)}
-              </li>
-            </ul>
-            <p>
-              <Link href={`/tract/${profile.geoid}`}>Full tract profile and sources</Link>
-            </p>
-            <div className="next-steps">
-              <strong>What next</strong>
-              <Link href="/how-it-works">How a gain, a fund and a zone fit together</Link>
-              <Link href="/how-it-works#designation">Why eligible is not designated</Link>
-              <Link href="/funds">Finding and reviewing funds</Link>
-            </div>
-          </section>
-        )}
-        <p className="note">Informational only, not investment, tax or legal advice.</p>
-      </aside>
-      <div className="map">
-        <div ref={container} className="map-canvas" />
-        {loading > 0 && <div className="map-status">Loading boundaries...</div>}
-        <MapLegend flag={flag} showTracts={zoom >= tractMinZoomFor(boundaryIndex.current)} filtering={matchCount != null} />
-        <div className="map-version" title="Release · commit · build date">
-          {versionLabel()}
-        </div>
-      </div>
+      </details>
     </div>
-  );
+    <div className="map" role="region" aria-label="Map of matching places">
+      <div ref={container} className="map-canvas" />
+      {loading > 0 && <div className="map-status" role="status">Loading boundaries…</div>}
+      {mapError && <div className="map-error" role="status">Some map content is unavailable. The results list remains available. <button type="button" className="link" onClick={() => { setMapError(false); loadedStates.current.clear(); loadedTiles.current.clear(); void loadVisible(); }}>Retry boundaries</button></div>}
+      <details className="map-legend">
+        <summary>Map legend</summary>
+        <div className="map-legend-scroll" role="region" aria-label="Map legend entries" tabIndex={0}>
+          <p className="hint">{RESEARCH_SCOPE_NOTICE}</p>
+          <MapLegend flag={flag} showTracts={zoom >= tractMinZoom} filtering={matches != null} showUnavailable={unavailableLegend.flag === flag && unavailableLegend.visible} hidden={hiddenLayers} onToggle={(id) => setHiddenLayers((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])} />
+          <p className="hint">Uncheck a legend item to hide it. Search filters and result counts stay unchanged.</p>
+        </div>
+      </details>
+      <span className="map-version">{versionLabel()}</span>
+    </div>
+  </div>;
 }
 
 /** On-map key: counties when zoomed out, the chosen tract view when zoomed in. */
-function MapLegend({ flag, showTracts, filtering }: { flag: FlagName; showTracts: boolean; filtering: boolean }) {
+function MapLegend({ flag, showTracts, filtering, showUnavailable, hidden, onToggle }: { flag: FlagName; showTracts: boolean; filtering: boolean; showUnavailable: boolean; hidden: LegendItem[]; onToggle: (id: LegendItem) => void }) {
   const hatch = `repeating-linear-gradient(135deg, ${HATCH_INK} 0 1.5px, transparent 1.5px 5px)`;
   if (!showTracts) {
     return (
-      <div className="map-legend" aria-label="Map legend">
-        <strong>Counties</strong>
-        <span>
-          <span className="swatch" style={{ background: COUNTY_ZONE_COLOR }} /> Has 2027-eligible tracts
-        </span>
-        <span>
-          <span className="swatch" /> None
-        </span>
-        <span className="legend-note">Where a state&apos;s designations are published: has designated tracts. Zoom in for tracts.</span>
+      <div className="map-legend-content">
+        <strong>{filtering ? "Counties with matching tracts" : "Counties"}</strong>
+        <MapLegendItem label={filtering ? "Contains matching tracts" : "Has 2027-eligible tracts"} swatch={{ background: COUNTY_ZONE_COLOR }} checked={!hidden.includes("county-yes")} onToggle={() => onToggle("county-yes")} />
+        {!filtering && <MapLegendItem label="None" checked={!hidden.includes("county-no")} onToggle={() => onToggle("county-no")} />}
+        <span className="legend-note">{filtering ? "Zoom in to see only the matching tracts within these counties." : "Where a state's designations are published: has designated tracts. Zoom in for tracts."}</span>
       </div>
     );
   }
-  const [yes, yesRural, no, none] = LEGEND[flag] ?? [FLAGS[flag].label, "", "No", "No data"];
+  const [yes, yesRural, no, none] = LEGEND[flag] ?? [FLAGS[flag].label, "", "No", "Status unavailable"];
   return (
-    <div className="map-legend" aria-label="Map legend">
+    <div className="map-legend-content">
       <strong>{FLAGS[flag].label}</strong>
-      <span>
-        <span className="swatch" style={{ background: FLAGS[flag].color }} /> {yes}
-      </span>
+      <MapLegendItem label={HATCHES_RURAL.has(flag) ? `${yes} · other tracts` : yes} swatch={{ background: FLAGS[flag].color }} checked={!hidden.includes("tract-yes")} onToggle={() => onToggle("tract-yes")} />
       {HATCHES_RURAL.has(flag) && (
-        <span>
-          <span className="swatch" style={{ background: `${hatch}, ${FLAGS[flag].color}` }} /> {yesRural}
-        </span>
+        <MapLegendItem label={yesRural} swatch={{ background: `${hatch}, ${FLAGS[flag].color}` }} checked={!hidden.includes("tract-rural")} onToggle={() => onToggle("tract-rural")} />
       )}
-      <span>
-        <span className="swatch" style={{ background: "#ffffff" }} /> {no}
-      </span>
-      <span>
-        <span className="swatch" style={{ background: "#dddddd" }} /> {none}
-      </span>
-      {filtering && (
-        <span>
-          <span className="swatch" style={{ background: "transparent", outline: "2px solid #f59e0b", outlineOffset: "-2px" }} /> Matches Find areas (others faded)
-        </span>
-      )}
+      <MapLegendItem label={`${no}${flag === "eligible" ? " · boundary only" : ""}`} swatch={{ background: flag === "eligible" ? "transparent" : "#ffffff", ...(flag === "eligible" ? { border: "2px solid var(--muted)" } : {}) }} checked={!hidden.includes("tract-no")} onToggle={() => onToggle("tract-no")} />
+      {(showUnavailable || hidden.includes("tract-unavailable")) && <MapLegendItem label={none} swatch={{ background: UNAVAILABLE_COLOR }} checked={!hidden.includes("tract-unavailable")} onToggle={() => onToggle("tract-unavailable")} />}
+      {HATCHES_RURAL.has(flag) && <span className="legend-note">Rural tracts are shown separately; other tracts have non-rural or unavailable rural status.</span>}
+      {filtering && <span className="legend-note">Only tracts matching your filters are shown.</span>}
     </div>
   );
 }

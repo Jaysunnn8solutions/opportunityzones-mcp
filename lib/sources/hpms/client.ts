@@ -1,7 +1,7 @@
 /**
  * Traffic on public roads near a point, from FHWA's Highway Performance
  * Monitoring System (HPMS), national full join, published by the U.S. DOT
- * (ArcGIS organisation "usdot", credited to FHWA's Office of Highway Policy
+ * (ArcGIS organization "usdot", credited to FHWA's Office of Highway Policy
  * Information).
  *
  * Measures, all descriptive: the busiest road segments within a radius, with

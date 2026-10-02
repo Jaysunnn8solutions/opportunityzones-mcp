@@ -67,7 +67,7 @@ describe("nearestNeighbourMatch", () => {
     );
   });
 
-  it("standardises covariates so a dollar-scale variable does not swamp a rate", () => {
+  it("standardizes covariates so a dollar-scale variable does not swamp a rate", () => {
     // Without scaling, the income column (tens of thousands) would decide every
     // match and the poverty column (0-1) would be ignored.
     const units2 = [

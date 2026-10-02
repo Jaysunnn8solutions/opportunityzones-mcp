@@ -4,9 +4,7 @@ import { fetchBoundaries, LAYERS, type BoundaryLayer } from "@/lib/sources/tiger
 
 /**
  * Census tract or county boundaries for one map tile, proxied from TIGERweb.
- * Public data identical for every viewer, so cached at the CDN for 30 days:
- * the second person to view an area gets it without touching the Census
- * servers.
+ * Terms-protected response. Shared caches must not bypass acceptance checks.
  */
 export async function GET(_req: Request, { params }: { params: Promise<{ layer: string; z: string; x: string; y: string }> }) {
   const p = await params;
@@ -20,7 +18,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ layer: 
   try {
     const fc = await fetchBoundaries(layer, z, x, y);
     return Response.json(fc, {
-      headers: { "Cache-Control": "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400" },
+      headers: { "Cache-Control": "private, no-store" },
     });
   } catch (err) {
     const message = err instanceof SourceError ? err.message : "boundary service unavailable";

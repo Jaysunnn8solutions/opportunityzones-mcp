@@ -1,215 +1,75 @@
 "use client";
 
-/**
- * Many places at once: addresses or tract GEOIDs in, one row of status each.
- *
- * Privacy: the list lives only in this component's state. Each address goes
- * once to /api/geocode in a POST body (never a URL); tract profiles are public
- * data fetched by GEOID. Nothing is stored; "Download CSV" is built in the
- * browser.
- */
+import { useEffect, useRef, useState } from "react";
+import { isPlaceResult, lookupPlace, type PlaceCandidate, type PlaceResult } from "@/lib/client/place";
+import { DISCLAIMER } from "@/lib/client/presentation";
+import { useResearchState } from "./ResearchSession";
+import { ComparisonButton, ComparisonTray, PlaceReportLink } from "./ResearchActions";
+import ExportResearch from "./ExportResearch";
+import { useAccount } from "./AccountAccess";
+import Badges from "./Badges";
 
-import Link from "next/link";
-import { useState } from "react";
-
-const MAX_LINES = 25;
-const GEOID = /^\d{11}$/;
-
-interface Profile {
-  geoid: string;
-  state: string | null;
-  county: string | null;
-  measures: Record<string, { value: number | null }>;
-  rural: { treasury: boolean | null };
-  designation2027: { status: "designated" | "not-designated" | "pending" | "not-eligible" | "unknown"; stateEligible: number; stateCap: number };
-}
-
-interface Row {
-  input: string;
-  state: "waiting" | "working" | "done" | "no-match" | "error";
-  matched?: string | null;
-  profile?: Profile;
-}
-
-const yesNo = (v: boolean | null | undefined) => (v == null ? "n/a" : v ? "Yes" : "No");
-
-function zone2018(p: Profile): string {
-  const s = p.measures.oz2018_population_share?.value;
-  if (s == null) return "n/a";
-  if (s >= 0.999) return "Yes";
-  if (s > 0) return `Partly (${Math.round(s * 100)}%)`;
-  return "No";
-}
-
-function round2027(p: Profile): string {
-  const d = p.designation2027;
-  if (d.status === "designated") return "Designated 2027 zone";
-  if (d.status === "not-designated") return "Eligible, not designated";
-  if (d.status === "pending") return `Eligible, pending (state may pick ${d.stateCap.toLocaleString("en-US")} of ${d.stateEligible.toLocaleString("en-US")})`;
-  if (d.status === "not-eligible") return "Not eligible";
-  return "Unknown";
-}
-
-async function lookup(input: string): Promise<Pick<Row, "state" | "matched" | "profile">> {
-  let geoid = input.replace(/\s/g, "");
-  let matched: string | null = null;
-  if (!GEOID.test(geoid)) {
-    if (input.length < 5 || input.length > 200) return { state: "no-match" };
-    const res = await fetch("/api/geocode", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address: input }),
-    });
-    // The input is validated above, so any failure here is the lookup, not the address.
-    if (!res.ok) return { state: "error" };
-    const { matches } = (await res.json()) as { matches: Array<{ geoid: string; label: string | null }> };
-    if (!matches.length) return { state: "no-match" };
-    geoid = matches[0].geoid;
-    matched = matches[0].label;
-  }
-  const r = await fetch(`/api/tract/${geoid}`);
-  if (r.status === 404) return { state: "no-match", matched };
-  if (!r.ok) return { state: "error", matched };
-  return { state: "done", matched, profile: (await r.json()) as Profile };
-}
-
-function csvCell(v: string): string {
-  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
-}
+type Row = { input: string; state: "waiting" | "working" | "done" | "no-match" | "error" | "limited" | "ambiguous" | "stopped" | "out-of-scope"; result?: PlaceResult; candidates?: PlaceCandidate[] };
 
 export default function PropertyChecker() {
-  const [text, setText] = useState("");
-  const [rows, setRows] = useState<Row[]>([]);
+  const { account, open: openAccount } = useAccount();
+  const MAX_LINES = account.member ? 25 : 1;
+  const [text, setText] = useResearchState("batch-text", "");
+  const [rows, setRows] = useResearchState<Row[]>("batch-rows", []);
   const [busy, setBusy] = useState(false);
-  const lines = text
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  async function run(e: React.FormEvent) {
-    e.preventDefault();
-    const inputs = lines.slice(0, MAX_LINES);
-    const next: Row[] = inputs.map((input) => ({ input, state: "waiting" }));
-    setRows(next);
+  const request = useRef<AbortController | null>(null);
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  useEffect(() => () => request.current?.abort(), []);
+  async function process(initial: Row[], indexes: number[], candidate?: PlaceCandidate) {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
     setBusy(true);
-    // One at a time: kind to the Census Geocoder, and rows fill in as they resolve.
-    for (let i = 0; i < inputs.length; i++) {
-      next[i] = { ...next[i], state: "working" };
+    const next = [...initial];
+    for (const index of indexes) {
+      if (controller.signal.aborted) break;
+      next[index] = { input: next[index].input, state: "working" };
       setRows([...next]);
-      try {
-        next[i] = { ...next[i], ...(await lookup(inputs[i])) };
-      } catch {
-        next[i] = { ...next[i], state: "error" };
-      }
+      const result = await lookupPlace(next[index].input, candidate, controller.signal);
+      if (controller.signal.aborted) break;
+      next[index] = isPlaceResult(result) ? { input: next[index].input, state: "done", result }
+        : typeof result === "object" ? { input: next[index].input, state: "ambiguous", candidates: result.candidates }
+          : { input: next[index].input, state: result };
       setRows([...next]);
+      if (result === "limited") break;
     }
+    setRows(next.map((row) => row.state === "working" || row.state === "waiting" ? { ...row, state: "stopped" } : row));
     setBusy(false);
   }
-
-  function download() {
-    const header = ["input", "matched_address", "tract", "county", "state", "zone_2018", "eligible_2027", "designation_2027", "rural_2027"];
-    const body = rows.map((r) => {
-      const p = r.profile;
-      return [
-        r.input,
-        r.matched ?? "",
-        p?.geoid ?? "",
-        p?.county ?? "",
-        p?.state ?? "",
-        p ? zone2018(p) : r.state,
-        p ? yesNo(p.measures.eligible_2027?.value == null ? null : p.measures.eligible_2027.value === 1) : "",
-        p ? round2027(p) : "",
-        p ? yesNo(p.rural.treasury) : "",
-      ];
-    });
-    const csv = [header, ...body].map((r) => r.map(csvCell).join(",")).join("\n");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "opportunity-zone-check.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+  const complete = rows.filter((row) => row.state === "done").length;
+  const pending = rows.filter((row) => row.result?.profile.designation2027.status === "pending").length;
+  function editRow(index: number, input: string) {
+    const next = rows.map((row, i): Row => i === index ? { input, state: "stopped" } : row);
+    setRows(next); setText(next.map((row) => row.input).join("\n"));
   }
-
-  const done = rows.filter((r) => r.state !== "waiting" && r.state !== "working").length;
-
-  return (
-    <div className="checker">
-      <form onSubmit={run}>
-        <label htmlFor="places">Addresses or tract numbers, one per line (up to {MAX_LINES})</label>
-        <textarea
-          id="places"
-          rows={8}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={"55 Trinity Ave SW, Atlanta, GA 30303\n13121003500"}
-          autoComplete="off"
-          spellCheck={false}
-        />
-        <div className="checker-actions">
-          <button type="submit" disabled={busy || lines.length === 0}>
-            {busy ? `Checking ${done + 1} of ${rows.length}...` : `Check ${Math.min(lines.length, MAX_LINES) || ""} ${lines.length === 1 ? "place" : "places"}`}
-          </button>
-          {lines.length > MAX_LINES && <span className="error">Only the first {MAX_LINES} lines are checked.</span>}
-          {rows.length > 0 && !busy && (
-            <button type="button" className="secondary" onClick={download}>
-              Download CSV
-            </button>
-          )}
+  return <div className="checker">
+    {!account.member && <p className="hint">Public access checks one place at a time. <button className="link" onClick={openAccount}>Sign in free</button> to check up to 25 entries per batch. Each address lookup uses your allowance.</p>}
+    <form onSubmit={(event) => { event.preventDefault(); if (!busy && lines.length && lines.length <= MAX_LINES) void process(lines.map((input) => ({ input, state: "waiting" })), lines.map((_, i) => i)); }}>
+      <label htmlFor="places">Addresses or tract numbers, one per line (up to {MAX_LINES})</label>
+      <textarea id="places" rows={5} value={text} disabled={busy} onChange={(event) => setText(event.target.value)} placeholder={"55 Trinity Ave SW, Atlanta, GA 30303\n13001950100"} autoComplete="off" spellCheck={false} />
+      <div className="checker-actions"><button className="button" disabled={busy || !lines.length || lines.length > MAX_LINES}>{busy ? "Checking places…" : `Check ${lines.length || ""} ${lines.length === 1 ? "place" : "places"}`}</button>
+        {busy && <button type="button" className="button secondary" onClick={() => request.current?.abort()}>Stop checking</button>}
+        {!!rows.length && !busy && <><ExportResearch input={{ geoids: rows.flatMap((row) => row.result ? [row.result.profile.geoid] : []) }} label="Export matched tract data" disabled={!complete} /><button type="button" className="button secondary" onClick={() => { setRows([]); setText(""); }}>Clear list</button></>}
+      </div>
+      {lines.length > MAX_LINES && <p role="alert" className="error">There are {lines.length} entries. Split the list into batches of {MAX_LINES} or fewer; no entries have been skipped.</p>}
+    </form>
+    {!!rows.length && <>
+      <p className="batch-summary" role="status" aria-live="polite"><strong>{complete} of {rows.length} matched</strong> · {pending} with designation pending{!busy && complete < rows.length ? ` · ${rows.length - complete} need attention` : ""}</p>
+      <div className="batch-results">{rows.map((row, index) => <article className="batch-row" id={`batch-row-${index}`} key={index}>
+        <div><h2>{row.input}</h2>{row.result?.matched && <p className="hint">Matched: {row.result.matched}</p>}
+          {row.result ? <><p>{row.result.profile.county}, {row.result.profile.state} · Tract {row.result.profile.geoid}</p><Badges designation={row.result.profile.designation2027.status} rural={row.result.profile.rural.treasury} zone2018Share={row.result.profile.measures.oz2018_population_share?.value ?? null} /></>
+            : <p className="hint">{({ waiting: "Waiting", working: "Looking up…", "out-of-scope": "Outside research scope: details are limited to eligible or designated Opportunity Zone tracts.", "no-match": "No match. Correct the address or tract number below.", limited: "Lookup allowance reached. Remaining entries are preserved for later.", error: "Lookup unavailable. Retry this row when ready.", ambiguous: "Choose the correct matched address.", stopped: "Not completed. Retry this row to continue.", done: "Matched" })[row.state]}</p>}
         </div>
-      </form>
-
-      {rows.length > 0 && (
-        <div className="table-wrap">
-          <table className="results">
-            <thead>
-              <tr>
-                <th>Input</th>
-                <th>Tract</th>
-                <th>2018 zone</th>
-                <th>2027 round</th>
-                <th>Rural (2027)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={`${i}-${r.input}`}>
-                  <td>
-                    {r.input}
-                    {r.matched && r.matched.toUpperCase() !== r.input.toUpperCase() && <div className="hint">Matched: {r.matched}</div>}
-                  </td>
-                  {r.profile ? (
-                    <>
-                      <td>
-                        <Link href={`/tract/${r.profile.geoid}`}>{r.profile.geoid}</Link>
-                        <div className="hint">
-                          {r.profile.county}, {r.profile.state}
-                        </div>
-                      </td>
-                      <td>{zone2018(r.profile)}</td>
-                      <td>{round2027(r.profile)}</td>
-                      <td>{yesNo(r.profile.rural.treasury)}</td>
-                    </>
-                  ) : (
-                    <td colSpan={4} className="hint">
-                      {r.state === "waiting" && "Waiting"}
-                      {r.state === "working" && "Looking up..."}
-                      {r.state === "no-match" && "No match. Try the full street address with city, state and ZIP, or an 11-digit tract number."}
-                      {r.state === "error" && "Lookup unavailable right now; try again."}
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {rows.length > 0 && !busy && (
-        <p className="hint">
-          &quot;Pending&quot; means eligible for 2027, with the state&apos;s list of designations not yet published. A 2018 zone
-          remains in effect through 2028.
-        </p>
-      )}
-    </div>
-  );
+        {row.result ? <div className="answer-actions"><PlaceReportLink place={row.result} from={`/check#batch-row-${index}`} /><ComparisonButton geoid={row.result.profile.geoid} /></div>
+          : !busy && <div className="batch-recovery"><input aria-label={`Correct entry ${index + 1}`} value={row.input} onChange={(event) => editRow(index, event.target.value)} /><button type="button" className="button secondary" onClick={() => void process(rows, [index])}>Retry entry {index + 1}</button>{row.candidates?.map((candidate) => <button key={`${candidate.geoid}-${candidate.lon}`} type="button" className="button secondary" onClick={() => void process(rows, [index], candidate)}>{candidate.label ?? candidate.geoid}</button>)}</div>}
+      </article>)}</div>
+      <p className="note">Pending means a certified designation is not recorded in this dataset. Historical overlap describes a current tract, not an address-level determination. {DISCLAIMER}</p>
+    </>}
+    <ComparisonTray />
+  </div>;
 }

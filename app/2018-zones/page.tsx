@@ -103,7 +103,7 @@ export default function Zones2018Page() {
       <section>
         <h2>By measure</h2>
         <p>
-          The dot is the difference between zones and comparable tracts; the line is its 95% range. Right of the centre line is
+          The dot is the difference between zones and comparable tracts; the line is its 95% range. Right of the center line is
           more money (for poverty, SNAP, vacancy and households without a vehicle, a fall counts as more money). A filled dot is
           clearly different from zero.
         </p>
@@ -211,7 +211,7 @@ export default function Zones2018Page() {
           The next step is to point to 2027-eligible tracts that share the conditions under which designation clearly lifted money
           in the tract. That waits for the full set of measures (income per person, high-income households, SNAP, public
           assistance, vehicles, mortgages) and a check that the groups differ from one another, not just from zero. Until then no
-          tract is labelled as &quot;like the ones that benefited&quot;.
+          tract is labeled as &quot;like the ones that benefited&quot;.
         </p>
       </section>
 
@@ -232,7 +232,7 @@ export default function Zones2018Page() {
             Census block relationship files, weighted by population and housing.
           </li>
           <li>
-            Ranges treat tracts as independent; neighbouring tracts are not, so the true ranges are somewhat wider.
+            Ranges treat tracts as independent; neighboring tracts are not, so the true ranges are somewhat wider.
           </li>
         </ul>
         <p className="note">

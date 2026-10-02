@@ -17,7 +17,7 @@ export interface MapLayerInfo {
   /** One or two sentences, restating only what the cited rules say. */
   short: string;
   rules: RuleId[];
-  /** How the map colours a tract for this layer (this tool's method). */
+  /** How the map colors a tract for this layer (this tool's method). */
   mapped: string;
   /** The dataset in pipeline/sources.ts behind the layer. */
   sourceId: string;
@@ -30,7 +30,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "A low-income census tract that can be nominated for the 2027 round of Opportunity Zones. Eligible is not designated: only tracts a governor nominates and Treasury certifies become zones.",
     rules: ["eligibility", "designatedNotEligible", "ruralFund"],
-    mapped: "Coloured when Treasury's list of eligible tracts includes the tract. Hatching marks the tracts Treasury's list flags as rural.",
+    mapped: "Colored when Treasury's list of eligible tracts includes the tract. Hatching marks the tracts Treasury's list flags as rural.",
     sourceId: "oz2Eligible",
   },
   zone2027: {
@@ -38,7 +38,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     title: "2027 zone",
     short: "A tract designated as a 2027 Opportunity Zone. Zones certified in 2026 run from January 1, 2027, to December 31, 2036.",
     rules: ["designatedNotEligible", "zonePeriod"],
-    mapped: "Coloured from Treasury's published designations. Where a state's list is not out yet, its eligible tracts show as pending.",
+    mapped: "Colored from Treasury's published designations. Where a state's list is not out yet, its eligible tracts show as pending.",
     sourceId: "oz2Designated",
   },
   oz2018: {
@@ -47,7 +47,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "A zone designated in 2018. It stays designated through December 31, 2028, but property bought there after December 31, 2026, generally does not qualify.",
     rules: ["zones2018", "boughtAfterStart"],
-    mapped: "The 2018 zones are 2010 census tracts. A 2020 tract is coloured when at least half of its population lives in one. How the 2018 zones fared against comparable tracts is on the 2018 results page (/2018-zones).",
+    mapped: "The 2018 zones are 2010 census tracts. A 2020 tract is colored when at least half of its population lives in one. How the 2018 zones fared against comparable tracts is on the 2018 results page (/2018-zones).",
     sourceId: "oz1Designated",
   },
   qct: {
@@ -56,7 +56,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "A tract HUD designates for the low-income housing credit (LIHTC): at least half of households below 60% of area median gross income, or a poverty rate of at least 25%. A separate program from Opportunity Zones.",
     rules: ["hudQct"],
-    mapped: "Coloured when the tract is on HUD's 2026 list of Qualified Census Tracts.",
+    mapped: "Colored when the tract is on HUD's 2026 list of Qualified Census Tracts.",
     sourceId: "hudQct",
   },
   dda: {
@@ -65,7 +65,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "An area HUD designates for the low-income housing credit (LIHTC) as having high construction, land and utility costs relative to area median gross income. A separate program from Opportunity Zones.",
     rules: ["hudDda"],
-    mapped: "DDAs are drawn by ZIP-code area in metro areas and by larger areas outside them, not by tract. A tract is coloured when any of its land lies in a 2026 DDA.",
+    mapped: "DDAs are drawn by ZIP-code area in metro areas and by larger areas outside them, not by tract. A tract is colored when any of its land lies in a 2026 DDA.",
     sourceId: "hudDda",
   },
   nmtc: {
@@ -74,7 +74,7 @@ export const MAP_LAYERS: Record<MapLayerId, MapLayerInfo> = {
     short:
       "A tract that is a low-income community for the New Markets Tax Credit, a separate program: a poverty rate of at least 20%, or a median family income of at most 80% of its benchmark.",
     rules: ["otherProgramsNmtc"],
-    mapped: "Coloured when the CDFI Fund's eligibility file (2016-2020 ACS) marks the tract as a low-income community.",
+    mapped: "Colored when the CDFI Fund's eligibility file (2016-2020 ACS) marks the tract as a low-income community.",
     sourceId: "nmtcLic",
   },
 };

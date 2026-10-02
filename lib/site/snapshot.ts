@@ -22,23 +22,28 @@ export interface SnapshotItem {
   headline: string | null;
   detail: string | null;
   source: string;
+  checkedAt?: number;
   unavailable?: string;
 }
 
 function why(err: unknown): string {
-  if (err instanceof SourceError && err.kind === "missing-key") return "not configured on this server";
-  if (err instanceof SourceError && err.kind === "unavailable") return "the source did not answer in time";
-  return "not available right now";
+  if (err instanceof SourceError && err.kind === "limited") return "Source temporarily paused or at its allowance; try later";
+  if (err instanceof SourceError && err.kind === "missing-key") return "Source not enabled on this site";
+  if (err instanceof SourceError && err.kind === "unavailable") return "Source could not be reached, timed out, or returned a service error";
+  if (err instanceof SourceError && err.kind === "rejected") return "Source rejected the request";
+  if (err instanceof SourceError && err.kind === "bad-response") return "Source response could not be interpreted";
+  return "Source not available right now";
 }
 
-export async function siteSnapshot(lon: number, lat: number): Promise<SnapshotItem[]> {
+export async function siteSnapshot(lon: number, lat: number, only?: SnapshotItem["key"]): Promise<SnapshotItem[]> {
+  const run = <T,>(key: SnapshotItem["key"], request: () => Promise<T>): Promise<T> => only && only !== key ? Promise.reject(new Error("not requested")) : request();
   const [flood, quake, fire, epa, roads, places] = await Promise.allSettled([
-    floodZoneAt(lon, lat),
-    seismicDesignAt(lon, lat),
-    wildfireLikelihoodAt(lon, lat),
-    sitesNear(lon, lat, 1),
-    busiestRoadsNear(lon, lat, 0.5),
-    amenitiesNear(lon, lat, 1),
+    run("flood", () => floodZoneAt(lon, lat)),
+    run("earthquake", () => seismicDesignAt(lon, lat)),
+    run("wildfire", () => wildfireLikelihoodAt(lon, lat)),
+    run("epa", () => sitesNear(lon, lat, 1)),
+    run("traffic", () => busiestRoadsNear(lon, lat, 0.5)),
+    run("amenities", () => amenitiesNear(lon, lat, 1)),
   ]);
   const item = <T,>(
     key: SnapshotItem["key"],
@@ -58,7 +63,7 @@ export async function siteSnapshot(lon: number, lat: number): Promise<SnapshotIt
     ]),
     item("earthquake", "Earthquake", "USGS Seismic Design Maps (ASCE 7-22)", quake, (q) => [`Seismic Design Category ${q.category}`, q.description]),
     item("wildfire", "Wildfire", "USDA Forest Service, Wildfire Risk to Communities", fire, (w) => [
-      w.oneInYears ? `About 1 in ${w.oneInYears.toLocaleString("en-US")} years` : w.status === "not-covered" ? "Not modelled here" : "None modelled",
+      w.burnProbability != null && w.burnProbability > 0 ? `${(w.burnProbability * 100).toPrecision(2)}% modeled annual chance` : w.status === "not-covered" ? "Not modeled here" : "None modeled",
       w.description,
     ]),
     item("epa", "EPA sites within 1 mile", "EPA Superfund (NPL) and brownfields (ACRES)", epa, (e) => {
@@ -79,5 +84,5 @@ export async function siteSnapshot(lon: number, lat: number): Promise<SnapshotIt
       `${a.amenities.grocery.count} grocery, ${a.amenities.pharmacy.count} pharmacy, ${a.amenities.bank.count} bank`,
       `${a.amenities.restaurant.count} restaurants, ${a.amenities.retail.count} shops.`,
     ]),
-  ];
+  ].filter((result) => !only || result.key === only);
 }

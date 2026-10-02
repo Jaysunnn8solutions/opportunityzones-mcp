@@ -58,7 +58,7 @@ const SEED0 = seed;
  *
  * White noise is the pessimistic bound: every tract independent, nothing for the
  * compressor to find. An AR(1) series is the optimistic one: the payload is
- * ordered by GEOID, which is roughly geographic, so neighbouring tracts do
+ * ordered by GEOID, which is roughly geographic, so neighboring tracts do
  * resemble each other. `phi` is deliberately moderate — a near-1.0 walk produces
  * absurdly compressible data and a number that would not survive contact with
  * the real pipeline.

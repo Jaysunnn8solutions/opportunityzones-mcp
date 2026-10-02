@@ -14,8 +14,8 @@ export default function CheckPage() {
       </p>
       <PropertyChecker />
       <p className="note">
-        Addresses stay in this page: each is sent once, in the body of a request, to the U.S. Census Geocoder to find its tract,
-        and is not stored or logged. Results describe places, not investments. See <Link href="/funds">Funds</Link> for what else
+        Your list stays in browser memory as you navigate and clears on reload. Addresses are sent in request bodies to the
+        U.S. Census Geocoder and are not stored or logged by this app. Results describe places, not investments. See <Link href="/funds">Funds</Link> for what else
         to ask a fund. Informational only, not investment, tax or legal advice.
       </p>
     </main>

@@ -1,5 +1,5 @@
 /**
- * First-pass treated-versus-control comparison for OZ 1.0: nearest-neighbour
+ * First-pass treated-versus-control comparison for OZ 1.0: nearest-neighbor
  * matching within a stratum, balance diagnostics, and an average effect on the
  * treated with a clustered bootstrap interval.
  *
@@ -12,7 +12,7 @@
  * two-thirds of the apparent construction effect down to selection), and the
  * report says so.
  *
- * Matching is with replacement, on covariates standardised by their pooled
+ * Matching is with replacement, on covariates standardized by their pooled
  * standard deviation, i.e. a diagonal Mahalanobis distance.
  */
 
@@ -29,7 +29,7 @@ export interface Unit {
 
 export interface MatchOptions {
   k: number;
-  /** Maximum standardised distance per covariate, averaged (RMS). Optional. */
+  /** Maximum standardized distance per covariate, averaged (RMS). Optional. */
   caliper?: number;
 }
 
@@ -43,7 +43,7 @@ export interface MatchResult {
   matches: Match[];
   /** Treated units that could not be matched, and why. */
   unmatched: Array<{ id: string; reason: "missing-covariates" | "no-controls-in-stratum" | "caliper" }>;
-  /** Pooled SD used for standardisation, per covariate. */
+  /** Pooled SD used for standardization, per covariate. */
   scale: number[];
   covariateCount: number;
 }
@@ -126,14 +126,14 @@ export interface BalanceRow {
   meanTreated: number;
   meanControlAll: number;
   meanControlMatched: number;
-  /** Standardised mean difference before matching (all controls in matched strata). */
+  /** Standardized mean difference before matching (all controls in matched strata). */
   smdBefore: number;
   /** After matching (each treated unit's matched controls weighted 1/k). */
   smdAfter: number;
 }
 
 /**
- * Standardised mean differences, the usual balance check. |SMD| under 0.1 is
+ * Standardized mean differences, the usual balance check. |SMD| under 0.1 is
  * the conventional bar for "well balanced"; the report shows every covariate so
  * a reader can see which ones clear it.
  */
@@ -269,10 +269,10 @@ export function fitOls(
 /**
  * The outcome model used to bias-correct a matched estimate.
  *
- *  - `linear`    OLS on all controls, standardised covariates (the default).
+ *  - `linear`    OLS on all controls, standardized covariates (the default).
  *  - `state`     the same, with slopes estimated within state (covariates and
  *                outcome demeaned by stratum), matching the within-state design.
- *  - `quadratic` adds squared standardised covariates, relaxing linearity.
+ *  - `quadratic` adds squared standardized covariates, relaxing linearity.
  *  - `matched`   OLS on the matched controls only, weighted by how often each is
  *                used — the form in Abadie and Imbens (2011).
  *
@@ -286,7 +286,7 @@ export const OUTCOME_MODELS: readonly OutcomeModel[] = ["linear", "state", "quad
 /**
  * Average effect on the treated for one outcome, with a 95% interval from a
  * bootstrap that resamples clusters (counties) of treated units. Resampling
- * clusters rather than tracts respects the fact that neighbouring tracts share
+ * clusters rather than tracts respects the fact that neighboring tracts share
  * a housing market; resampling tracts would understate the uncertainty.
  *
  * With `biasCorrect`, each treated unit's difference is adjusted for whatever

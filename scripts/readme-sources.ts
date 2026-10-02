@@ -20,7 +20,7 @@ export function sourcesTable(): string {
     (s) =>
       `| [${cell(s.name)}](${s.homepage}) | ${cell(s.publisher)} | ${s.purposes.join(", ")} | ${s.access.map((a) => ACCESS[a]).join(", ")} | ${cell(s.license)} |`
   );
-  return ["| Source | Publisher | Purpose | Access | Licence |", "|---|---|---|---|---|", ...rows].join("\n");
+  return ["| Source | Publisher | Purpose | Access | License |", "|---|---|---|---|---|", ...rows].join("\n");
 }
 
 export function withTable(readme: string): string {

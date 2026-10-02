@@ -14,7 +14,7 @@ const index: BoundaryIndex = {
 };
 
 describe("statesInView", () => {
-  it("loads Georgia first for a view centred on Atlanta, then neighbours that overlap", () => {
+  it("loads Georgia first for a view centered on Atlanta, then neighbors that overlap", () => {
     expect(statesInView(index, { west: -86.5, south: 32.0, east: -82.5, north: 35.5 })).toEqual(["13", "01"]);
     // Further south the view reaches Florida too.
     expect(statesInView(index, { west: -86.5, south: 30.0, east: -82.5, north: 34.0 })).toEqual(["13", "01", "12"]);

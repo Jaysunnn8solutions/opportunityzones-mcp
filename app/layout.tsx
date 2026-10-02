@@ -1,64 +1,72 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { designationNote } from "@/lib/data/tracts";
 import { versionLabel } from "@/lib/version";
-import McpHelper from "./ui/McpHelper";
+import { ResearchSession } from "./ui/ResearchSession";
+import SiteNavigation from "./ui/SiteNavigation";
+import LegalAccess from "./ui/LegalAccess";
 import { RulePopupProvider } from "./ui/RulePopup";
+import { INDEPENDENCE_NOTICE, OFFICIAL_SOURCES } from "@/lib/content/officialSources";
+import { RELIANCE_NOTICE } from "@/lib/content/siteTerms";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import { AccountAccess, AccountButton } from "./ui/AccountAccess";
+import ResearchTrail from "./ui/ResearchTrail";
+import AccessibilitySupport from "./ui/AccessibilitySupport";
+import ResearchBar from "./ui/ResearchBar";
+import { loadTractData } from "@/lib/data/tracts";
 
 export const metadata: Metadata = {
-  title: "Opportunity Zone screening",
+  title: "Opportunity Zone Research",
   description:
     "Understand the 2027 Opportunity Zone rules, screen U.S. census tracts, and check where a fund's properties sit. Informational only, not investment, tax or legal advice.",
 };
 
-const NAV: Array<[string, string]> = [
-  ["/", "Start"],
-  ["/guide", "Guided check"],
-  ["/how-it-works", "How it works"],
-  ["/rules", "Rules & sources"],
-  ["/map", "Map"],
-  ["/funds", "Funds"],
-  ["/check", "Check properties"],
-  ["/use-with-claude", "Use with Claude"],
-];
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const { manifest, lookups } = loadTractData();
   return (
-    <html lang="en">
+    <html lang="en-US">
       <body>
+        <AccessibilitySupport />
+        <ResearchSession>
+        <a className="skip-link" href="#main-content">Skip to content</a>
         <div className="disclaimer" role="note">
-          <strong>Informational only, not investment, tax or legal advice.</strong> This tool describes places and explains the
-          rules in general terms. It does not recommend any tract, fund or transaction. Eligibility is not designation.{" "}
-          {designationNote()}
+          <span>Informational only, not investment, tax or legal advice.</span>
+          <span>Independent site · Not affiliated with U.S. Treasury.</span>
+          <a href={OFFICIAL_SOURCES[0].url}>Official Treasury information ↗</a>
+          <Link href="/legal">Terms & disclaimer</Link>
+          <Link href="/accessibility">Accessibility</Link>
         </div>
+        <LegalAccess>
+        <AccountAccess>
         <header className="site-header">
-          <h1>
+          <div className="site-brand">
             <Link href="/">
               <svg className="logo-mark" viewBox="0 0 24 24" aria-hidden="true">
                 <rect x="2" y="2" width="20" height="20" rx="5" fill="var(--accent)" />
-                <path d="M6 16 L10 11 L13 14 L18 7" stroke="var(--accent-ink)" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="m5 7 5-2 4 2 5-2v12l-5 2-4-2-5 2Zm5-2v12m4-10v12" stroke="var(--accent-ink)" strokeWidth="1.3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Opportunity Zone screening
+              <span>Opportunity Zone Research<small>Independent information &amp; place research</small></span>
             </Link>
-          </h1>
-          <nav aria-label="Main">
-            {NAV.map(([href, label]) => (
-              <Link key={href} href={href}>
-                {label}
-              </Link>
-            ))}
-          </nav>
+          </div>
+          <SiteNavigation />
+          <AccountButton />
         </header>
-        <RulePopupProvider>{children}</RulePopupProvider>
+        <RulePopupProvider><div id="main-content" tabIndex={-1}><ResearchTrail />{children}<ResearchBar version={manifest.generated} states={lookups.states} /></div></RulePopupProvider>
         <footer className="site-footer">
+          <p className="footer-independence">{INDEPENDENCE_NOTICE}</p>
+          <p className="footer-reliance">{RELIANCE_NOTICE}</p>
+          <nav className="resource-links" aria-label="Official government sources">{OFFICIAL_SOURCES.map((source) => <a key={source.url} href={source.url}>{source.name} · official information ↗</a>)}</nav>
+          <nav aria-label="Resources" className="resource-links"><Link href="/check">Check multiple properties</Link><Link href="/how-it-works">Program overview</Link><Link href="/rules">Rules & sources</Link><Link href="/funds">Fund research checklist</Link><Link href="/2018-zones">2018 zone research</Link><Link href="/use-with-claude">Research through chat / MCP</Link><Link href="/accessibility">Accessibility</Link><Link href="/legal">Disclaimer, terms & privacy</Link></nav>
           Basemap: OpenFreeMap, © OpenStreetMap contributors, or USGS The National Map. Boundaries: U.S. Census Bureau. Data: U.S.
           Treasury, Census Bureau, HUD, CDFI Fund, CFPB/FFIEC, EPA, FHWA, FEMA, USGS, USDA Forest Service, BLS, NCES, CMS; see each
-          tract page for sources and vintages. Nothing you search is stored.
+          tract page for sources and vintages. Research stays in browser memory unless you explicitly save a project on this device. Saved projects include local notes and can be removed in the workbench.
+          Addresses are sent to the Census Geocoder for lookup and are not stored or logged by this app.
+          Optional passkey accounts retain credentials and usage allowances; prepared public-data exports expire after one hour. <Link href="/legal#privacy">Privacy details</Link>.
           <span className="version"> Version {versionLabel()}.</span>
         </footer>
-        <McpHelper />
+        </AccountAccess>
+        </LegalAccess>
+        </ResearchSession>
       </body>
     </html>
   );

@@ -52,3 +52,7 @@ next-env.d.ts
 
 # Page link lists from the legal-source fetch (kept on the data/legal-sources branch)
 legal/links/
+.runtime/
+
+# Local backup of previously generated public assets; not used by the app.
+/public-old/

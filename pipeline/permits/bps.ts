@@ -5,7 +5,7 @@
  * The current, but coarse, side of "is anyone building here": no public source
  * tracks construction starts by tract, so this county figure sits beside the
  * lagging tract-level "built 2020 or later" share from the ACS
- * (pipeline/acs/housingAge.ts). County-level and labelled so.
+ * (pipeline/acs/housingAge.ts). County-level and labeled so.
  *
  * Uses the estimates that include imputation for non-reporting permit offices
  * (the first four column groups), not the "reported only" groups. Permits

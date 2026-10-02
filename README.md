@@ -7,16 +7,21 @@ properties sits.
 
 ## The website
 
+Before public release, complete the [pre-launch checklist](docs/PRE_LAUNCH_CHECKLIST.md), including operator details, legal review, production access controls, and accessibility checks.
+
 | Page | What it is for |
 |---|---|
-| `/` Start | The gain, the fund and the zone; nine starting points in three groups; where the 2027 round stands |
-| `/for/{individual,corporate,builder,business,landowner,sponsor,adviser,lender,community}` | How the rules apply to that situation, with worked examples, the questions for an adviser, and the tools that answer the next question |
-| `/guide` | Guided check: who you are, where the money comes from (with the 180-day date), a place or a state, the fund route, then a printable checklist and questions for an adviser |
+| `/` Research Hub | Location research, map entry, and clear paths to published rules and comparisons |
+| `/compare` | Up to 25 tracts with a free account, selectable measures, factual differences, and criteria evidence |
+| `/brief` | Printable screening brief, source dates, and portable public research files |
+| `/guide` | Published rules organized by research topic, with links back to place research; no personal financial questions |
 | `/how-it-works` | The statutory mechanics in general terms, eligible vs designated, timeline, sources |
-| `/map` | Address search and state-wide tract map, coloured by 2027 eligibility (rural tracts hatched), 2027 zone, 2018 zone, HUD QCT/DDA or NMTC; counties in one blue where they have zones |
+| `/map` | Address/city/state search and national tract map with independent designation/rural filters; an optional state narrows the results |
 | `/tract/{geoid}` | One tract's full profile, its place in the 2027 round, and its sources |
 | `/funds` | Where funds can be found and what to ask one (no fund is named, by rule) |
-| `/check` | Paste up to 25 addresses or tract numbers; get each one's zone status, and a CSV |
+| `/workbench` | Device-local projects, export recipes, tract-list matching, filter previews, coverage, baselines, boundary/release history, and developer queries |
+| `/workbench/rules` | Captured source-text changes, retrieval dates, citation checks, and official links |
+| `/check` | Single-place public lookup; members can check up to 25 addresses and export published tract facts |
 | `/use-with-claude` | How to connect the MCP server to Claude Code or Claude Desktop, with example questions |
 
 > **Informational only, not investment, tax or legal advice.** It describes
@@ -38,23 +43,36 @@ properties sits.
 - **What is it like, and what is around it:** people, housing, jobs, lending,
   rents, EPA sites, flood zone, traffic, anchor institutions, the county labor
   market and building permits. Every figure names its source, vintage and
-  geography; county- and ZIP-level figures are labelled as such.
+  geography; county- and ZIP-level figures are labeled as such.
 
 The 2027 designations themselves are not yet published; the ingest is ready for
 the day Treasury releases them (`pipeline/oz2/designated.ts`).
 
 ## MCP tools
 
-Served at `/mcp` (Streamable HTTP, stateless, read-only, no account):
+Served at `/mcp` (Streamable HTTP, stateless, read-only, free account required). Sign in and explicitly accept the current MCP terms at `/use-with-claude` to obtain a private bearer token before connecting. Browser acceptance or account login alone does not grant MCP access.
 
 | Tool | What it does |
 |---|---|
-| `check_address` | Address to tract (Census Geocoder), with the tract's OZ status |
+| `describe_research` | Capabilities, measure definitions, units, dates, and sources |
+| `lookup_geography` | State/county identifiers by name |
+| `get_rules` | Published rule statements and official citations |
+| `compare_places` | Compare up to two explicitly selected tracts |
 | `get_tract` | Everything published for one tract |
 | `list_tracts` | Tracts in a state or county, filtered on OZ and incentive status |
 | `compare_tract` | Per-measure percentiles among eligible tracts in the state |
 | `oz1_findings` | Findings of the 2018-zone retrospective |
-| `nearby` | Live context around a point: flood, EPA sites, traffic, anchors, county jobs |
+| `research_capabilities` | Effective tool names and access limits |
+| `usage_status` | Current account allowances and next release times |
+| `get_measure_definition` | Units, observation periods, source links, and licenses |
+| `get_data_coverage` | Available/missing counts for a published measure |
+| `preview_criteria` | Match, exclusion, and unknown-evidence counts for explicit criteria |
+| `explain_criteria_match` | Published values and criterion results for a selected tract |
+| `compare_selected_tracts` | Up to 25 explicit tracts and six measures, preserving selection order |
+| `trace_tract_boundary` | Bounded 2010/2020 Census relationship records |
+| `get_uncertainty` | Estimates and paired published margins of error, when available |
+| `get_source_changes` | Captured legal-source change metadata and bounded excerpts |
+| `preview_research_export` | Selection preview and website handoff; no automatic download |
 
 ### Connect
 
@@ -63,7 +81,7 @@ Run locally (`npm run dev`), then add the server to your MCP client.
 Claude Code:
 
 ```sh
-claude mcp add --transport http opportunityzones http://localhost:3000/mcp
+claude mcp add --transport http opportunityzones http://localhost:3000/mcp --header "Authorization: Bearer YOUR_PRIVATE_MCP_TOKEN"
 ```
 
 Claude Desktop (via `mcp-remote` for stdio-only clients), in
@@ -72,24 +90,32 @@ Claude Desktop (via `mcp-remote` for stdio-only clients), in
 ```json
 {
   "mcpServers": {
-    "opportunityzones": { "command": "npx", "args": ["-y", "mcp-remote", "http://localhost:3000/mcp"] }
+    "opportunityzones": { "command": "npx", "args": ["-y", "mcp-remote", "http://localhost:3000/mcp", "--header", "Authorization:${OZ_MCP_AUTH}"], "env": { "OZ_MCP_AUTH": "Bearer YOUR_PRIVATE_MCP_TOKEN" } }
   }
 }
 ```
 
 Replace `http://localhost:3000` with the deployed URL once it is hosted.
+MCP tokens require a signed-in free passkey account and explicit, recorded acceptance of the current terms. Manage, replace, or revoke connections at `/account`. Only hashes are stored; credentials are displayed only at creation. Keep tokens out of shared configs and chat messages. Manual tokens expire after 30 days. Anonymous legacy tokens no longer work. Optional OAuth uses PKCE, explicit account approval, and one-hour access tokens; it is disabled until configured and verified with the intended clients. See [MCP tools, limits, and connection setup](docs/MCP_IMPLEMENTATION.md) and [consent enforcement](docs/CONSENT_ENFORCEMENT.md).
+
+There are 19 hosted tools, including coverage, definitions, criteria previews and explanations, boundary relationships, uncertainty, captured source changes, 25-tract comparisons, export previews, and usage/capability discovery. Account and service allowances, bounded outputs, concurrency limits, abuse cooldowns, and operator pause controls protect the hosted service. Source facts remain reusable under their licenses. See [launch readiness](docs/LAUNCH_READINESS.md) and the [deployment runbook](docs/DEPLOYMENT_RUNBOOK.md) before public release.
+
+## Free accounts and exports
+
+Public visitors can browse maps and basic filters and compare two places. Free passkey accounts add numeric/neighbor filters, comparisons of up to 25 tracts, and server-generated CSV packages or JSON. Limits: 500 rows/file, 3 exports and 1,000 rows/24 hours, 10 exports and 5,000 rows/30 days. Exports use the published dataset and never initiate provider lookups. The [research workbench](docs/WORKBENCH_IMPLEMENTATION.md) adds explicitly saved device-local projects and notes; names and notes are excluded from share links, API requests, and exported data.
+
+See [implementation and production setup](docs/ACCESS_IMPLEMENTATION.md). Account and API protections require one persistent host; this is not a serverless deployment configuration.
 
 ## Privacy
 
-Nothing personal is stored. The server keeps no accounts and logs no tool
-arguments. An address goes only to the Census Bureau to find its tract. Other
+Public research requires terms acceptance but no account. A server-verified browser receipt lasts seven days. Pseudonymous acceptance records are retained for up to 90 days; no names, IP addresses, or search activity are included in those receipts. Optional free passkey accounts retain minimal authentication and usage records; no name, email, or payment details are requested. The app does not log tool arguments. An address goes only to the Census Bureau to find its tract. Other
 live sources receive only an approximate location (a point rounded to about
 1 km, or a box around it); exact distances and flood-zone tests are computed
 here. See `docs/ARCHITECTURE.md`.
 
 ## Setup
 
-Requires Node 22+.
+Requires Node 22.13+ (Node 24 recommended).
 
 ```sh
 npm ci
@@ -119,13 +145,14 @@ npm run pipeline   # downloads ~3 GB of federal files into pipeline/cache/, then
 ## Data sources
 
 Generated from `pipeline/sources.ts` (`npx tsx scripts/readme-sources.ts`);
-each entry there records the licence, attribution, geography, vintage and why
+each entry there records the license, attribution, geography, vintage and why
 the product needs it. All inputs are public domain or openly licensed for
 commercial use.
 
 <!-- sources:start -->
-| Source | Publisher | Purpose | Access | Licence |
+| Source | Publisher | Purpose | Access | License |
 |---|---|---|---|---|
+| [2024 Census Gazetteer Places](https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2024.html) | U.S. Census Bureau | statutory | offline (file) | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [American Community Survey 5-year estimates](https://www.census.gov/data/developers/data-sets/acs-5year.html) | U.S. Census Bureau | statutory, feasibility, impact-baseline | offline (API) | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [2020 Census Redistricting Data (P.L. 94-171), block level](https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html) | U.S. Census Bureau | statutory, impact-baseline | offline (API) | U.S. federal work, no copyright (17 U.S.C. § 105) |
 | [2010 to 2020 Tabulation Block Relationship Files](https://www.census.gov/geographies/reference-files/time-series/geo/relationship-files.html) | U.S. Census Bureau, Geography Division | impact-baseline | offline (file) | U.S. federal work, no copyright (17 U.S.C. § 105) |
@@ -172,6 +199,6 @@ commercial use.
 Built step by step from `docs/NEXT_SESSION_PROMPT.md`; progress is tracked in
 issue #1. Next: the web map (Step 4).
 
-## Licence
+## License
 
 See `LICENSE`.

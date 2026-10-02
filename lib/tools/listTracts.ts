@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { loadTractData } from "../data/tracts";
+import { canResearchTract } from "../data/researchScope";
 import { stateFips } from "../geo/states";
-import { DESCRIPTION_SUFFIX, error, fmt, readOnly, text } from "./shared";
+import { DESCRIPTION_SUFFIX, error, fmt, readOnly, text, websiteLink } from "./shared";
 
 /** Measures a list may be ordered by: single raw measures only, never a composite score. */
 export const SORTABLE = [
@@ -29,7 +30,7 @@ export const listTractsConfig = {
     DESCRIPTION_SUFFIX,
   inputSchema: z
     .object({
-      state: z.string().describe("Two-letter postal code (e.g. 'GA') or 2-digit FIPS."),
+      state: z.string().trim().min(2).max(2).describe("Two-letter postal code (e.g. 'GA') or 2-digit FIPS. Use lookup_geography to resolve names."),
       county: z.string().regex(/^\d{5}$/).optional().describe("5-digit county FIPS to restrict to one county."),
       eligible2027: z.boolean().optional().describe("Only tracts Treasury lists as eligible (true) or not (false)."),
       rural: z.boolean().optional().describe("Only tracts Treasury classifies as rural (true) or not (false)."),
@@ -40,6 +41,7 @@ export const listTractsConfig = {
       sortBy: z.enum(SORTABLE).optional(),
       order: z.enum(["asc", "desc"]).optional(),
       limit: z.number().int().min(1).max(50).optional(),
+      format: z.enum(["list", "table"]).optional().describe("Default list: labeled items suitable for linear reading and voice. Table is optional."),
     })
     .strict(),
   annotations: readOnly,
@@ -57,12 +59,13 @@ export interface ListArgs {
   sortBy?: (typeof SORTABLE)[number];
   order?: "asc" | "desc";
   limit?: number;
+  format?: "list" | "table";
 }
 
 export function listTractsHandler(args: ListArgs) {
   const fips = stateFips(args.state);
-  if (!fips) return error(`Unknown state "${args.state}". Use a two-letter postal code such as GA.`);
-  if (args.county && !args.county.startsWith(fips)) return error(`County ${args.county} is not in state ${args.state}.`);
+  if (!fips) return error("Unknown state. Use a supported two-letter postal code or FIPS identifier.");
+  if (args.county && !args.county.startsWith(fips)) return error("The supplied county is not in the supplied state.");
   const { payload, lookups } = loadTractData();
   const col = (n: string) => payload.columns.get(n)!;
   const want = (flag: boolean | undefined, value: number | null, test: (v: number) => boolean) =>
@@ -72,6 +75,7 @@ export function listTractsHandler(args: ListArgs) {
   for (let i = 0; i < payload.count; i++) {
     const g = payload.geoids[i];
     if (!g.startsWith(args.county ?? fips)) continue;
+    if (!canResearchTract(g)) continue;
     if (!want(args.eligible2027, col("eligible_2027").get(i), (v) => v === 1)) continue;
     if (!want(args.rural, col("rural_2027").get(i), (v) => v === 1)) continue;
     if (!want(args.in2018Zone, col("oz2018_population_share").get(i), (v) => v >= 0.5)) continue;
@@ -98,15 +102,16 @@ export function listTractsHandler(args: ListArgs) {
     `# ${rows.length.toLocaleString("en-US")} tracts match in ${lookups.states[fips] ?? args.state}${args.county ? `, ${lookups.counties[args.county]?.name ?? args.county}` : ""}`,
     args.sortBy ? `Sorted by ${args.sortBy} (${args.order ?? "desc"}); showing ${shown.length}.` : `Showing ${shown.length}.`,
     "",
-    "| Tract | County | Eligible 2027 | Rural | 2018 zone | QCT | Poverty | MFI ratio | Population |",
-    "|---|---|---|---|---|---|---|---|---|",
+    ...(args.format === "table" ? ["| Tract | County | Eligible 2027 | Rural | 2018 zone | QCT | Poverty | MFI ratio | Population |", "|---|---|---|---|---|---|---|---|---|"] : []),
     ...shown.map((i) => {
       const g = payload.geoids[i];
       const oz = col("oz2018_population_share").get(i);
+      if (args.format !== "table") return `- Tract ${g}, ${lookups.counties[g.slice(0, 5)]?.name ?? "county unavailable"}. 2027 eligible: ${fmt.yesNo(col("eligible_2027").get(i))}; rural: ${fmt.yesNo(col("rural_2027").get(i))}; 2018 zone population overlap: ${fmt.pct(oz)}; HUD Qualified Census Tract: ${fmt.yesNo(col("qct_2026").get(i))}; poverty: ${fmt.pct(col("poverty_rate").get(i))}; median family income as a share of area median: ${fmt.pct(col("mfi_ratio").get(i))}; population: ${fmt.int(col("population").get(i))}. Open report: ${websiteLink(`/tract/${g}`)}.`;
       return `| ${g} | ${lookups.counties[g.slice(0, 5)]?.name ?? ""} | ${fmt.yesNo(col("eligible_2027").get(i))} | ${fmt.yesNo(col("rural_2027").get(i))} | ${oz == null ? "n/a" : oz >= 0.5 ? "yes" : oz > 0 ? "partly" : "no"} | ${fmt.yesNo(col("qct_2026").get(i))} | ${fmt.pct(col("poverty_rate").get(i))} | ${col("mfi_ratio").get(i)?.toFixed(2) ?? "n/a"} | ${fmt.int(col("population").get(i))} |`;
     }),
     "",
     "Use get_tract with a GEOID for the full profile.",
+    "Eligibility is not designation. Missing values are not zero. Results describe places, not recommended choices.",
   ];
   return text(lines.join("\n"), ["oz2Eligible", "oz1Designated", "hudQct", "hudDda", "nmtcLic", "acs5"]);
 }

@@ -8,7 +8,7 @@
  * keeps the hard-won error handling without making this build depend on a live
  * deployment.
  *
- * Three behaviours of the API are load-bearing and each is handled explicitly:
+ * Three behaviors of the API are load-bearing and each is handled explicitly:
  *
  *  1. `for=tract:*&in=state:XX` returns every tract in a state in one response,
  *     with no county needed. `in=state:*` is rejected with HTTP 400, so there is

@@ -28,6 +28,11 @@ function insidePolygon(x: number, y: number, poly: Polygon): boolean {
   return hit;
 }
 
+export function pointInGeometry(point: [number, number], geometry: { type: string; coordinates: unknown }): boolean {
+  const polygons: Polygon[] = geometry.type === "Polygon" ? [geometry.coordinates as Polygon] : geometry.type === "MultiPolygon" ? geometry.coordinates as Polygon[] : [];
+  return polygons.some((polygon) => insidePolygon(point[0], point[1], polygon));
+}
+
 function centroid(r: Ring): [number, number] {
   let a = 0;
   let cx = 0;

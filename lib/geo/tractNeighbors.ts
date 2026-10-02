@@ -1,8 +1,8 @@
 /**
  * Which tracts border which, from the boundary files the app serves
  * (public/boundaries/tracts/{state}.json). The files are TopoJSON, so two
- * tracts are neighbours when they share an arc of boundary (touching at a
- * single corner does not count). Tracts in a neighbouring state are not
+ * tracts are neighbors when they share an arc of boundary (touching at a
+ * single corner does not count). Tracts in a neighboring state are not
  * included. Server-side; each state is worked out once per server instance.
  */
 
@@ -28,7 +28,7 @@ export function stateNeighbors(state: string): Map<string, string[]> {
     const topo = JSON.parse(readFileSync(path.join(boundariesDir(), "tracts", `${state}.json`), "utf8")) as Topology;
     out = neighborsFromTopology(topo);
   } catch {
-    // No boundary file (or not TopoJSON): no neighbours, and callers show none.
+    // No boundary file (or not TopoJSON): no neighbors, and callers show none.
   }
   cache.set(state, out);
   return out;

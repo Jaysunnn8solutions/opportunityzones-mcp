@@ -32,10 +32,6 @@ export function RulePopupProvider({ children }: { children: React.ReactNode }) {
         ref={dialog}
         className="rule-popup"
         aria-labelledby="rule-popup-title"
-        onClick={(e) => {
-          // A click on the backdrop (the dialog element itself) closes it.
-          if (e.target === dialog.current) dialog.current.close();
-        }}
       >
         <div className="rule-popup-body">
           <div className="rule-popup-head">

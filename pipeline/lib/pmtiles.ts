@@ -10,7 +10,7 @@
  *
  * Every layout rule below is taken from the reader in
  * `node_modules/pmtiles/dist/esm/index.js`, because that is what has to consume
- * the output. Three of its behaviours constrain the writer and are easy to get
+ * the output. Three of its behaviors constrain the writer and are easy to get
  * wrong:
  *
  *  - The reader opens an archive with a single `getBytes(0, 16384)` and slices

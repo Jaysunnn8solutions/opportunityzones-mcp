@@ -7,7 +7,7 @@ import { RuleBlock } from "../ui/RuleBlock";
 export const metadata: Metadata = { title: "Map layers explained" };
 
 /**
- * What each way of colouring the map means: the law behind it, quoted from the
+ * What each way of coloring the map means: the law behind it, quoted from the
  * official source; how the map draws it; and the dataset it comes from.
  */
 export default function MapLayersPage() {
@@ -16,7 +16,7 @@ export default function MapLayersPage() {
     <main className="page prose">
       <h1>Map layers explained</h1>
       <p className="lead">
-        What each colouring on the <Link href="/map">map</Link> means. The law behind each one is quoted word for word from the
+        What each coloring on the <Link href="/map">map</Link> means. The law behind each one is quoted word for word from the
         official source, with a link; &quot;On this map&quot; says how this tool draws it from the data. Informational only, not
         investment, tax or legal advice.
       </p>
@@ -44,7 +44,7 @@ export default function MapLayersPage() {
               <a href={src.homepage} target="_blank" rel="noopener noreferrer">
                 {src.name} ↗
               </a>
-              , {src.publisher}. {src.vintage}. Licence: {src.license}.
+              , {src.publisher}. {src.vintage}. License: {src.license}.
             </p>
           </section>
         );
@@ -57,20 +57,20 @@ export default function MapLayersPage() {
         </p>
         <ul>
           <li>
-            <strong>Designations:</strong> tick any of the layers above; &quot;All of these&quot; keeps tracts that have every one,
+            <strong>Designations:</strong> select any of the layers above; &quot;All of these&quot; keeps tracts that have every one,
             &quot;Any of these&quot; keeps tracts that have at least one.
           </li>
           <li>
-            <strong>Surroundings:</strong> a tract&apos;s neighbours are the tracts that share a stretch of boundary with it in the
+            <strong>Surroundings:</strong> a tract&apos;s neighbors are the tracts that share a stretch of boundary with it in the
             same state (touching at a single corner does not count, and tracts across a state line are not included). For each
-            measure, the neighbours&apos; published figures are averaged, weighted by their population.
+            measure, the neighbors&apos; published figures are averaged, weighted by their population.
           </li>
           <li>
-            <strong>Top half, quarter or tenth</strong> is measured among the tracts of the same state; for unemployment the lowest
-            rates count as the top.
+            <strong>Higher or lower 50%, 25%, or 10%</strong> compares published neighboring-area values within the same state.
+            You choose the direction for each measure. Ties at the cutoff are included; higher and lower do not mean better or worse.
           </li>
           <li>
-            Net worth and household wealth are not published for census tracts, so they are not offered. Averages of neighbours&apos;
+            Net worth and household wealth are not published for census tracts, so they are not offered. Averages of neighbors&apos;
             medians are an approximation, not a median of the combined area.
           </li>
         </ul>

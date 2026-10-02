@@ -20,7 +20,7 @@
  *    "Nonmetro Area", applied to the Puerto Rico tracts whose internal point
  *    falls inside HUD's polygon for it. A ZCTA DDA is carried to tracts by the Census ZCTA-to-tract
  *    relationship file as the share of the tract's land inside DDA ZCTAs;
- *    a tract can be partly in one. That share is labelled as derived from ZCTAs.
+ *    a tract can be partly in one. That share is labeled as derived from ZCTAs.
  *
  * Output: pipeline/clean/hud_qct_dda.csv
  */

@@ -13,7 +13,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 const noop = () => () => {};
 const HIDDEN_ON = ["/map", "/use-with-claude"];
-const EXAMPLE = "Is 55 Trinity Ave SW, Atlanta, GA 30303 in a census tract eligible for the 2027 Opportunity Zone round?";
+const EXAMPLE = "Give me the published profile and sources for census tract 13001950100.";
 
 export default function McpHelper() {
   const path = usePathname();
@@ -107,7 +107,7 @@ export default function McpHelper() {
               Full instructions, Claude Desktop and more questions
             </Link>
           </p>
-          <p className="mcp-note">No account or key here. Uses your own Claude plan; this site never calls an AI model. Nothing is stored.</p>
+          <p className="mcp-note">Public MCP uses published data with traffic limits. Live lookups and account exports are available on the website. This site never calls an AI model or logs research arguments. See the Privacy Notice for usage-record retention.</p>
         </div>
       )}
       <button type="button" className="mcp-fab" aria-expanded={open} onClick={() => setOpen(!open)}>

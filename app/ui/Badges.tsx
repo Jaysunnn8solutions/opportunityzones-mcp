@@ -3,6 +3,8 @@
  * for designation, rural, the 2018 zones and the stacking incentives.
  */
 
+import { overlapLabel } from "@/lib/client/presentation";
+
 export interface BadgeInput {
   designation: "designated" | "not-designated" | "pending" | "not-eligible" | "unknown";
   rural: boolean | null;
@@ -26,7 +28,7 @@ export default function Badges({ designation, rural, zone2018Share, qct, dda, nm
     <div className="badges">
       <span className={`badge ${cls}`}>{label}</span>
       {rural && <span className="badge b-rural">Rural</span>}
-      {zone2018Share != null && zone2018Share >= 0.5 && <span className="badge b-2018">2018 zone (to 2028)</span>}
+      {zone2018Share != null && zone2018Share > 0 && <span className="badge b-2018">{overlapLabel(zone2018Share)}</span>}
       {qct === 1 && <span className="badge b-incentive">HUD QCT</span>}
       {dda != null && dda > 0 && <span className="badge b-incentive">HUD DDA{dda === 1 ? " (part)" : ""}</span>}
       {nmtc === 1 && <span className="badge b-incentive">NMTC area</span>}

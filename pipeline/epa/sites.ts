@@ -5,9 +5,9 @@
  *
  * Each site's point is placed in a tract with the 1:500,000 cartographic
  * boundaries (pipeline/lib/tractIndex.ts), so a site within ~100 m of a tract
- * edge can land in the neighbouring tract. EPA's own coordinates are not
+ * edge can land in the neighboring tract. EPA's own coordinates are not
  * survey-grade either. Counts are therefore "sites recorded in or at the edge
- * of this tract", and are labelled as such.
+ * of this tract", and are labeled as such.
  *
  * Output: pipeline/clean/epa_sites.csv
  */

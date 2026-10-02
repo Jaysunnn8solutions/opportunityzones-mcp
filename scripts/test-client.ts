@@ -13,7 +13,9 @@ const PREVIEW_LINES = 8;
 async function main() {
   const client = new Client({ name: "opportunityzones-smoke", version: "0.1.0" });
   const endpoint = new URL("/mcp", `${origin}/`);
-  await client.connect(new StreamableHTTPClientTransport(endpoint));
+  const credential = process.env.OZ_MCP_TOKEN;
+  if (!credential) throw new Error("Accept the MCP terms at /use-with-claude, then set OZ_MCP_TOKEN privately before running this smoke test.");
+  await client.connect(new StreamableHTTPClientTransport(endpoint, { requestInit: { headers: { Authorization: `Bearer ${credential}` } } }));
   console.log("Connected to", endpoint.toString());
 
   const { tools } = await client.listTools();
@@ -26,12 +28,25 @@ async function main() {
   }
 
   const calls: Array<[string, Record<string, unknown>]> = [
-    ["check_address", { address: "55 Trinity Ave SW, Atlanta, GA 30303" }],
+    ["describe_research", { measures: ["population"] }],
+    ["lookup_geography", { state: "North Carolina", countyName: "Wake" }],
+    ["get_rules", { topics: ["window180"] }],
+    ["compare_places", { geoids: ["13121003500", "13001950100"], measures: ["population", "median_gross_rent"] }],
     ["get_tract", { geoid: "13121003500" }],
-    ["list_tracts", { state: "DE", eligible2027: true, sortBy: "poverty_rate", limit: 3 }],
+    ["list_tracts", { state: "DE", eligible2027: true, limit: 3 }],
     ["compare_tract", { geoid: "13121003500" }],
     ["oz1_findings", { section: "headline" }],
-    ["nearby", { lat: 33.7486, lon: -84.3907, radiusMiles: 1 }],
+    ["research_capabilities", {}],
+    ["usage_status", {}],
+    ["get_measure_definition", { measures: ["population"] }],
+    ["get_data_coverage", { measure: "population", state: "10" }],
+    ["preview_criteria", { state: "10", filters: { rural: "not-rural" } }],
+    ["explain_criteria_match", { geoid: "10001040100", filters: { flags: ["eligible"] } }],
+    ["compare_selected_tracts", { geoids: ["10001040100", "10001040201"], measures: ["population"] }],
+    ["trace_tract_boundary", { geoid: "10001040100", vintage: "2020" }],
+    ["get_uncertainty", { geoid: "10001040100", measure: "population" }],
+    ["get_source_changes", {}],
+    ["preview_research_export", { geoids: ["10001040100"], measures: ["population"] }],
   ];
 
   let failures = 0;

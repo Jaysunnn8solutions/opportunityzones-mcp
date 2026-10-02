@@ -20,7 +20,7 @@
  * what was not. Tract data cannot tell whether existing residents gained or
  * better-off people moved in; population and housing changes are reported
  * beside every score for that reason. Standard errors treat tracts as
- * independent, which neighbouring tracts are not, so intervals are too narrow;
+ * independent, which neighboring tracts are not, so intervals are too narrow;
  * a group is only called clear at 99%.
  *
  * Output: data/oz1/growth.json
@@ -225,13 +225,13 @@ export function computeGrowth(file = path.join(OUT_DIR, "analysis.csv")): Growth
   });
   const nb = (tr: Tract) => Number(tr.get("designated_neighbours") ?? 0);
   const nbBins = [
-    ["No designated neighbours", (n: number) => n === 0],
-    ["1-2 designated neighbours", (n: number) => n >= 1 && n <= 2],
+    ["No designated neighbors", (n: number) => n === 0],
+    ["1-2 designated neighbors", (n: number) => n >= 1 && n <= 2],
     ["3 or more", (n: number) => n >= 3],
   ] as const;
   groups.push({
     feature: "designated_neighbours",
-    label: "Neighbouring 2018 zones",
+    label: "Neighboring 2018 zones",
     bins: nbBins.map(([bin, test]) => {
       const inBin = scored.filter((tr) => test(nb(tr)));
       const pick = (treated: boolean) => inBin.filter((x) => x.treated === treated).map((x) => x.composite!);

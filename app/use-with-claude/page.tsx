@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
+import McpConsent from "../ui/McpConsent";
 
-export const metadata: Metadata = { title: "Use it from Claude" };
+export const metadata: Metadata = { title: "Research through chat / MCP" };
 
 const REPO = "https://github.com/Jaysunnn8solutions/opportunityzones-mcp";
 
 const EXAMPLES: Array<[string, string]> = [
-  ["Is 55 Trinity Ave SW, Atlanta, GA 30303 in a census tract that is eligible for the 2027 Opportunity Zone round? Is it rural?", "check_address"],
-  ["List the rural tracts in Georgia that are eligible for 2027, with the highest poverty rates first.", "list_tracts"],
+  ["What research can I do without a map? Explain population and median gross rent, including dates and units.", "describe_research"],
+  ["Find the county identifier for Wake County in North Carolina.", "lookup_geography"],
+  ["Show the available rule topics, then read the eligibility-versus-designation rules with official citations.", "get_rules"],
+  ["Compare these two tract identifiers on the published measures I specify. Use labeled text, and do not recommend either place.", "compare_places"],
+  ["List up to 25 rural tracts in Georgia that are eligible for 2027, in tract-number order.", "list_tracts"],
   ["How does tract 13121003500 compare with other eligible tracts in Georgia on income, rents and jobs?", "compare_tract"],
-  ["What is the flood zone, earthquake design category and wildfire likelihood around 33.749, -84.388? Any Superfund sites or busy roads nearby?", "nearby"],
   ["How did the 2018 Opportunity Zones fare against similar tracts that were not chosen?", "oz1_findings"],
   ["Give me everything published for tract 13001950100, with the sources.", "get_tract"],
 ];
@@ -18,20 +21,42 @@ const EXAMPLES: Array<[string, string]> = [
 /** How to connect the MCP server to Claude, with the server URL for wherever this site is running. */
 export default async function UseWithClaudePage() {
   const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-  const proto = h.get("x-forwarded-proto") ?? (/^(localhost|127\.0\.0\.1)(:|$)/.test(host) ? "http" : "https");
-  const url = `${proto}://${host}/mcp`;
+  const host = h.get("host") ?? "localhost:3000";
+  const base = process.env.OZ_ORIGIN ? new URL(process.env.OZ_ORIGIN).origin : /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host) ? `http://${host}` : "";
+  const url = base ? `${base}/mcp` : "Configure the public research origin before connecting";
   const local = /^(localhost|127\.0\.0\.1)(:|$)/.test(host);
-  const desktop = JSON.stringify({ mcpServers: { opportunityzones: { command: "npx", args: ["-y", "mcp-remote", url] } } }, null, 2);
+  const desktop = JSON.stringify({ mcpServers: { opportunityzones: { command: "npx", args: ["-y", "mcp-remote", url, "--header", "Authorization:${OZ_MCP_AUTH}"], env: { OZ_MCP_AUTH: "Bearer YOUR_PRIVATE_MCP_TOKEN" } } } }, null, 2);
 
   return (
     <main className="page prose">
-      <h1>Use it from Claude</h1>
+      <h1>Research through chat / MCP</h1>
       <p className="lead">
-        Everything on this site is also available to Claude as an <strong>MCP server</strong>: a set of tools Claude can call to
-        look up an address, profile or compare tracts, list a state&apos;s tracts, and check hazards and data around a site. You ask
-        in plain English; Claude calls the tools and answers with the sources.
+        Published place research is available through an <strong>MCP server</strong>. Claude can profile a tract, explain comparisons, and request a bounded list with sources. Account-connected MCP access has traffic limits and no live address or site enrichment. Use the website for those features and account-based exports.
       </p>
+      <p>MCP is a protocol supported by compatible chat clients. You can ask for labeled lists instead of tables, read published rules with citations, and compare explicitly chosen tracts without using the map. Voice and screen-reader features depend on your client. The site does not supply or pay for a language model.</p>
+      <p><Link href="/accessibility">Accessibility options and known limitations</Link> · <Link href="/map#m=list">Use website text results</Link></p>
+      <McpConsent />
+      {process.env.OZ_OAUTH_ENABLED === "1" && <section><h2>Connect through your browser</h2><p>In a compatible MCP client, add this server URL: <code>{url}</code>. The client can open this website for sign-in and an explicit approval. Verify the displayed callback destination before choosing Agree and connect. No token copying is needed for clients supporting this flow.</p><p>Browser connections expire after one hour and can be revoked from <Link href="/account">My account</Link>. This deployment uses public OAuth clients with PKCE and dynamic registration. Refresh tokens and client metadata URL fetching are not supported; individual client compatibility must be verified.</p></section>}
+      <section>
+        <h2>Available tools and limits</h2>
+        <ul>
+          <li><code>describe_research</code>: capabilities and definitions for up to six requested measures.</li>
+          <li><code>lookup_geography</code>: state and county identifiers; county lists are capped at 25 and can be narrowed by name.</li>
+          <li><code>list_tracts</code>: up to 25 tracts with public status filters, in tract-number order. Labeled lists are the default; a table is optional.</li>
+          <li><code>get_tract</code>: a published tract profile with sources.</li>
+          <li><code>compare_places</code>: up to two user-selected tracts and six measures, with units and source dates.</li>
+          <li><code>compare_tract</code>: a tract’s position on separate published measures within its state; labeled lists are the default.</li>
+          <li><code>get_rules</code>: discover rule topics or read up to three sourced statements.</li>
+          <li><code>oz1_findings</code>: published historical findings and limitations.</li>
+          <li><code>research_capabilities</code> and <code>usage_status</code>: effective capabilities and your account’s remaining MCP allowances.</li>
+          <li><code>get_measure_definition</code>, <code>get_data_coverage</code>, and <code>get_uncertainty</code>: definitions, coverage, and published uncertainty or explicit missingness.</li>
+          <li><code>preview_criteria</code> and <code>explain_criteria_match</code>: counts and evidence for criteria you supply.</li>
+          <li><code>compare_selected_tracts</code>: up to 25 explicit tracts and six measures, in your selection order.</li>
+          <li><code>trace_tract_boundary</code> and <code>get_source_changes</code>: historical boundary relationships and captured source changes.</li>
+          <li><code>preview_research_export</code>: preview an explicit selection and continue to the website to confirm a download.</li>
+        </ul>
+        <p>Live address lookup, site enrichment, and file downloads are not offered as hosted MCP tools. Numeric criteria can be previewed through the account-connected tools; downloads require website confirmation. MCP allowances include 60 tool calls per minute, 500 per rolling day, 1,000 reserved tract rows per day, and 16 MiB of tool results per day. Row reservations use each tool’s bounded maximum, even if fewer rows are available. Manage and revoke connections from My account. Limits apply across all connections on your account.</p>
+      </section>
       <p>
         The server address for this site is <code>{url}</code>
         {local && " (your own computer: the site has to be running, see step 1)"}.
@@ -52,7 +77,7 @@ export default async function UseWithClaudePage() {
           <li>
             <strong>Add the server.</strong> In another terminal:
             <pre>
-              <code>{`claude mcp add --transport http opportunityzones ${url}`}</code>
+              <code>{`claude mcp add --transport http opportunityzones ${url} --header "Authorization: Bearer YOUR_PRIVATE_MCP_TOKEN"`}</code>
             </pre>
           </li>
           <li>
@@ -62,9 +87,9 @@ export default async function UseWithClaudePage() {
           <li>
             <strong>Ask a question</strong>, for example:
             <pre>
-              <code>Is 55 Trinity Ave SW, Atlanta, GA 30303 in a census tract that is eligible for the 2027 Opportunity Zone round?</code>
+              <code>Give me the published profile and sources for tract 13001950100.</code>
             </pre>
-            Claude asks permission the first time it uses a tool; allow it.
+            Your client may also ask permission to use a tool. That permission is separate from accepting this service’s terms.
           </li>
         </ol>
       </section>
@@ -94,8 +119,7 @@ export default async function UseWithClaudePage() {
         <section>
           <h2>Claude on the web</h2>
           <p>
-            Where your plan offers custom connectors, add this site in Claude&apos;s settings under <strong>Connectors → Add custom
-            connector</strong>, with the address <code>{url}</code>. No account or key is needed.
+            This endpoint currently requires an Authorization bearer header. Use a client that supports a private custom header or the local bridge above. A connector that only supports browser OAuth cannot connect yet; an OAuth consent flow is not implemented. A URL alone does not grant access.
           </p>
         </section>
       )}
@@ -105,8 +129,8 @@ export default async function UseWithClaudePage() {
         <table className="examples">
           <thead>
             <tr>
-              <th>Ask</th>
-              <th>Tool Claude uses</th>
+              <th scope="col">Ask</th>
+              <th scope="col">Tool the client uses</th>
             </tr>
           </thead>
           <tbody>
@@ -121,8 +145,7 @@ export default async function UseWithClaudePage() {
           </tbody>
         </table>
         <p>
-          Claude can chain them: &quot;Check these five addresses, then compare the eligible ones and show the hazards around each&quot;
-          works in one request.
+          Ask for published facts and sources. These tools do not recommend locations, assess personal suitability, or identify compatible residents.
         </p>
       </section>
 
@@ -133,10 +156,10 @@ export default async function UseWithClaudePage() {
             Every answer ends with the sources and &quot;informational only, not investment, tax or legal advice&quot;. The tools
             describe places; they do not recommend a tract, fund or deal.
           </li>
-          <li>Nothing is stored. Addresses go once to the Census Geocoder to find the tract; coordinates are not logged.</li>
+          <li>Research arguments are not logged by the app. Short-lived usage records protect shared capacity; see the Privacy Notice for retention and hosting considerations.</li>
           <li>
             For the program itself (the gain, the fund, the zone), see <Link href="/how-it-works">How it works</Link> or run the{" "}
-            <Link href="/guide">Guided check</Link>.
+            <Link href="/guide">Understand the rules</Link>.
           </li>
         </ul>
       </section>

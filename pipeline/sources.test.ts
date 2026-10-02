@@ -8,8 +8,8 @@ describe("source registry", () => {
     expect(all.length).toBeGreaterThan(0);
   });
 
-  it.each(all.map((s) => [s.id, s] as const))("%s names its licence, commercial use and attribution", (_id, s) => {
-    // The licence rule in AGENTS.md is enforced here: nothing ships without
+  it.each(all.map((s) => [s.id, s] as const))("%s names its license, commercial use and attribution", (_id, s) => {
+    // The license rule in AGENTS.md is enforced here: nothing ships without
     // being able to say what it is allowed to do with each input.
     expect(s.license.trim().length).toBeGreaterThan(0);
     expect(["public-domain", "attribution", "share-alike"]).toContain(s.commercialUse);

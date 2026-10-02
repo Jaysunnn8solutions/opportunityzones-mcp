@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SourceError } from "../http";
-import { amenitiesNear, amenityOf, buildSql, summarise, type PlaceRow } from "./places";
+import { amenitiesNear, amenityOf, buildSql, summarize, type PlaceRow } from "./places";
 
 // Hand-made rows in Foursquare's published OS Places shape. Not recorded from
 // the live catalog: the connection is not configured yet (see places.ts).
@@ -27,14 +27,14 @@ describe("amenityOf", () => {
   });
 });
 
-describe("summarise", () => {
+describe("summarize", () => {
   const rows = [
     row("Near Grocer", 0.005, ["Retail > Food and Beverage Retail > Grocery Store"], "2026-05-01"),
     row("Far Grocer", 0.012, ["Retail > Food and Beverage Retail > Grocery Store"], "2026-07-01"),
     row("Outside", 0.05, ["Retail > Food and Beverage Retail > Grocery Store"]),
     row("Pharmacy", 0.008, ["Health and Medicine > Pharmacy"], "2026-03-01"),
   ];
-  const s = summarise(rows, origin.lon, origin.lat, 1);
+  const s = summarize(rows, origin.lon, origin.lat, 1);
 
   it("counts places within the radius and names the nearest", () => {
     expect(s.amenities.grocery.count).toBe(2);

@@ -1,5 +1,7 @@
 # Handoff prompt: data sources, API clients, MCP server
 
+> Historical implementation notes below. For the September 28, 2026 working tree, begin with [LAUNCH_READINESS.md](LAUNCH_READINESS.md), [MCP_IMPLEMENTATION.md](MCP_IMPLEMENTATION.md), and [ACCESS_IMPLEMENTATION.md](ACCESS_IMPLEMENTATION.md). The old six-tool list, anonymous MCP access assumptions, and serverless deployment suggestions below are superseded. Current hosted MCP has 19 account-authenticated tools; precise-location live lookups remain website workflows. Current accounts retain only the security data permitted by AGENTS.md. Do not execute the historical steps as a new work order.
+
 Paste everything below the line into a new Claude Code session on
 `Jaysunnn8solutions/opportunityzones-mcp`.
 
@@ -15,7 +17,7 @@ writing any code. This repo uses Next.js 16: read the relevant guide in
 
 ## Non-negotiable rules (from AGENTS.md)
 
-- Screening tool, not an adviser. Output describes places, never recommends an
+- Screening tool, not an advisor. Output describes places, never recommends an
   allocation, fund or deal. "Informational, not investment/tax/legal advice"
   appears in the UI, every MCP tool description and every tool response.
 - Every source must be license-clean for commercial use and registered in
@@ -80,7 +82,7 @@ Sources to add, in priority order:
 | 6 | EPA brownfields (ACRES) + Superfund NPL (SEMS) | feasibility | runtime and pipeline | **Done:** `lib/sources/epa/client.ts` (sites near a point; EPA gets only a ~1 km-rounded point) and `pipeline/epa/sites.ts` (counts per tract via `pipeline/lib/tractIndex.ts`). |
 | 7 | HMDA (CFPB Data Browser API) | impact baseline | pipeline | **Done, `pipeline/hmda/lar.ts`.** The Data Browser API cannot aggregate below the county, so the national 2024 loan-level file is streamed (ZIP64, 4.6 GB CSV) via `pipeline/lib/zipStream.ts`. |
 | 8 | Anchor institutions: IPEDS postsecondary (NCES) + CMS hospitals | feasibility | pipeline | **Done, `pipeline/anchors/anchors.ts`.** Colleges from NCES EDGE coordinates; hospitals via the Census batch geocoder. Writes a small `anchor_points.csv` so "nearby" needs no live call. |
-| 9 | HUD Small Area Fair Market Rents | feasibility | pipeline | **Done, `pipeline/hud/safmr.ts`.** From HUD's keyless ArcGIS table, so no `HUD_USER_API_TOKEN` is needed. ZIP-level, carried to tracts as a land-weighted average and labelled so. |
+| 9 | HUD Small Area Fair Market Rents | feasibility | pipeline | **Done, `pipeline/hud/safmr.ts`.** From HUD's keyless ArcGIS table, so no `HUD_USER_API_TOKEN` is needed. ZIP-level, carried to tracts as a land-weighted average and labeled so. |
 | 10 | FHWA HPMS traffic counts via NTAD ArcGIS REST | feasibility | runtime | **Done:** `lib/sources/hpms/client.ts` (busiest roads near a site, live) and `pipeline/roads/interstate.ts` (distance to nearest Interstate per tract, offline from TIGER, because live queries took 2-17 s). **No level-of-service**: no national source exists. |
 | 11 | Foursquare OS Places | feasibility | runtime | **Built, not yet live:** `lib/sources/foursquare/places.ts` (query, categories, summary, tested). To finish: the owner sets `FSQ_PORTAL_TOKEN`, copies the endpoint/warehouse/table from the Portal's code page into `CATALOG`, then add `@duckdb/node-api` and a runner, and check the Vercel bundle size. See below. |
 | 12 | Natural hazards | feasibility | runtime | See below. |
@@ -139,7 +141,7 @@ risk score.
 - **Building activity:** no public source tracks new construction at tract
   level. Use BPS (#15) at county/place level for current permits, and ACS
   "built 2020 or later" (#5) as the lagging tract-level signal. Show them side
-  by side, each labelled.
+  by side, each labeled.
 - **Rejected:** job postings (Lightcast, Indeed) and Dodge/ConstructConnect,
   which are proprietary and not license-clean. FRED is also rejected: it only
   republishes BPS (a weaker duplicate) and its terms are stricter than the
@@ -186,7 +188,7 @@ exercises every tool against a local `next dev`.
 ## Step 4: web app (built; see docs/ARCHITECTURE.md "The national map")
 
 Address search (`/api/geocode`, POST, never cached), a TIGERweb-based map of
-counties and tracts coloured by 2027 eligibility, rural, 2018 zone, QCT, DDA or
+counties and tracts colored by 2027 eligibility, rural, 2018 zone, QCT, DDA or
 NMTC, and `/tract/{geoid}` with the same data as `get_tract`. The owner chose
 TIGERweb over hosting a PMTiles file. The original brief follows.
 

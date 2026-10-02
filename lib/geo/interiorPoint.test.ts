@@ -24,7 +24,7 @@ describe("interiorPoint", () => {
     expect(inside(p[0], p[1], u)).toBe(true);
   });
 
-  it("avoids a hole at the centre", () => {
+  it("avoids a hole at the center", () => {
     const outer = [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]];
     const hole = [[3, 3], [7, 3], [7, 7], [3, 7], [3, 3]];
     const p = interiorPoint({ type: "Polygon", coordinates: [outer, hole] })!;

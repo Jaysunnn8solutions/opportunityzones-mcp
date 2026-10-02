@@ -6,7 +6,7 @@
  * Interstates do not move, and the live HPMS query for this proved too slow
  * and erratic for a request (2-17 s), so it is computed once here; per-site
  * traffic on nearby roads stays live (lib/sources/hpms/client.ts). The value is
- * labelled as measured from the tract's interior point, not from any site.
+ * labeled as measured from the tract's interior point, not from any site.
  *
  * Output: pipeline/clean/interstate_distance.csv
  */

@@ -101,7 +101,7 @@ export function num(s: string | undefined): number | null {
 }
 
 /**
- * Normalise a tract GEOID to 11 characters. Spreadsheets store GEOIDs as
+ * Normalize a tract GEOID to 11 characters. Spreadsheets store GEOIDs as
  * numbers and drop the leading zero for states 01-09, which would silently
  * orphan every tract in Alabama through Connecticut.
  */

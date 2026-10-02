@@ -369,7 +369,7 @@
    "name": "LIHTC Difficult Development Areas, 2026",
    "publisher": "U.S. Department of Housing and Urban Development",
    "vintage": "2026 designation (service data of 2025-09-22)",
-   "geography": "ZIP Code Tabulation Area in metro areas; county (or territory, or Puerto Rico's nonmetro area) outside them. Carried to 2020 tracts as a land share, labelled as ZCTA-derived.",
+   "geography": "ZIP Code Tabulation Area in metro areas; county (or territory, or Puerto Rico's nonmetro area) outside them. Carried to 2020 tracts as a land share, labeled as ZCTA-derived.",
    "attribution": "U.S. Department of Housing and Urban Development, Difficult Development Areas 2026"
   },
   {
@@ -433,7 +433,7 @@
    "name": "HUD Small Area Fair Market Rents, FY2026",
    "publisher": "U.S. Department of Housing and Urban Development",
    "vintage": "FY2026 (service data of 2025-09-30)",
-   "geography": "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labelled as ZIP-derived.",
+   "geography": "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labeled as ZIP-derived.",
    "attribution": "U.S. Department of Housing and Urban Development, Small Area Fair Market Rents FY2026"
   },
   {
@@ -449,7 +449,7 @@
    "name": "Building Permits Survey, annual county files",
    "publisher": "U.S. Census Bureau",
    "vintage": "Newest annual file at pipeline run (2025 when first built), with the prior year for change",
-   "geography": "County (Connecticut by planning region), labelled as such in every output",
+   "geography": "County (Connecticut by planning region), labeled as such in every output",
    "attribution": "U.S. Census Bureau, Building Permits Survey"
   }
  ]

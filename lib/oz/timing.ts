@@ -2,7 +2,7 @@
  * Dates the guided check shows, as general rules only: the 180-day investment
  * window and when the 2027 rules begin (lib/content/rules.ts: window180,
  * gain2026Invested2027). Some gains start their window on a different date;
- * the check says an adviser should confirm.
+ * the check says an advisor should confirm.
  */
 
 const DAY = 86_400_000;

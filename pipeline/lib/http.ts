@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { redact } from "../../lib/sources/redact";
 import { CACHE_DIR } from "../config";
+import { providerPermit, providerBackoff } from "../../lib/sources/gateway";
 
 const USER_AGENT =
   "opportunityzones-mcp-pipeline/0.1 (+https://github.com/Jaysunnn8solutions/opportunityzones-mcp)";
@@ -49,8 +50,12 @@ export async function fetchBuffer(url: string, options: FetchOptions = {}): Prom
   if (!headers.has("User-Agent")) headers.set("User-Agent", USER_AGENT);
 
   let lastError: unknown;
+  const upstream = new URL(url);
+  const budgetSource = upstream.hostname === "api.census.gov" ? "censusQwi" : upstream.hostname === "geocoding.geo.census.gov" ? "censusGeocoder" : upstream.hostname === "api.bls.gov" ? upstream.pathname.includes("/v2/") ? "blsLaus" : "blsCpi" : null;
   for (let attempt = 1; attempt <= retries; attempt++) {
+    let release = () => {};
     try {
+      if (budgetSource) release = providerPermit(budgetSource, timeoutMs + 5000);
       log(`download   ${redact(url)}${attempt > 1 ? ` (attempt ${attempt})` : ""}`);
       const res = await fetch(url, {
         ...init,
@@ -58,6 +63,7 @@ export async function fetchBuffer(url: string, options: FetchOptions = {}): Prom
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (!res.ok) {
+        if (res.status === 429 && budgetSource) providerBackoff(budgetSource, res.headers.get("Retry-After"));
         const body = (await res.text().catch(() => "")).slice(0, 300);
         const err = new Error(
           `HTTP ${res.status} fetching ${redact(url)}${body ? `: ${redact(body)}` : ""}`
@@ -71,7 +77,7 @@ export async function fetchBuffer(url: string, options: FetchOptions = {}): Prom
     } catch (err) {
       lastError = err;
       if (err instanceof Error && err.message.startsWith("HTTP 4")) throw err;
-    }
+    } finally { release(); }
     if (attempt < retries) await sleep(1000 * 2 ** (attempt - 1));
   }
   throw lastError instanceof Error

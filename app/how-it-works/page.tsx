@@ -19,7 +19,7 @@ export default function HowItWorksPage() {
       <p className="lead">
         Three things have to line up: a <strong>capital gain</strong>, a <strong>Qualified Opportunity Fund</strong>, and
         property or a business in a <strong>designated zone</strong>. This page explains each in general terms. It is not tax
-        advice: the rules have details and exceptions, and a tax adviser should confirm how they apply to any real situation.
+        advice: the rules have details and exceptions, and a tax advisor should confirm how they apply to any real situation.
       </p>
 
       <nav className="toc" aria-label="On this page">
@@ -171,7 +171,7 @@ export default function HowItWorksPage() {
             <Cite rules={["passThroughTiming", "installmentTiming"]} />
           </li>
         </ul>
-        <p className="note">Day counting and which start date applies to a particular gain are questions for a tax adviser.</p>
+        <p className="note">Day counting and which start date applies to a particular gain are questions for a tax advisor.</p>
       </section>
 
       <section id="designation">

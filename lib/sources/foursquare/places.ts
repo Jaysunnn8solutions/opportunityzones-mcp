@@ -111,8 +111,8 @@ export function amenityOf(labels: readonly string[]): Amenity[] {
   return out;
 }
 
-/** Summarise rows around the exact point; rows outside the radius are dropped. */
-export function summarise(rows: readonly PlaceRow[], lon: number, lat: number, radiusMiles: number): AmenitiesNear {
+/** Summarize rows around the exact point; rows outside the radius are dropped. */
+export function summarize(rows: readonly PlaceRow[], lon: number, lat: number, radiusMiles: number): AmenitiesNear {
   const amenities = Object.fromEntries(
     (Object.keys(AMENITIES) as Amenity[]).map((a) => [a, { count: 0, nearestMiles: null, nearestName: null }])
   ) as Record<Amenity, AmenitySummary>;
@@ -162,5 +162,5 @@ export async function amenitiesNear(
   if (!CATALOG.endpoint || !CATALOG.table || !runner) {
     throw new SourceError(SOURCE_ID, "unavailable", "Foursquare catalog connection is not configured yet");
   }
-  return summarise(await runner(buildSql(CATALOG.table, lon, lat, radiusMiles)), lon, lat, radiusMiles);
+  return summarize(await runner(buildSql(CATALOG.table, lon, lat, radiusMiles)), lon, lat, radiusMiles);
 }

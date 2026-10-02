@@ -17,7 +17,7 @@ describe("parseDda", () => {
     });
   });
 
-  it("recognises whole-territory and Puerto Rico nonmetro codes", () => {
+  it("recognizes whole-territory and Puerto Rico nonmetro codes", () => {
     expect(parseDda({ DDA_TYPE: "NM", DDA_CODE: "NCNTY69999N69999", DDA_NAME: "Northern Mariana Islands" }).area).toEqual({
       kind: "territory",
       stateFips: "69",

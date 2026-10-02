@@ -2,13 +2,13 @@
  * Every external input the product fetches, offline in the pipeline or live
  * in `lib/sources/`, and the terms it is used under.
  *
- * This file is the licence boundary of the product. A stage or client may only
+ * This file is the license boundary of the product. A stage or client may only
  * fetch a URL that is built from an entry here, and `sources.test.ts` fails the build if an
- * entry lacks a licence, a commercial-use verdict, or an attribution string. The
+ * entry lacks a license, a commercial-use verdict, or an attribution string. The
  * README's data table is generated from the same list, so what the product says
  * about its inputs cannot drift from what it actually uses.
  *
- * Licence verdicts were checked by an adversarial pass that tried to refute each
+ * License verdicts were checked by an adversarial pass that tried to refute each
  * one (2026-09-15/16). Federal works carry no copyright under 17 U.S.C. § 105,
  * but most agencies still ask for attribution, so "public domain" here never
  * means "no credit needed".
@@ -61,6 +61,21 @@ export interface Source {
 }
 
 export const SOURCES = {
+  gazetteerPlaces2024: {
+    id: "gazetteerPlaces2024",
+    name: "2024 Census Gazetteer Places",
+    publisher: "U.S. Census Bureau",
+    homepage: "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.2024.html",
+    license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
+    commercialUse: "public-domain",
+    attribution: "U.S. Census Bureau, 2024 Gazetteer Files, Places",
+    geography: "2024 incorporated places and census-designated places",
+    vintage: "2024",
+    notes: "Names and representative internal points for map navigation, not municipal boundary filtering or eligibility. Covers the 50 states, DC and Puerto Rico; excludes the Island Areas. Zoom is approximate, derived from land and water area.",
+    purposes: ["statutory"],
+    rationale: "Lets users find the map around a named city or town to inspect individual census tracts and their published program status, without treating an entire city as an eligible zone.",
+    access: ["file-pipeline"],
+  },
   acs5: {
     id: "acs5",
     name: "American Community Survey 5-year estimates",
@@ -71,7 +86,7 @@ export const SOURCES = {
     attribution: "U.S. Census Bureau, American Community Survey 5-year estimates",
     geography:
       "Census tract. Vintages 2010-2019 are tabulated on 2010 tracts; 2020 onward on 2020 tracts (verified: Delaware has 218 tracts in 2010-2019, 262 from 2020).",
-    vintage: "2006-2010, 2012-2016, 2013-2017, 2020-2024",
+    vintage: "2006-2010, 2012-2016, 2013-2017, 2016-2020, 2020-2024",
     notes:
       "Dollar figures are in each vintage's final-year dollars. Missing estimates arrive as sentinels such as -666666666 and are mapped to null. B25034 (year structure built, 2020-2024) is pulled by pipeline/acs/housingAge.ts.",
     purposes: ["statutory", "feasibility", "impact-baseline"],
@@ -141,10 +156,10 @@ export const SOURCES = {
     geography: "2010 census tract polygons",
     vintage: "2010",
     notes:
-      "Used only to find which 2010 tracts border a designated zone, so controls next door to a zone can be excluded as a spillover check.",
+      "Used for tract adjacency in the retrospective and the workbench's 2010/current boundary comparison. Cartographic generalization can differ between vintages; these are not parcel boundaries.",
     purposes: ["impact-baseline"],
     rationale:
-      "Tract adjacency for the spillover check in the 2018 retrospective, since effects can leak into neighbouring tracts. The relationship files carry no adjacency.",
+      "Tract adjacency for the spillover check in the 2018 retrospective, since effects can leak into neighboring tracts. The relationship files carry no adjacency.",
     access: ["file-pipeline"],
   },
   oz1Designated: {
@@ -277,7 +292,7 @@ export const SOURCES = {
     commercialUse: "public-domain",
     attribution: "U.S. Department of Housing and Urban Development, Difficult Development Areas 2026",
     geography:
-      "ZIP Code Tabulation Area in metro areas; county (or territory, or Puerto Rico's nonmetro area) outside them. Carried to 2020 tracts as a land share, labelled as ZCTA-derived.",
+      "ZIP Code Tabulation Area in metro areas; county (or territory, or Puerto Rico's nonmetro area) outside them. Carried to 2020 tracts as a land share, labeled as ZCTA-derived.",
     vintage: "2026 designation (service data of 2025-09-22)",
     notes:
       "2,615 small-area (ZCTA) and 287 non-metro DDAs. Puerto Rico's single nonmetro DDA is matched to tracts by testing Gazetteer internal points against HUD's polygon.",
@@ -330,7 +345,7 @@ export const SOURCES = {
       "2020 census tract, 50 states, DC and Puerto Rico; Connecticut in 2020 county codes, mapped to planning regions. Island areas published separately and not included.",
     vintage: "2016-2020 ACS; in effect from 2023-09-01",
     notes:
-      "85,395 tracts; the LIC verdict is taken as published. A second sheet lists 62 high-migration rural tracts eligible at 85% of benchmark income. The MFI column is labelled a percent but holds a fraction.",
+      "85,395 tracts; the LIC verdict is taken as published. A second sheet lists 62 high-migration rural tracts eligible at 85% of benchmark income. The MFI column is labeled a percent but holds a fraction.",
     purposes: ["feasibility"],
     rationale:
       "NMTC is a federal credit commonly paired with OZ investment in the same places. The CDFI Fund's file is the authority on which tracts qualify.",
@@ -412,13 +427,13 @@ export const SOURCES = {
     commercialUse: "public-domain",
     attribution: "U.S. Department of Housing and Urban Development, Small Area Fair Market Rents FY2026",
     geography:
-      "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labelled as ZIP-derived.",
+      "ZIP Code (metro and nonmetro HUD areas). Carried to 2020 census tracts as a land-weighted average, labeled as ZIP-derived.",
     vintage: "FY2026 (service data of 2025-09-30)",
     notes:
       "From HUD's own ArcGIS table (no key). 51,895 rows for 38,601 ZIPs; a ZIP straddling HUD areas is listed per area with identical rents, which the stage asserts. Replaces the HUD USER API, which needs a token and whose host blocks scripts.",
     purposes: ["feasibility"],
     rationale:
-      "HUD's 40th-percentile rent benchmark by ZIP is the published reference for what a rental unit in a place rents for, per bedroom count. No federal rent benchmark exists at tract level; the ZIP figure is labelled as such.",
+      "HUD's 40th-percentile rent benchmark by ZIP is the published reference for what a rental unit in a place rents for, per bedroom count. No federal rent benchmark exists at tract level; the ZIP figure is labeled as such.",
     access: ["api-pipeline"],
   },
   fhwaHpms: {
@@ -432,7 +447,7 @@ export const SOURCES = {
     geography: "Road segment, looked up around a site (no areal aggregation)",
     vintage: "2024 data year",
     notes:
-      "Published by the USDOT ArcGIS organisation. Queried live with a bounding box around a ~1 km-rounded point; exact distances computed locally. The service ignores ordering on spatial queries, so the busiest roads come from a max-AADT statistics query first. No level-of-service measure exists nationally.",
+      "Published by the USDOT ArcGIS organization. Queried live with a bounding box around a ~1 km-rounded point; exact distances computed locally. The service ignores ordering on spatial queries, so the busiest roads come from a max-AADT statistics query first. No level-of-service measure exists nationally.",
     purposes: ["feasibility"],
     rationale:
       "Traffic volume and truck share on nearby roads bear on retail and logistics feasibility at a site. HPMS is the federal record of AADT on public roads.",
@@ -530,7 +545,7 @@ export const SOURCES = {
     license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
     commercialUse: "public-domain",
     attribution: "U.S. Census Bureau, LEHD Quarterly Workforce Indicators",
-    geography: "County, labelled as such in every output",
+    geography: "County, labeled as such in every output",
     vintage: "Newest quarter available per county at query time (about a year behind)",
     notes:
       "Employment, hires and average monthly earnings, all ownership. Newest quarters are often partly released, so each measure reports its own quarter. Year-over-year change compares the same quarter. Earnings nominal. Uses CENSUS_API_KEY.",
@@ -547,7 +562,7 @@ export const SOURCES = {
     license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
     commercialUse: "public-domain",
     attribution: "U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wages",
-    geography: "County, labelled as such in every output",
+    geography: "County, labeled as such in every output",
     vintage: "Newest published quarter at query time (about six months behind)",
     notes:
       "Keyless CSV per county and quarter. County total plus top private supersectors. Suppressed cells (disclosure N) are missing, never zero.",
@@ -564,7 +579,7 @@ export const SOURCES = {
     license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
     commercialUse: "public-domain",
     attribution: "U.S. Bureau of Labor Statistics, Local Area Unemployment Statistics",
-    geography: "County, labelled as such in every output",
+    geography: "County, labeled as such in every output",
     vintage: "Newest month at query time; the newest is usually preliminary",
     notes:
       "Needs BLS_API_KEY (not yet set): parsing verified on a real series from the keyless v1 API. Not seasonally adjusted; compared year over year. Key sent in the POST body.",
@@ -581,7 +596,7 @@ export const SOURCES = {
     license: "U.S. federal work, no copyright (17 U.S.C. § 105)",
     commercialUse: "public-domain",
     attribution: "U.S. Census Bureau, Building Permits Survey",
-    geography: "County (Connecticut by planning region), labelled as such in every output",
+    geography: "County (Connecticut by planning region), labeled as such in every output",
     vintage: "Newest annual file at pipeline run (2025 when first built), with the prior year for change",
     notes:
       "Housing units authorized by permit, by building size, using the estimates that include imputation. Permits are authorizations, not starts or completions. Place-level permits are a possible follow-up.",
@@ -638,7 +653,7 @@ export const SOURCES = {
       "Displayed only, loaded by the browser from tiles.openfreemap.org; nothing is stored or derived from it, so ODbL share-alike does not reach our data. The attribution travels in the style and MapLibre shows it. No request limits and commercial use allowed per openfreemap.org.",
     purposes: ["feasibility"],
     rationale:
-      "Street, water and place-name context under the tract colours, so a user can tell where a tract is and what surrounds a site; TIGERweb's map images were too coarse and slow for that.",
+      "Street, water and place-name context under the tract colors, so a user can tell where a tract is and what surrounds a site; TIGERweb's map images were too coarse and slow for that.",
     access: ["api-runtime"],
   },
   usgsNationalMap: {
@@ -730,6 +745,22 @@ export const SOURCES = {
 } as const satisfies Record<string, Source>;
 
 export type SourceId = keyof typeof SOURCES;
+
+/** Application pilot ceilings, not promises about provider quotas. Unknown provider quotas remain unknown. */
+export const RUNTIME_BUDGETS: Partial<Record<SourceId, { pilotDaily: number; providerDaily: number | null; verified: string; docs: string }>> = {
+  censusGeocoder: { pilotDaily: 500, providerDaily: null, verified: "2026-09-27", docs: "https://geocoding.geo.census.gov/geocoder/Geocoding_Services_API.html" },
+  censusQwi: { pilotDaily: 300, providerDaily: null, verified: "2026-09-27", docs: "https://www.census.gov/data/developers/guidance/api-user-guide.Query_Limits.html" },
+  blsLaus: { pilotDaily: 400, providerDaily: 500, verified: "2026-09-27", docs: "https://www.bls.gov/developers/api_FAQs.htm" },
+  blsCpi: { pilotDaily: 20, providerDaily: 25, verified: "2026-09-27", docs: "https://www.bls.gov/developers/api_FAQs.htm" },
+  blsQcew: { pilotDaily: 100, providerDaily: null, verified: "2026-09-27", docs: "https://www.bls.gov/cew/additional-resources/open-data/home.htm" },
+  censusTigerweb: { pilotDaily: 500, providerDaily: null, verified: "2026-09-27", docs: "https://tigerweb.geo.census.gov/arcgis/rest/services" },
+  femaNfhl: { pilotDaily: 100, providerDaily: null, verified: "2026-09-27", docs: SOURCES.femaNfhl.homepage },
+  epaSites: { pilotDaily: 200, providerDaily: null, verified: "2026-09-27", docs: SOURCES.epaSites.homepage },
+  fhwaHpms: { pilotDaily: 100, providerDaily: null, verified: "2026-09-27", docs: SOURCES.fhwaHpms.homepage },
+  usgsSeismicDesign: { pilotDaily: 100, providerDaily: null, verified: "2026-09-27", docs: SOURCES.usgsSeismicDesign.homepage },
+  usfsWildfireRisk: { pilotDaily: 100, providerDaily: null, verified: "2026-09-27", docs: SOURCES.usfsWildfireRisk.homepage },
+  foursquarePlaces: { pilotDaily: 0, providerDaily: null, verified: "2026-09-27", docs: SOURCES.foursquarePlaces.homepage },
+};
 
 /** One line per source, for the report and README. */
 export function attributionLines(): string[] {

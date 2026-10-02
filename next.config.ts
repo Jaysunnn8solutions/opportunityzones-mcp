@@ -30,10 +30,14 @@ const nextConfig: NextConfig = {
     "/tract/**": ["./data/*.json", "./data/*.bin"],
     // The site snapshot finds a tract's interior point in the boundary files.
     "/api/site": ["./public/boundaries/tracts/*.json"],
-    // The Find areas panel works out neighbouring tracts from the boundary files.
+    "/api/tract/**": ["./public/boundaries/tracts/*.json"],
+    // The Find areas panel works out neighboring tracts from the boundary files.
     "/api/explore/**": ["./public/boundaries/tracts/*.json"],
+    "/api/exports": ["./public/boundaries/tracts/*.json"],
     // Rules and sources reads each saved source's retrieval date.
     "/rules": ["./legal/text/*.txt"],
+    "/workbench": ["./data/*.json", "./data/*.bin"],
+    "/workbench/rules": ["./data/research-legal-history.json"],
   },
   // Map outlines built by the pipeline (pipeline/map/boundaries.ts). They change
   // once a year, are identical for every viewer, and carry nothing about users.
@@ -41,7 +45,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/boundaries/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+        headers: [{ key: "Cache-Control", value: "private, no-store" }],
       },
     ];
   },

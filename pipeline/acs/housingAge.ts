@@ -26,7 +26,7 @@ import { writeCsv } from "../lib/table";
 
 export const VINTAGE = 2024;
 
-/** B25034 categories, newest first, as labelled in the 2024 ACS. */
+/** B25034 categories, newest first, as labeled in the 2024 ACS. */
 export const YEAR_BUILT = {
   total: "B25034_001E",
   built2020Later: "B25034_002E",

@@ -6,7 +6,7 @@
  * It carries 2020 tracts with Connecticut's planning-region GEOIDs, the same
  * keys as the rest of the product, and is the file the national map is built
  * from. Being generalised, it can put a point within roughly 100 m of a tract
- * edge in the neighbouring tract; outputs that use it say so.
+ * edge in the neighboring tract; outputs that use it say so.
  *
  * Point-in-polygon uses the even-odd rule across all rings of a tract, which
  * handles holes and multi-part tracts without needing ring orientation. A

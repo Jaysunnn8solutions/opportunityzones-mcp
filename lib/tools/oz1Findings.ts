@@ -23,7 +23,7 @@ export const oz1FindingsConfig = {
     "not proof of what it caused." +
     DESCRIPTION_SUFFIX,
   inputSchema: z
-    .object({ section: z.enum(Object.keys(SECTIONS) as [keyof typeof SECTIONS, ...Array<keyof typeof SECTIONS>]).optional() })
+    .object({ section: z.enum(Object.keys(SECTIONS) as [keyof typeof SECTIONS, ...Array<keyof typeof SECTIONS>]).optional(), format: z.enum(["list", "table"]).optional().describe("Default list repeats column labels for linear reading; table preserves the published Markdown table.") })
     .strict(),
   annotations: readOnly,
 };
@@ -34,7 +34,25 @@ export function extractSection(markdown: string, heading: string): string | null
   return part ? `## ${part.trim()}` : null;
 }
 
-export function oz1FindingsHandler({ section = "headline" }: { section?: keyof typeof SECTIONS }) {
+/** Preserve published values and surrounding limitations; only change table presentation. */
+export function tablesToLabeledText(markdown: string): string {
+  const lines = markdown.split(/\r?\n/), output: string[] = [];
+  const cells = (line: string) => line.trim().replace(/^\||\|$/g, "").split(/(?<!\\)\|/).map((value) => value.trim().replace(/\\\|/g, "|"));
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim().startsWith("|") && lines[i + 1]?.trim().startsWith("|") && cells(lines[i + 1]).every((cell) => /^:?-+:?$/.test(cell))) {
+      const headings = cells(lines[i]); i += 2;
+      while (i < lines.length && lines[i].trim().startsWith("|")) {
+        const values = cells(lines[i]);
+        output.push("", `### ${headings[0]}: ${values[0] || "Not reported"}`, ...headings.slice(1).map((heading, j) => `- ${heading}: ${values[j + 1] || "Not reported"}`));
+        i++;
+      }
+      i--;
+    } else output.push(lines[i]);
+  }
+  return output.join("\n");
+}
+
+export function oz1FindingsHandler({ section = "headline", format }: { section?: keyof typeof SECTIONS; format?: "list" | "table" }) {
   let report: string;
   try {
     report = readFileSync(path.join(dataDir(), "oz1", "REPORT.md"), "utf8");
@@ -44,7 +62,7 @@ export function oz1FindingsHandler({ section = "headline" }: { section?: keyof t
   const body = extractSection(report, SECTIONS[section]);
   if (!body) return error(`Section "${section}" was not found in the report.`);
   return text(
-    `${body}\n\nOther sections: ${Object.keys(SECTIONS).filter((s) => s !== section).join(", ")}.`,
+    `${format === "table" ? body : tablesToLabeledText(body)}\n\nOther sections: ${Object.keys(SECTIONS).filter((s) => s !== section).join(", ")}.`,
     ["oz1Designated", "oz1Eligible", "acs5", "fhfaTractHpi", "lodesWac", "blsCpi", "blockRelationship", "decennialPl"]
   );
 }
