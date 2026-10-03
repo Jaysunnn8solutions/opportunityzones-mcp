@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { entryReturnDestination, isPublicLegalPage } from "@/lib/client/termsConsent";
+import { CONSENT_UNAVAILABLE, entryReturnDestination, isPublicLegalPage } from "@/lib/client/termsConsent";
 import { RELIANCE_NOTICE, TERMS_VERSION } from "@/lib/content/siteTerms";
 import LegalDocument from "./LegalDocument";
 import EntryAtmosphere from "./EntryAtmosphere";
@@ -13,7 +13,8 @@ export default function LegalAccess({ children }: { children: React.ReactNode })
   const path = usePathname();
   const agreementPage = path === "/entry/agreement";
   const entryPage = path === "/entry" || agreementPage;
-  const [status, setStatus] = useState<"checking" | "required" | "saving" | "accepted">("checking");
+  const [status, setStatus] = useState<"checking" | "required" | "saving" | "accepted" | "unavailable">("checking");
+  const [availabilityCheck, setAvailabilityCheck] = useState(0);
   const [acknowledged, setAcknowledged] = useState(false);
   const [declined, setDeclined] = useState(false);
   const [error, setError] = useState("");
@@ -21,21 +22,22 @@ export default function LegalAccess({ children }: { children: React.ReactNode })
     if (isPublicLegalPage(path)) return;
     const controller = new AbortController();
     fetch("/api/consent", { cache: "no-store", signal: controller.signal }).then(async (response) => {
-      if (!response.ok) throw new Error("Consent verification is unavailable. Please try again.");
+      if (!response.ok) throw new Error(CONSENT_UNAVAILABLE);
       const result = await response.json();
       if (result.accepted === true && result.version === TERMS_VERSION) {
         if (entryPage) window.location.replace(entryReturnDestination(new URLSearchParams(window.location.search).get("next"), window.location.hash));
         else setStatus("accepted");
       } else setStatus("required");
-    }).catch((failure) => { if (!controller.signal.aborted) { setError(failure.message); setStatus("required"); } });
+    }).catch(() => { if (!controller.signal.aborted) { setError(CONSENT_UNAVAILABLE); setStatus("unavailable"); } });
     return () => controller.abort();
-  }, [path, entryPage]);
+  }, [path, entryPage, availabilityCheck]);
   if (isPublicLegalPage(path) || (status === "accepted" && !entryPage)) return children;
   async function accept() {
     if (!acknowledged || declined || status !== "required") return;
     setStatus("saving"); setError("");
     try {
       const response = await fetch("/api/consent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ accepted: true, version: TERMS_VERSION, channel: "web" }) });
+      if (response.status >= 500) { setError(CONSENT_UNAVAILABLE); setStatus("unavailable"); return; }
       const result = await response.json();
       if (!response.ok || result.accepted !== true) throw new Error(result.error ?? "Acceptance could not be recorded. Please try again.");
       window.location.assign(entryReturnDestination(entryPage ? new URLSearchParams(window.location.search).get("next") : path, window.location.hash));
@@ -50,7 +52,9 @@ export default function LegalAccess({ children }: { children: React.ReactNode })
     <section className="entry-agreement" aria-labelledby="entry-agreement-title"><p className="eyebrow">Before you enter</p><AgreementHeading id="entry-agreement-title">Review and acknowledge</AgreementHeading>
       <details className="entry-full-terms"><summary>Read the full disclaimer, terms, and privacy notice</summary><div className="entry-terms-scroll" tabIndex={0} role="region" aria-label="Full disclaimer, terms, and privacy notice"><LegalDocument compact /></div></details>
       {declined ? <div className="entry-declined" role="status"><h3>You have not accepted the terms.</h3><p>The research tools remain closed. You can read the legal page, reconsider, or close this tab.</p><button type="button" className="button secondary" onClick={() => { setDeclined(false); setAcknowledged(false); }}>Review again</button></div> : <form className="entry-consent" onSubmit={(event) => { event.preventDefault(); accept(); }}><label className="consent-checkbox"><input type="checkbox" checked={acknowledged} disabled={status === "saving"} onChange={(event) => setAcknowledged(event.target.checked)} required /><span>I have read and agree to the <Link href="/legal#terms">Terms of Use</Link> and acknowledge the <Link href="/legal#disclaimer">Disclaimer</Link> and <Link href="/legal#privacy">Privacy Notice</Link> (version {TERMS_VERSION}).</span></label><p className="consent-action-notice">Clicking “I agree and enter” records your acceptance.</p><div className="entry-actions"><button type="submit" className="button" disabled={!acknowledged || status !== "required"}>{status === "saving" ? "Recording acceptance…" : "I agree and enter"}</button><button type="button" className="button secondary" disabled={status === "saving"} onClick={() => { setDeclined(true); setAcknowledged(false); }}>I do not agree</button></div></form>}
+      {status === "checking" && <p role="status">Checking whether agreement acceptance is available…</p>}
       {error && <p role="alert" className="error">{error}</p>}
+      {status === "unavailable" && <button type="button" className="button secondary" onClick={() => { setStatus("checking"); setError(""); setAvailabilityCheck((value) => value + 1); }}>Check availability again</button>}
       <p>Use this service for initial research. Verify current source records and consult qualified professionals before relying on information for a decision.</p><ul className="entry-summary"><li>Eligibility is different from certified designation.</li><li>Data may be incomplete, delayed, or approximate.</li><li>Using the service creates no professional advisory relationship.</li></ul>
       <p className="source-reliance">{RELIANCE_NOTICE}</p>
       <Link className="legal-page-link" href="/legal">Open the dedicated legal page →</Link>

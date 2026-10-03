@@ -5,12 +5,12 @@ import { oauthBody } from "@/lib/access/oauthHttp";
 import { TERMS_VERSION } from "@/lib/content/siteTerms";
 export async function POST(req: Request) {
   try {
-    sameOrigin(req); limitRequest(req, "auth");
+    sameOrigin(req); (await limitRequest(req, "auth"));
     const body = await oauthBody(req);
-    const validated = authorizeParameters(body?.parameters, oauthResource(req));
+    const validated = (await authorizeParameters(body?.parameters, oauthResource(req)));
     if (body?.preview === true) return json({ client: validated.client, destination: validated.destination });
-    const account = requireMember(req);
+    const account = (await requireMember(req));
     if (body?.accepted !== true || body?.version !== TERMS_VERSION) throw new AccessError("Read and explicitly accept the current terms to authorize this connection.", 400);
-    return json({ redirect: approveAuthorization(account.id, body.parameters, oauthResource(req)) });
+    return json({ redirect: (await approveAuthorization(account.id, body.parameters, oauthResource(req))) });
   } catch (error) { return failure(error); }
 }

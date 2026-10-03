@@ -8,7 +8,7 @@ import { tractIndicators } from "@/lib/data/indicators";
 
 /** The published profile of one tract, as JSON. Public data about a place; cached. */
 export async function GET(_req: Request, { params }: { params: Promise<{ geoid: string }> }) {
-  try { limitRequest(_req, "read"); } catch (error) { return failure(error); }
+  try { (await limitRequest(_req, "read")); } catch (error) { return failure(error); }
   const { geoid } = await params;
   const t = getTract(geoid);
   if (!t) return Response.json({ error: "no such tract" }, { status: 404 });

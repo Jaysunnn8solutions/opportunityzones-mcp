@@ -8,7 +8,7 @@ const headers = { "Cache-Control": "no-store" };
 
 /** POST keeps search text out of URLs and access logs. Bundled data only. */
 export async function POST(req: Request) {
-  try { sameOrigin(req); limitRequest(req, "read"); } catch (error) { return failure(error); }
+  try { sameOrigin(req); (await limitRequest(req, "read")); } catch (error) { return failure(error); }
   let query: unknown;
   try { query = ((await readBody(req, 2000)) as { query?: unknown }).query; } catch {
     return Response.json({ error: "Expected a JSON search query." }, { status: 400, headers });

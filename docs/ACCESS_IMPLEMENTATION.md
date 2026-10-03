@@ -1,6 +1,6 @@
 # Implemented research access
 
-Local implementation, September 27, 2026. This records actual behavior and supersedes proposal details in ACCESS_AND_EXPORT_PLAN.md. No production deployment or provider-key changes were made.
+Local implementation, September 27, updated October 2, 2026 for PostgreSQL support. This records actual behavior and supersedes proposal details in ACCESS_AND_EXPORT_PLAN.md. The owner has configured Vercel/Neon; deployment of the new adapter and live verification remain outstanding. No credentials were supplied in chat.
 
 ## User experience
 
@@ -40,7 +40,7 @@ Use **localhost**, not a numeric IP address, for browser passkey development. Us
 - Up to **500 tract rows** and 10 MB per file; fields come from an explicit allowlist.
 - **3 exports / 1,000 rows per rolling 24 hours**; **10 exports / 5,000 rows per rolling 30 days**.
 - Settings-only research JSON: separate 20/day allowance.
-- Shared ceiling: 100 generated files/day. Bounded synchronous generation is serialized through a SQLite transaction; there is no background queue.
+- Shared ceiling: 100 generated files/day. Bounded generation and reservations are serialized through a database transaction; there is no background queue.
 - Preview shows selected/matched counts, field count, version, missing values, and remaining account allowances. Oversize results require narrower criteria or an explicit first-500 subset in the current deterministic sort order.
 - Every data export is recomputed from the published local dataset. No per-row Census or hazard lookups.
 - ZIP includes areas.csv, data-dictionary.csv, sources.csv, manifest.json, README.txt, and a standalone semantic report.html for tract exports. JSON includes corresponding typed data/context. GEOIDs are strings; CSV instructions explain leading zeros. Negative numbers remain numeric and formula-like text is escaped. Browser PDF printing is not a verified tagged-PDF workflow.
@@ -53,7 +53,7 @@ Browser printing, screenshots, copying public facts, and direct reuse under sour
 
 `pipeline/sources.ts` records source budgets and documentation. Published provider limits and internal operating caps are distinct. The implementation cannot inspect actual provider account usage or activity by other applications using the same key.
 
-Runtime attempts use shared SQLite counters, at most two concurrent leases/source, a 30-attempt/minute ceiling, provider Retry-After cooldowns, and daily budgets. Retries count. Known provider ceilings are capped at 80%; sources without a verified daily limit default to disabled in production until the operator explicitly sets a conservative budget. Foursquare remains unavailable until the free catalog integration and constraints are verified.
+Runtime attempts use shared database counters, at most two concurrent leases/source, a 30-attempt/minute ceiling, provider Retry-After cooldowns, and daily budgets. Retries count. Known provider ceilings are capped at 80%; sources without a verified daily limit default to disabled in production until the operator explicitly sets a conservative budget. Foursquare remains unavailable until the free catalog integration and constraints are verified.
 
 Public county data is cached by geography (LAUS/QCEW 24 hours, QWI seven days); canonical tract site readings cache successful responses for 24 hours. Exact site coordinates and addresses are not cache keys. Source checks are user-triggered. Site cards show when readings were checked. An unavailable value is never treated as zero or absence of risk.
 
@@ -61,18 +61,19 @@ Census and BLS requests through the pipeline HTTP client use the same gateway wh
 
 ## Production setup — required before enabling the service
 
-This implementation targets **one persistent host**, with all Node processes sharing the same local SQLite disk. Node 22.13+ is required; Node 24 is recommended. It is not suitable for independently scaled serverless instances or network-mounted SQLite. No paid service was added, and the actual host has not been selected or approved.
+This implementation supports **shared PostgreSQL** for serverless instances when `DATABASE_URL` is set, or SQLite on **one persistent host** otherwise. Node 22.13+ is required; Node 24 is recommended. SQLite is explicitly refused on Vercel. The PostgreSQL adapter uses verified TLS, bounded pooled connections, atomic versioned schema initialization, and transaction-scoped advisory locks for security reservations. No paid service was added. See DEPLOYMENT_RUNBOOK.md for the owner's free-plan setup and outstanding live checks.
 
 Configure the following through the host environment (see .env.example):
 
 - `OZ_ORIGIN`: exact public HTTPS origin.
-- `OZ_STORAGE_PATH`: absolute private persistent SQLite file path outside public/static files.
-- `OZ_SINGLE_HOST=1`: explicit confirmation of the shared single-host architecture.
+- `DATABASE_URL`: secret pooled PostgreSQL connection URI for Vercel/Neon; never expose it to client code. A new empty project initializes automatically on first use. Existing local accounts are not copied to it.
+- `OZ_STORAGE_PATH`: for SQLite only, absolute private persistent file path outside public/static files.
+- `OZ_SINGLE_HOST=1`: for SQLite only, explicit confirmation of the shared single-host architecture.
 - `OZ_TRUSTED_IP_HEADER`: only a header that the trusted reverse proxy **overwrites**, stripping client-supplied values. Otherwise leave unset for conservative shared limits.
 - `OZ_SOURCE_<SOURCEID_UPPERCASE>_DAILY`: verified operating budget per source, e.g. `OZ_SOURCE_CENSUSGEOCODER_DAILY`. A key is not evidence of unlimited usage.
 - `OZ_SIGNUP_PAUSED=1`, `OZ_EXPORTS_PAUSED=1`, `OZ_LIVE_PAUSED=1`: operator stop switches.
 
-Use restrictive filesystem permissions, TLS, request-size/time limits, bounded disk/backups, and log redaction at the host/proxy. Do not log request bodies, credentials, geocode queries, exact coordinates, or full upstream URLs. Keep backups private and set separate retention/deletion rules. Hosting must satisfy the owner's free-only, no-payment-method requirement. Deployment remains blocked on a suitable host and its operational configuration; environment-dependent API features fail closed when storage/origin is missing.
+Use restrictive filesystem permissions, TLS, request-size/time limits, bounded storage/backups, and log redaction at the host/proxy. Do not log request bodies, credentials, geocode queries, exact coordinates, or full upstream URLs. Keep backups private and set separate retention/deletion rules. Hosting must satisfy the owner's free-only, no-payment-method requirement. Operational checks remain outstanding; environment-dependent API features fail closed when storage/origin is missing or unavailable. PostgreSQL errors never trigger a fallback to ephemeral SQLite.
 
 Operator commands (with the same storage environment as the server):
 

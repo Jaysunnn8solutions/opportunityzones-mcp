@@ -19,7 +19,7 @@ import { POST as searchPost, GET as publicMap } from "@/app/api/explore/[state]/
 
 const origin = "http://localhost:3000";
 function request(path: string, body: unknown, cookie = "", from = origin) { return new Request(`${origin}${path}`, { method: "POST", headers: { Origin: from, Cookie: cookie, "Content-Type": "application/json" }, body: JSON.stringify(body) }); }
-function member() { const id = randomUUID(), raw = randomUUID(); db().prepare("INSERT INTO accounts VALUES(?,?,?)").run(id, TERMS_VERSION, Date.now()); db().prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(hashToken(raw), id, Date.now() + DAY, Date.now()); return { id, cookie: `oz_session=${raw}` }; }
+async function member() { const id = randomUUID(), raw = randomUUID(); (await db().prepare("INSERT INTO accounts VALUES(?,?,?)").run(id, TERMS_VERSION, Date.now())); (await db().prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(hashToken(raw), id, Date.now() + DAY, Date.now())); return { id, cookie: `oz_session=${raw}` }; }
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe("persistent access budgets", () => {
@@ -53,26 +53,26 @@ describe("persistent access budgets", () => {
     expect(() => sameOrigin(request())).toThrow(/research website/);
     expect(() => sameOrigin(request({ Origin: "http://127.0.0.1:3000" }))).not.toThrow();
   });
-  it("preserves allowances across connections and process-style database reopen", () => {
+  it("preserves allowances across connections and process-style database reopen", async () => {
     const folder = mkdtempSync(join(tmpdir(), "oz-access-test-")); const path = join(folder, "access.sqlite");
     const budget = [{ subject: "a", action: "exports", limit: 1, window: DAY }];
     const first = openStore(path), second = openStore(path);
-    try { consume(budget, first); expect(() => consume(budget, second)).toThrow(/allowance/); }
-    finally { first.close(); second.close(); }
+    try { (await consume(budget, first)); await expect(async () => (await consume(budget, second))).rejects.toThrow(/allowance/); }
+    finally { (await first.close()); (await second.close()); }
     const reopened = openStore(path);
-    try { expect(() => consume(budget, reopened)).toThrow(/allowance/); }
-    finally { reopened.close(); for (const name of ["access.sqlite", "access.sqlite-wal", "access.sqlite-shm"]) rmSync(join(folder, name), { force: true }); rmdirSync(folder); }
+    try { await expect(async () => (await consume(budget, reopened))).rejects.toThrow(/allowance/); }
+    finally { (await reopened.close()); for (const name of ["access.sqlite", "access.sqlite-wal", "access.sqlite-shm"]) rmSync(join(folder, name), { force: true }); rmdirSync(folder); }
   });
-  it("enforces atomic overlapping row/count limits without recording failed reservations", () => {
+  it("enforces atomic overlapping row/count limits without recording failed reservations", async () => {
     const store = openStore(":memory:"); const now = 40 * DAY;
     const budgets = [{ subject: "a", action: "rows", amount: 500, limit: 1000, window: DAY }, { subject: "a", action: "rows", amount: 500, limit: 5000, window: 30 * DAY }];
-    consume(budgets, store, now); consume(budgets, store, now + 1);
-    expect(() => consume(budgets, store, now + 2)).toThrow(AccessError);
-    expect((store.prepare("SELECT COUNT(*) AS n FROM usage").get() as { n: number }).n).toBe(2);
-    consume(budgets, store, now + DAY + 2);
-    expect(() => transaction(store, () => { store.prepare("INSERT INTO usage(subject,action,at,amount) VALUES('a','test',?,1)").run(now); throw new Error("generation failure"); })).toThrow();
-    expect(store.prepare("SELECT * FROM usage WHERE action='test'").all()).toHaveLength(0);
-    store.close();
+    (await consume(budgets, store, now)); (await consume(budgets, store, now + 1));
+    await expect(async () => (await consume(budgets, store, now + 2))).rejects.toThrow(AccessError);
+    expect(((await store.prepare("SELECT COUNT(*) AS n FROM usage").get()) as { n: number }).n).toBe(2);
+    (await consume(budgets, store, now + DAY + 2));
+    await expect(async () => (await transaction(store, async () => { (await store.prepare("INSERT INTO usage(subject,action,at,amount) VALUES('a','test',?,1)").run(now)); throw new Error("generation failure"); }))).rejects.toThrow();
+    expect((await store.prepare("SELECT * FROM usage WHERE action='test'").all())).toHaveLength(0);
+    (await store.close());
   });
   it("rejects unsupported member-only filters on the server and provides only a bounded public list", () => {
     expect(() => authorizeFilters({ ...NO_FILTERS, tiers: { median_home_value: "higher25" } }, false)).toThrow(/free research account/);
@@ -120,7 +120,7 @@ describe("server exports", () => {
     expect(selection.geoids).toEqual(page.matches.slice(0, 25));
   });
   it("returns evidence for 25 member comparison tracts and enforces both tier limits", async () => {
-    const signed = member();
+    const signed = (await member());
     const ids = searchPage("10", NO_FILTERS, "geoid", 0, true).rows.slice(0, 25).map((row) => row[0]);
     expect(ids).toHaveLength(25);
     const context = { params: Promise.resolve({ state: "10" }) };
@@ -133,7 +133,7 @@ describe("server exports", () => {
   it("requires a valid session and same-origin requests; client claims cannot grant access", async () => {
     const result = await exportPost(request("/api/exports", { input: { geoids: ["10001040100"] }, member: true }, "oz_session=forged"));
     expect(result.status).toBe(401);
-    const signed = member();
+    const signed = (await member());
     expect((await exportPost(request("/api/exports", {}, signed.cookie, "https://foreign.example"))).status).toBe(403);
     expect((await searchPost(request("/api/explore/10", { filters: { ...NO_FILTERS, ranges: { population: { min: 1 } } } }), { params: Promise.resolve({ state: "10" }) })).status).toBe(401);
     const map = await (await publicMap(new Request(`${origin}/api/explore/10`), { params: Promise.resolve({ state: "10" }) })).json();
@@ -148,30 +148,30 @@ describe("server exports", () => {
     const manifest = JSON.parse(strFromU8(files["manifest.json"])); expect(manifest.rows).toBe(4); expect(manifest.explicitlyLimitedTo).toBe(4);
     expect(strFromU8(files["sources.csv"])).toContain("Census"); expect(network).not.toHaveBeenCalled();
   });
-  it("charges new exports once, supports bounded retries, and rejects cross-account retries", () => {
-    const a = member(), b = member(); const input = { state: "10", limit: 2 }; const id = randomUUID();
-    const first = generateExport(a.id, id, input); const retry = generateExport(a.id, id, input);
+  it("charges new exports once, supports bounded retries, and rejects cross-account retries", async () => {
+    const a = (await member()), b = (await member()); const input = { state: "10", limit: 2 }; const id = randomUUID();
+    const first = (await generateExport(a.id, id, input)); const retry = (await generateExport(a.id, id, input));
     expect(Buffer.from(first.body)).toEqual(Buffer.from(retry.body));
-    expect(() => generateExport(b.id, id, input)).toThrow(/another request/);
-    generateExport(a.id, randomUUID(), input); generateExport(a.id, randomUUID(), input);
-    expect(() => generateExport(a.id, randomUUID(), input)).toThrow(/allowance/);
-    expect(db().prepare("SELECT * FROM usage WHERE subject=? AND action='exports'").all(a.id)).toHaveLength(3);
+    await expect(async () => (await generateExport(b.id, id, input))).rejects.toThrow(/another request/);
+    (await generateExport(a.id, randomUUID(), input)); (await generateExport(a.id, randomUUID(), input));
+    await expect(async () => (await generateExport(a.id, randomUUID(), input))).rejects.toThrow(/allowance/);
+    expect((await db().prepare("SELECT * FROM usage WHERE subject=? AND action='exports'").all(a.id))).toHaveLength(3);
     expect(() => prepareExport({ state: "10", columns: ["race"] })).toThrow(/supported/);
   });
 });
 
 describe("passkey authentication", () => {
   it("requires current terms and recent authentication, and consumes recovery codes only once", async () => {
-    const signed = member();
-    db().prepare("UPDATE accounts SET terms='old' WHERE id=?").run(signed.id);
+    const signed = (await member());
+    (await db().prepare("UPDATE accounts SET terms='old' WHERE id=?").run(signed.id));
     expect((await exportPost(request("/api/exports", { preview: true, input: { state: "10", limit: 1 } }, signed.cookie))).status).toBe(403);
     expect((await accountPost(request("/api/account", { action: "accept-terms", terms: TERMS_VERSION }, signed.cookie))).status).toBe(200);
-    db().prepare("UPDATE sessions SET verified=? WHERE account=?").run(Date.now() - DAY, signed.id);
+    (await db().prepare("UPDATE sessions SET verified=? WHERE account=?").run(Date.now() - DAY, signed.id));
     expect((await accountPost(request("/api/account", { action: "delete", confirm: "DELETE" }, signed.cookie))).status).toBe(401);
-    db().prepare("UPDATE sessions SET verified=? WHERE account=?").run(Date.now(), signed.id);
+    (await db().prepare("UPDATE sessions SET verified=? WHERE account=?").run(Date.now(), signed.id));
     const codesResponse = await accountPost(request("/api/account", { action: "recovery-codes" }, signed.cookie));
     const { codes } = await codesResponse.json(); expect(codes).toHaveLength(6);
-    expect(db().prepare("SELECT hash FROM recovery WHERE account=?").all(signed.id).some((row) => row.hash === codes[0])).toBe(false);
+    expect((await db().prepare("SELECT hash FROM recovery WHERE account=?").all(signed.id)).some((row) => row.hash === codes[0])).toBe(false);
     const recovered = await accountPost(request("/api/account", { action: "recover", code: codes[0] })); expect(recovered.status).toBe(200);
     expect((await (await accountGet(new Request(`${origin}/api/account`, { headers: { Cookie: signed.cookie } }))).json()).member).toBe(false);
     expect((await accountPost(request("/api/account", { action: "recover", code: codes[0] }))).status).toBe(400);
@@ -208,7 +208,7 @@ describe("passkey authentication", () => {
     const status = await accountGet(new Request(`${origin}/api/account`, { headers: { Cookie: sessionCookie } }));
     expect((await status.json()).member).toBe(true);
     const deleted = await accountPost(request("/api/account", { action: "delete", confirm: "DELETE" }, sessionCookie)); expect(deleted.status).toBe(200);
-    expect(db().prepare("SELECT * FROM credentials WHERE id=?").get(response.id)).toBeUndefined();
+    expect((await db().prepare("SELECT * FROM credentials WHERE id=?").get(response.id))).toBeUndefined();
     const after = await accountGet(new Request(`${origin}/api/account`, { headers: { Cookie: sessionCookie } })); expect((await after.json()).member).toBe(false);
   });
 });

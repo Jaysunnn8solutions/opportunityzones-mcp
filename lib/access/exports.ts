@@ -80,25 +80,25 @@ export function exportBudgets(account: string, rows: number, research: boolean) 
   ];
 }
 /** Synchronous bounded generation under a transaction serializes reservations across local server processes. */
-export function generateExport(account: string, id: string, input: ExportInput) {
+export async function generateExport(account: string, id: string, input: ExportInput) {
   if (process.env.OZ_EXPORTS_PAUSED === "1") throw new AccessError("Research downloads are temporarily paused. Your selections are preserved.", 503);
   if (!/^[\w-]{16,80}$/.test(id)) throw new AccessError("A valid retry identifier is required.", 400);
   // Invalidate old retry artifacts created under the previous all-tract scope.
   const fingerprint = createHash("sha256").update("oz-scope-v1:" + JSON.stringify(input)).digest("hex");
   const store = db(); const now = Date.now();
-  return transaction(store, () => {
-    prune(store, now);
-    store.prepare("DELETE FROM exports WHERE id=? AND at<=?").run(id, now - 3_600_000);
-    const existing = store.prepare("SELECT * FROM exports WHERE id=?").get(id) as { account: string; fingerprint: string; body: Uint8Array; filename: string; mime: string } | undefined;
+  return (await transaction(store, async () => {
+    (await prune(store, now));
+    (await store.prepare("DELETE FROM exports WHERE id=? AND at<=?").run(id, now - 3_600_000));
+    const existing = (await store.prepare("SELECT * FROM exports WHERE id=?").get(id)) as { account: string; fingerprint: string; body: Uint8Array; filename: string; mime: string } | undefined;
     if (existing) { if (existing.account !== account || existing.fingerprint !== fingerprint) throw new AccessError("This retry identifier belongs to another request.", 409); return existing; }
     const prepared = prepareExport(input);
     const budgets = exportBudgets(account, prepared.research ? 0 : prepared.geoids.length, !!prepared.research);
-    checkBudgets(store, budgets, now);
-    checkBudgets(store, [{ subject: "service", action: "exports", limit: 100, window: DAY }], now);
+    (await checkBudgets(store, budgets, now));
+    (await checkBudgets(store, [{ subject: "service", action: "exports", limit: 100, window: DAY }], now));
     const result = buildExport(input, prepared);
     if (result.body.length > 10_000_000) throw new AccessError("Export exceeds 10 MB.", 400);
-    store.prepare("INSERT INTO exports(id,account,fingerprint,at,filename,mime,body,rows) VALUES(?,?,?,?,?,?,?,?)").run(id, account, fingerprint, now, result.filename, result.mime, result.body, result.rows);
-    recordBudgets(store, [...budgets, { subject: "service", action: "exports", limit: 100, window: DAY }], now);
+    (await store.prepare("INSERT INTO exports(id,account,fingerprint,at,filename,mime,body,rows) VALUES(?,?,?,?,?,?,?,?)").run(id, account, fingerprint, now, result.filename, result.mime, result.body, result.rows));
+    (await recordBudgets(store, [...budgets, { subject: "service", action: "exports", limit: 100, window: DAY }], now));
     return result;
-  });
+  }));
 }

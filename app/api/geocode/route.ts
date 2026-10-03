@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   if (typeof address !== "string" || address.trim().length < 5 || address.length > 200) {
     return Response.json({ error: "address must be 5-200 characters" }, { status: 400, headers: noStore });
   }
-  try { limitRequest(req, "address"); } catch (error) { return failure(error); }
+  try { (await limitRequest(req, "address")); } catch (error) { return failure(error); }
   try {
     const matches = await geocodeAddress(address);
     return Response.json(

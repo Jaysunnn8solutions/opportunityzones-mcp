@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "expected a tract GEOID or a point" }, { status: 400, headers: noStore });
   }
   if (!point) return Response.json({ error: "no point for this tract" }, { status: 404, headers: noStore });
-  try { limitRequest(req, "site"); } catch (error) { return failure(error); }
+  try { (await limitRequest(req, "site")); } catch (error) { return failure(error); }
   try {
     const only = body.source as SnapshotItem["key"] | undefined;
     const items = basis === "tract" ? await Promise.all((only ? [only] : keys as SnapshotItem["key"][]).map(async (key) => {

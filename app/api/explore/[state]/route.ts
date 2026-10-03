@@ -15,7 +15,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ state: 
 
 export async function POST(req: Request, { params }: { params: Promise<{ state: string }> }) {
   try {
-    sameOrigin(req); const account = session(req); limitRequest(req, "read", account);
+    sameOrigin(req); const account = (await session(req)); (await limitRequest(req, "read", account));
     const body = await readBody(req, 8000); const { state } = await params;
     if (body.geoids != null && (!Array.isArray(body.geoids) || body.geoids.length > (comparisonLimit(!!account)) || body.geoids.some((id: unknown) => typeof id !== "string" || !/^\d{11}$/.test(id)))) throw new AccessError("Choose valid tract identifiers within your comparison allowance.", 400);
     const filters = authorizeFilters(body.filters, !!account);

@@ -3,7 +3,7 @@ import { hasConsent } from "@/lib/access/consent";
 import { isPublicLegalPage } from "@/lib/client/termsConsent";
 
 /** All hosted research pages, APIs, RSC requests, and data files pass this gate. */
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname.replace(/\/$/, "") || "/";
   if (path === "/oauth/authorize") {
     const response = NextResponse.next();
@@ -20,7 +20,7 @@ export function proxy(req: NextRequest) {
   // MCP checks its own, separate bearer receipt in the route handler.
   if (isPublicLegalPage(path) || ["/entry", "/entry/agreement", "/api/consent", "/mcp", "/favicon.ico", "/entry-population-lights.svg"].includes(path) || path.startsWith("/_next/static/") || path.startsWith("/_next/webpack-hmr")) return NextResponse.next();
   let accepted = false;
-  try { accepted = hasConsent(req, "web"); } catch { /* Fail closed if the receipt store is unavailable. */ }
+  try { accepted = (await hasConsent(req, "web")); } catch { /* Fail closed if the receipt store is unavailable. */ }
   if (accepted) {
     const response = NextResponse.next();
     response.headers.set("Cache-Control", "private, no-store");

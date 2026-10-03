@@ -19,8 +19,8 @@ describe("bounded export samples and exact research handoffs", () => {
   });
   it("returns three sample rows matching the actual file without charging export allowance", async () => {
     const id = randomUUID(), token = randomUUID();
-    db().prepare("INSERT INTO accounts VALUES(?,?,?)").run(id, TERMS_VERSION, Date.now());
-    db().prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(hashToken(token), id, Date.now() + DAY, Date.now());
+    (await db().prepare("INSERT INTO accounts VALUES(?,?,?)").run(id, TERMS_VERSION, Date.now()));
+    (await db().prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(hashToken(token), id, Date.now() + DAY, Date.now()));
     const geoids = loadTractData().payload.geoids.filter((g) => g.startsWith("01") && canResearchTract(g)).slice(0, 4);
     const input = { geoids, columns: ["population", "median_household_income"], format: "json" as const };
     const response = await POST(new Request("http://localhost:3000/api/exports", { method: "POST", headers: { Origin: "http://localhost:3000", Cookie: `oz_session=${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ preview: true, input }) }));
@@ -30,7 +30,7 @@ describe("bounded export samples and exact research handoffs", () => {
     expect(preview.sample.rows).toEqual(file.rows.slice(0, 3));
     expect(preview.sample.columns.map((c: { name: string }) => c.name)).toEqual(file.manifest.columns);
     expect(preview.sample.rows[0].geoid).toMatch(/^0\d{10}$/);
-    expect(db().prepare("SELECT COUNT(*) AS n FROM exports WHERE account=?").get(id)).toEqual({ n: 0 });
+    expect((await db().prepare("SELECT COUNT(*) AS n FROM exports WHERE account=?").get(id))).toEqual({ n: 0 });
     expect((await POST(new Request("http://localhost:3000/api/exports", { method: "POST", headers: { Origin: "http://localhost:3000", "Content-Type": "application/json" }, body: JSON.stringify({ preview: true, input }) }))).status).toBe(401);
   });
   it("provides an MCP comparison link with the same ordered tracts and measures", () => {

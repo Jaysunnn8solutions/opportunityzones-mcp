@@ -21,7 +21,7 @@ const origin = `http://127.0.0.1:${port}`;
 const publicOrigin = "https://launch-check.invalid";
 const child = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
   cwd: root, windowsHide: true, stdio: "ignore",
-  env: { ...process.env, NODE_ENV: "production", OZ_ORIGIN: publicOrigin,
+  env: { ...process.env, NODE_ENV: "production", OZ_ORIGIN: publicOrigin, DATABASE_URL: "", VERCEL: "",
     OZ_STORAGE_PATH: path.join(folder, "access.sqlite"), OZ_SINGLE_HOST: "1",
     OZ_TRUSTED_IP_HEADER: "", OZ_LIVE_PAUSED: "1", OZ_SIGNUP_PAUSED: "1",
     OZ_OAUTH_ENABLED: "", OZ_MCP_PAUSED: "" },

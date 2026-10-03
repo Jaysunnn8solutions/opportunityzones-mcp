@@ -5,34 +5,34 @@ import { publicGeographyCache } from "./publicCache";
 import { fetchText } from "./http";
 
 vi.unmock("@/lib/sources/gateway");
-beforeEach(() => { db().exec("DELETE FROM usage; DELETE FROM settings"); });
+beforeEach(async () => { (await db().exec("DELETE FROM usage; DELETE FROM settings")); });
 afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 describe("shared source protection", () => {
-  it("enforces concurrent leases and records attempts once across both rolling windows", () => {
+  it("enforces concurrent leases and records attempts once across both rolling windows", async () => {
     vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "3");
-    const a = providerPermit("censusGeocoder"); const b = providerPermit("censusGeocoder");
-    expect(() => providerPermit("censusGeocoder")).toThrow(/busy/);
-    a(); providerPermit("censusGeocoder")(); b();
-    expect(() => providerPermit("censusGeocoder")).toThrow(/allowance/);
-    expect(db().prepare("SELECT * FROM usage WHERE subject='provider:censusGeocoder'").all()).toHaveLength(3);
+    const a = (await providerPermit("censusGeocoder")); const b = (await providerPermit("censusGeocoder"));
+    await expect(async () => (await providerPermit("censusGeocoder"))).rejects.toThrow(/busy/);
+    (await a()); (await (await providerPermit("censusGeocoder"))()); (await b());
+    await expect(async () => (await providerPermit("censusGeocoder"))).rejects.toThrow(/allowance/);
+    expect((await db().prepare("SELECT * FROM usage WHERE subject='provider:censusGeocoder'").all())).toHaveLength(3);
   });
-  it("fails closed for unknown production quotas, invalid budgets, and operator pauses", () => {
+  it("fails closed for unknown production quotas, invalid budgets, and operator pauses", async () => {
     vi.stubEnv("NODE_ENV", "production");
-    expect(() => providerPermit("censusGeocoder")).toThrow(/operator budget/);
-    vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "4"); providerPermit("censusGeocoder")();
-    vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "NaN"); expect(() => providerPermit("censusGeocoder")).toThrow();
-    vi.stubEnv("OZ_LIVE_PAUSED", "1"); expect(() => providerPermit("blsLaus")).toThrow();
+    await expect(async () => (await providerPermit("censusGeocoder"))).rejects.toThrow(/operator budget/);
+    vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "4"); (await (await providerPermit("censusGeocoder"))());
+    vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "NaN"); await expect(async () => (await providerPermit("censusGeocoder"))).rejects.toThrow();
+    vi.stubEnv("OZ_LIVE_PAUSED", "1"); await expect(async () => (await providerPermit("blsLaus"))).rejects.toThrow();
   });
   it("honors Retry-After across requests and does not retry a provider 429", async () => {
     vi.useFakeTimers(); vi.setSystemTime(new Date("2026-09-27T12:00:00Z"));
     vi.stubEnv("OZ_SOURCE_CENSUSGEOCODER_DAILY", "5");
     const network = vi.fn().mockResolvedValue(new Response("limited", { status: 429, headers: { "Retry-After": "120" } })); vi.stubGlobal("fetch", network);
     await expect(fetchText("https://source.invalid/private-query", { sourceId: "censusGeocoder", retries: 2 })).rejects.toMatchObject({ kind: "limited", retryAfter: 120 });
-    providerBackoff("censusGeocoder", "10"); // A shorter later response cannot shorten the shared cooldown.
-    expect(() => providerPermit("censusGeocoder")).toThrow(/cooling down/);
+    (await providerBackoff("censusGeocoder", "10")); // A shorter later response cannot shorten the shared cooldown.
+    await expect(async () => (await providerPermit("censusGeocoder"))).rejects.toThrow(/cooling down/);
     expect(network).toHaveBeenCalledTimes(1);
-    vi.advanceTimersByTime(121_000); providerPermit("censusGeocoder")();
+    vi.advanceTimersByTime(121_000); (await (await providerPermit("censusGeocoder"))());
   });
 });
 

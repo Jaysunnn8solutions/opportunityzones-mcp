@@ -6,14 +6,14 @@ import { loadTractData } from "@/lib/data/tracts";
 export const runtime = "nodejs";
 export async function POST(req: Request) {
   try {
-    sameOrigin(req); const account = requireMember(req); limitRequest(req, "download", account);
+    sameOrigin(req); const account = (await requireMember(req)); (await limitRequest(req, "download", account));
     const body = await readBody(req, 64_000);
     if (body.preview === true) {
       const prepared = prepareExport(body.input);
       const { payload, manifest } = loadTractData();
       const missing = Object.fromEntries(prepared.columns.map((column) => [column, prepared.geoids.reduce((sum, id) => { const index = payload.indexOf(id); return sum + (index < 0 || payload.columns.get(column)?.get(index) == null ? 1 : 0); }, 0)]));
       let allowance: { available: boolean; message: string; resetsAt: string | null } = { available: true, message: "This new export fits your current account and shared allowances.", resetsAt: null };
-      try { checkBudgets(db(), [...exportBudgets(account.id, prepared.research ? 0 : prepared.geoids.length, !!prepared.research), { subject: "service", action: "exports", limit: 100, window: DAY }]); }
+      try { (await checkBudgets(db(), [...exportBudgets(account.id, prepared.research ? 0 : prepared.geoids.length, !!prepared.research), { subject: "service", action: "exports", limit: 100, window: DAY }])); }
       catch (error) { if (!(error instanceof AccessError)) throw error; allowance = { available: false, message: error.message, resetsAt: new Date(Date.now() + error.retryAfter * 1000).toISOString() }; }
       if (prepared.geoids.length > 500 && !prepared.research) allowance = { available: false, message: "Narrow the search or explicitly select a subset of up to 500 rows.", resetsAt: null };
       const sample = prepared.research ? undefined : {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       };
       return json({ total: prepared.total, selected: prepared.geoids.length, version: prepared.version, missing, fields: prepared.columns.length + 6, allowance, sample });
     }
-    const result: ReturnType<typeof buildExport> | { body: Uint8Array; filename: string; mime: string } = generateExport(account.id, body.id, body.input);
+    const result: ReturnType<typeof buildExport> | { body: Uint8Array; filename: string; mime: string } = (await generateExport(account.id, body.id, body.input));
     return new Response(new Uint8Array(result.body), { headers: { "Content-Type": result.mime, "Content-Disposition": `attachment; filename="${result.filename}"`, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
   } catch (error) { return failure(error); }
 }

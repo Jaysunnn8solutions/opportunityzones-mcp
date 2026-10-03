@@ -1,3 +1,5 @@
+export const CONSENT_UNAVAILABLE = "Entry is temporarily unavailable because this site cannot securely record agreement acceptance. You can still read the terms and privacy notice. Please try again later.";
+
 export function isPublicLegalPage(path: string): boolean { return ["/legal", "/accessibility", "/use-with-claude", "/account", "/oauth/authorize"].includes(path.replace(/\/$/, "")); }
 
 export function entryDestination(value: string | null): string {

@@ -69,24 +69,24 @@ export async function fetchText(url: string, options: RuntimeFetchOptions): Prom
   for (let attempt = 0; attempt <= retries; attempt++) {
     if (attempt > 0) await sleep(250 * 2 ** (attempt - 1));
     let res: Response;
-    let release: () => void;
-    try { release = providerPermit(sourceId, timeoutMs + 5000); }
+    let release: () => Promise<void>;
+    try { release = (await providerPermit(sourceId, timeoutMs + 5000)); }
     catch (error) { throw new SourceError(sourceId, "limited", "live source allowance or capacity unavailable; try later", error instanceof AccessError ? error.retryAfter : 60); }
     try {
       res = await fetch(url, { ...init, headers, signal: AbortSignal.timeout(timeoutMs) });
     } catch (err) {
       const timedOut = err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError");
       last = new SourceError(sourceId, "unavailable", timedOut ? `no answer within ${timeoutMs} ms` : "network error");
-      release();
+      await release();
       continue;
     }
-    if (res.ok) { try { return await res.text(); } catch { throw new SourceError(sourceId, "unavailable", "response body could not be read"); } finally { release(); } }
+    if (res.ok) { try { return await res.text(); } catch { throw new SourceError(sourceId, "unavailable", "response body could not be read"); } finally { await release(); } }
     // Drain the body so the connection can be reused; its content is not
     // reported, since some APIs echo the request (and its key) back.
     await res.body?.cancel().catch(() => undefined);
-    release();
+    await release();
     if (res.status === 429) {
-      const retryAfter = providerBackoff(sourceId, res.headers.get("Retry-After"));
+      const retryAfter = (await providerBackoff(sourceId, res.headers.get("Retry-After")));
       throw new SourceError(sourceId, "limited", "HTTP 429; source cooldown in effect", retryAfter ?? 60);
     }
     if (res.status >= 500) {
@@ -95,7 +95,7 @@ export async function fetchText(url: string, options: RuntimeFetchOptions): Prom
     }
     throw new SourceError(sourceId, "rejected", `HTTP ${res.status}`);
   }
-  providerBackoff(sourceId, "30");
+  (await providerBackoff(sourceId, "30"));
   throw last ?? new SourceError(sourceId, "unavailable", "no response");
 }
 

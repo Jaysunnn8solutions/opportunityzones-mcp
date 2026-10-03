@@ -15,7 +15,7 @@ const schema = z.object({ action: z.enum(["impact", "coverage", "baseline", "mat
 let crosswalkCache: { pairs: Array<[string, string, number, number, number]>; generated: string } | undefined;
 export async function POST(req: Request) {
   try {
-    sameOrigin(req); const account = session(req); limitRequest(req, "read", account);
+    sameOrigin(req); const account = (await session(req)); (await limitRequest(req, "read", account));
     const parsed = schema.safeParse(await readBody(req, 32_000)); if (!parsed.success) throw new AccessError("Choose valid research parameters.", 400);
     const body = parsed.data;
     if (body.action === "coverage") return json({ groups: coverage(body.column ?? "population", body.state), version: loadTractData().manifest.generated });

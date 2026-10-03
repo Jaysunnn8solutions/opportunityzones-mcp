@@ -9,22 +9,22 @@ const issue = z.object({ action: z.literal("create"), label: z.string().trim().m
 const revoke = z.discriminatedUnion("action", [z.object({ action: z.literal("revoke"), id: z.string().uuid() }).strict(), z.object({ action: z.literal("revoke-all") }).strict()]);
 export async function GET(req: Request) {
   try {
-    const account = session(req); if (!account) throw new AccessError("Sign in to manage MCP connections.", 401);
-    limitRequest(req, "read", account);
-    return json({ connections: listMcpConnections(account.id) });
+    const account = (await session(req)); if (!account) throw new AccessError("Sign in to manage MCP connections.", 401);
+    (await limitRequest(req, "read", account));
+    return json({ connections: (await listMcpConnections(account.id)) });
   } catch (error) { return failure(error); }
 }
 export async function POST(req: Request) {
   try {
     sameOrigin(req);
-    const account = session(req); if (!account) throw new AccessError("Sign in or create a free account to continue.", 401);
-    limitRequest(req, "auth", account);
+    const account = (await session(req)); if (!account) throw new AccessError("Sign in or create a free account to continue.", 401);
+    (await limitRequest(req, "auth", account));
     const body = await readBody(req, 2048);
     const removal = revoke.safeParse(body);
-    if (removal.success) { revokeMcpConnections(account.id, removal.data.action === "revoke" ? removal.data.id : undefined); return json({ revoked: true }); }
+    if (removal.success) { (await revokeMcpConnections(account.id, removal.data.action === "revoke" ? removal.data.id : undefined)); return json({ revoked: true }); }
     const parsed = issue.safeParse(body);
     if (!parsed.success) throw new AccessError("Review and explicitly accept the current terms before creating or replacing a connection.", 400);
-    requireMember(req);
-    return json(createMcpConnection(account.id, parsed.data.label, parsed.data.replace));
+    (await requireMember(req));
+    return json((await createMcpConnection(account.id, parsed.data.label, parsed.data.replace)));
   } catch (error) { return failure(error); }
 }

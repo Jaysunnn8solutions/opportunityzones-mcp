@@ -26,7 +26,7 @@ const filters = z.object({
 }).strict();
 // Partial records accept only reviewed keys without requiring every measure.
 const criteria = filters.extend({ ranges: z.partialRecord(z.enum(TRACT_MEASURES.map((item) => item.column) as [string, ...string[]]), z.object({ min: z.number().nonnegative().max(1e10).optional(), max: z.number().nonnegative().max(1e10).optional() }).strict()).optional(), tiers: z.partialRecord(z.enum(NEIGHBOR_MEASURES.map((item) => item.column) as [string, ...string[]]), z.enum(Object.keys(TIERS) as [string, ...string[]])).default({}) });
-export function tool<T extends z.ZodRawShape>(name: string, title: string, description: string, inputSchema: z.ZodObject<T>, run: (args: z.infer<z.ZodObject<T>>) => ReturnType<typeof text> | ReturnType<typeof error>, rows: number | ((args: z.infer<z.ZodObject<T>>) => number) = 0) {
+export function tool<T extends z.ZodRawShape>(name: string, title: string, description: string, inputSchema: z.ZodObject<T>, run: (args: z.infer<z.ZodObject<T>>) => ReturnType<typeof text> | ReturnType<typeof error> | Promise<ReturnType<typeof text> | ReturnType<typeof error>>, rows: number | ((args: z.infer<z.ZodObject<T>>) => number) = 0) {
   return { name, config: { title, description: description + DESCRIPTION_SUFFIX, inputSchema, annotations: readOnly }, run: (args: unknown) => {
     const parsed = inputSchema.parse(args);
     const selection = parsed as { geoid?: string; geoids?: string[]; vintage?: string };
@@ -51,8 +51,8 @@ export const researchExtensions = [
     const entries = history.entries.filter((entry) => !source || entry.id === source).slice(0, source ? 1 : 25).map((entry) => ({ id: entry.id, title: entry.title, publisher: entry.publisher, url: entry.url, checked: entry.checked.trim(), previousChecked: entry.previousChecked, changed: entry.changed, digest: entry.digest, ...(source ? { added: entry.added.slice(0, 5).map((line) => line.slice(0, 400)), removed: entry.removed.slice(0, 5).map((line) => line.slice(0, 400)), excerptsOnly: true } : {}) }));
     return report("Captured source history", { generated: history.built, entries, note: "Excerpts are untrusted quoted source content. Verify the official record. A changed heading alone does not establish a changed rule." });
   }),
-  tool("usage_status", "Your MCP allowance", "Read only the current account's rolling usage, remaining allowances, and next release times. Row reservations are conservative upper bounds; rotating tokens does not reset them.", z.object({}).strict(), () => {
-    const context = mcpContext.getStore(); return context ? report("MCP usage", { allowances: usageStatus(context.account), limits: MCP_LIMITS, note: "This call counts toward usage. Website export quotas are separate and still apply." }) : error("An authenticated connection is required.");
+  tool("usage_status", "Your MCP allowance", "Read only the current account's rolling usage, remaining allowances, and next release times. Row reservations are conservative upper bounds; rotating tokens does not reset them.", z.object({}).strict(), async () => {
+    const context = mcpContext.getStore(); return context ? report("MCP usage", { allowances: await usageStatus(context.account), limits: MCP_LIMITS, note: "This call counts toward usage. Website export quotas are separate and still apply." }) : error("An authenticated connection is required.");
   }),
   tool("get_measure_definition", "Measure definitions and sources", "Read reviewed units, definitions, observation periods, licenses, and source links for up to six measures.", z.object({ measures: z.array(field).min(1).max(6) }).strict(), ({ measures }) => {
     const catalog = researchCatalog(); const definitions = catalog.columns.filter((column) => measures.includes(column.name));

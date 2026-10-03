@@ -45,13 +45,13 @@ export async function readBody(req: Request, max = 32_000) {
   while (true) { const next = await reader.read(); if (next.done) break; size += next.value.length; if (size > max) { await reader.cancel(); throw new AccessError("Request too large.", 413); } chunks.push(next.value); }
   try { return JSON.parse(Buffer.concat(chunks).toString("utf8")); } catch { throw new AccessError("Invalid JSON request.", 400); }
 }
-export function session(req: Request) {
+export async function session(req: Request) {
   const raw = cookie(req, "oz_session");
   if (!raw || raw.length > 100) return null;
-  return db().prepare("SELECT a.id, a.terms, s.verified FROM sessions s JOIN accounts a ON a.id=s.account WHERE s.hash=? AND s.expires>? AND NOT EXISTS (SELECT 1 FROM settings WHERE key='account-disabled:' || a.id AND value='1')").get(hashToken(raw), Date.now()) as { id: string; terms: string; verified: number } | undefined ?? null;
+  return (await db().prepare("SELECT a.id, a.terms, s.verified FROM sessions s JOIN accounts a ON a.id=s.account WHERE s.hash=? AND s.expires>? AND NOT EXISTS (SELECT 1 FROM settings WHERE key='account-disabled:' || a.id AND value='1')").get(hashToken(raw), Date.now())) as { id: string; terms: string; verified: number } | undefined ?? null;
 }
-export function requireMember(req: Request, recent = false) {
-  const account = session(req);
+export async function requireMember(req: Request, recent = false) {
+  const account = (await session(req));
   if (!account) throw new AccessError("Sign in to your free research account to continue.", 401);
   if (account.terms !== TERMS_VERSION) throw new AccessError("Review the current terms in your account before downloading.", 403);
   if (recent && Date.now() - account.verified > 10 * 60_000) throw new AccessError("Sign in again before changing account security.", 401);
@@ -64,21 +64,22 @@ export function failure(error: unknown) {
   return json({ error: "This service is temporarily unavailable. Your research is still here." }, 503, { "Retry-After": "60" });
 }
 /** Only trust a header explicitly configured at a proxy that strips the client's supplied value. */
-export function networkSubject(req: Request) {
+export async function networkSubject(req: Request) {
   const store = db();
-  store.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES('network-secret',?)").run(token());
-  const secret = (store.prepare("SELECT value FROM settings WHERE key='network-secret'").get() as { value: string }).value;
+  (await store.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES('network-secret',?)").run(token()));
+  const secret = ((await store.prepare("SELECT value FROM settings WHERE key='network-secret'").get()) as { value: string }).value;
   const header = process.env.OZ_TRUSTED_IP_HEADER;
   const address = header ? req.headers.get(header)?.slice(0, 200) ?? "shared" : "shared";
   // A conservative shared bucket is used when the hosting proxy is not configured.
   return `network:${createHmac("sha256", secret).update(`${Math.floor(Date.now() / DAY)}:${address}`).digest("hex")}`;
 }
-export function limitRequest(req: Request, action: "read" | "address" | "site" | "auth" | "download", account = session(req)) {
+export async function limitRequest(req: Request, action: "read" | "address" | "site" | "auth" | "download", account?: Awaited<ReturnType<typeof session>>) {
+  if (account === undefined) account = await session(req);
   const limits = { read: [300, 1200, 60_000], address: [10, 100, DAY], site: [2, 10, DAY], auth: [20, 20, 600_000], download: [10, 60, 60_000] } as const;
   const [publicLimit, memberLimit, window] = limits[action];
-  const network = networkSubject(req);
+  const network = (await networkSubject(req));
   const budgets: Budget[] = [{ subject: network, action, limit: action === "address" ? 300 : action === "site" ? 50 : memberLimit * 5, window }];
   if (account) budgets.push({ subject: account.id, action, limit: memberLimit, window });
   else budgets.push({ subject: network, action: `${action}:public`, limit: publicLimit, window });
-  consume(budgets);
+  (await consume(budgets));
 }

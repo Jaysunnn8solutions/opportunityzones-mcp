@@ -5,7 +5,7 @@ import { recordConsent, createMcpConnection } from "@/lib/access/consent";
 import { db, consume } from "@/lib/access/store";
 import { TERMS_VERSION } from "@/lib/content/siteTerms";
 
-beforeEach(() => db().exec("DELETE FROM consents; DELETE FROM usage; DELETE FROM mcp_events; DELETE FROM mcp_cooldowns; DELETE FROM mcp_leases; DELETE FROM settings WHERE key LIKE 'mcp-paused%';"));
+beforeEach(async () => (await db().exec("DELETE FROM consents; DELETE FROM usage; DELETE FROM mcp_events; DELETE FROM mcp_cooldowns; DELETE FROM mcp_leases; DELETE FROM settings WHERE key LIKE 'mcp-paused%';")));
 const request = (token?: string) => new Request("http://localhost:3000/mcp", {
   method: "POST",
   headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
@@ -15,7 +15,7 @@ describe("MCP consent boundary", () => {
   it("exposes the discovery challenge only to registered browser origins", async () => {
     vi.stubEnv("OZ_OAUTH_ENABLED", "1");
     try {
-      registerClient({ client_name: "Browser test", redirect_uris: ["https://chat.example/callback"] });
+      (await registerClient({ client_name: "Browser test", redirect_uris: ["https://chat.example/callback"] }));
       const req = request(); req.headers.set("Origin", "https://chat.example");
       const response = await POST(req);
       expect(response.status).toBe(401);
@@ -27,9 +27,9 @@ describe("MCP consent boundary", () => {
     } finally { vi.unstubAllEnvs(); }
   });
   it("advertises effective limits and returns bounded research tools through the real protocol", async () => {
-    db().prepare("INSERT OR IGNORE INTO accounts VALUES('protocol-test',?,?)").run(TERMS_VERSION, Date.now());
-    const token = createMcpConnection("protocol-test", "Protocol test").token;
-    const call = (method: string, params = {}) => POST(new Request("http://localhost:3000/mcp", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json, text/event-stream" }, body: JSON.stringify({ jsonrpc: "2.0", id: 2, method, params }) }));
+    (await db().prepare("INSERT OR IGNORE INTO accounts VALUES('protocol-test',?,?)").run(TERMS_VERSION, Date.now()));
+    const token = (await createMcpConnection("protocol-test", "Protocol test")).token;
+    const call = async (method: string, params = {}) => (await POST(new Request("http://localhost:3000/mcp", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json, text/event-stream" }, body: JSON.stringify({ jsonrpc: "2.0", id: 2, method, params }) })));
     const list = await (await call("tools/list")).text(); expect(list).toContain("preview_criteria"); expect(list).toContain("usage_status"); expect(list).toContain("get_uncertainty");
     const valid = await (await call("tools/call", { name: "get_data_coverage", arguments: { measure: "population", state: "10" } })).text();
     expect(valid).toContain("Data coverage"); expect(valid).toContain("Informational only");
@@ -39,19 +39,19 @@ describe("MCP consent boundary", () => {
   });
   it("rejects missing credentials and website receipts before handshake", async () => {
     expect((await POST(request())).status).toBe(401);
-    expect((await POST(request(recordConsent("web").token))).status).toBe(401);
+    expect((await POST(request((await recordConsent("web")).token))).status).toBe(401);
   });
   it("accepts a recorded MCP receipt for protocol initialization", async () => {
-    db().prepare("INSERT OR IGNORE INTO accounts(id,terms,created) VALUES('mcp-test',?,?)").run(TERMS_VERSION, Date.now());
-    const response = await POST(request(createMcpConnection("mcp-test", "Test app").token));
+    (await db().prepare("INSERT OR IGNORE INTO accounts(id,terms,created) VALUES('mcp-test',?,?)").run(TERMS_VERSION, Date.now()));
+    const response = await POST(request((await createMcpConnection("mcp-test", "Test app")).token));
     expect(response.status).toBe(200);
     expect(await response.text()).toContain("opportunityzones-mcp");
   });
   it("shares request limits across an account's tokens", async () => {
-    db().prepare("INSERT OR IGNORE INTO accounts(id,terms,created) VALUES('budget-test',?,?)").run(TERMS_VERSION, Date.now());
-    const first = createMcpConnection("budget-test", "One");
-    const second = createMcpConnection("budget-test", "Two");
-    consume([{ subject: "budget-test", action: "mcp-read", amount: 299, limit: 300, window: 60_000 }]);
+    (await db().prepare("INSERT OR IGNORE INTO accounts(id,terms,created) VALUES('budget-test',?,?)").run(TERMS_VERSION, Date.now()));
+    const first = (await createMcpConnection("budget-test", "One"));
+    const second = (await createMcpConnection("budget-test", "Two"));
+    (await consume([{ subject: "budget-test", action: "mcp-read", amount: 299, limit: 300, window: 60_000 }]));
     expect((await POST(request(first.token))).status).toBe(200);
     expect((await POST(request(second.token))).status).toBe(429);
   });
