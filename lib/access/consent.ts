@@ -1,6 +1,8 @@
+import { securityEvent } from "./securityEvents";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { TERMS_VERSION, DISCLAIMER_SECTIONS, TERMS_SECTIONS, PRIVACY_SECTIONS, LEGAL_OPERATOR } from "@/lib/content/siteTerms";
 import { cookie } from "./http";
+import { withMcpAllowance } from "./mcpAllowance";
 import { AccessError, DAY, db, transaction, checkBudgets, recordBudgets } from "./store";
 
 export const CONSENT_COOKIE = "oz_consent";
@@ -49,7 +51,7 @@ export async function createMcpConnection(account: string, label: string, replac
     const count = (await store.prepare("SELECT COUNT(*) AS n FROM mcp_connections c JOIN consents r ON r.hash=c.consent_hash WHERE c.account=? AND r.revoked=0 AND r.expires>?").get(account, now)) as { n: number };
     const replacingActive = previous && (await store.prepare("SELECT 1 FROM consents WHERE hash=? AND revoked=0 AND expires>?").get(previous.consent_hash, now));
     if (count.n - (replacingActive ? 1 : 0) >= 5) throw new AccessError("You can have five active MCP connections. Revoke one before creating another.", 409);
-    const budgets = [{ subject: account, action: "mcp-issue", limit: 10, window: DAY }];
+    const budgets = await withMcpAllowance([{ subject: account, action: "mcp-issue", limit: 10, window: DAY }], account, now);
     (await checkBudgets(store, budgets, now));
     const id = replace ?? randomUUID(), raw = randomBytes(32).toString("base64url"), digest = hash(raw), expires = now + Math.min(30 * DAY, Math.max(60_000, lifetime));
     (await store.prepare("INSERT OR IGNORE INTO consent_documents(digest,version,document) VALUES(?,?,?)").run(CONSENT_DIGEST, TERMS_VERSION, document));
@@ -59,6 +61,7 @@ export async function createMcpConnection(account: string, label: string, replac
       (await store.prepare("UPDATE mcp_connections SET consent_hash=?,label=?,last_used=NULL WHERE id=? AND account=?").run(digest, label.trim(), id, account));
     } else (await store.prepare("INSERT INTO mcp_connections(id,account,label,consent_hash,created) VALUES(?,?,?,?,?)").run(id, account, label.trim(), digest, now));
     (await recordBudgets(store, budgets, now));
+    await securityEvent(account, "mcp-created", now);
     return { id, token: raw, expires, version: TERMS_VERSION };
   }));
 }

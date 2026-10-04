@@ -25,6 +25,7 @@ import { useResearchState } from "./ResearchSession";
 import { researchFlagsAllowed, RESEARCH_SCOPE_NOTICE } from "@/lib/oz/researchScope";
 import { legendFilters, withLayerVisibility, type LegendItem } from "@/lib/geo/mapLayerVisibility";
 import MapLegendItem from "./MapLayerControls";
+import { readPreferences } from "./DevicePreferences";
 
 /** Tracts from this zoom when outlines come per tile from TIGERweb (the fallback). */
 const TILE_TRACT_MIN_ZOOM = 8;
@@ -397,7 +398,7 @@ export default function MapApp({ view, focus, matches, onSelect, viewControls }:
       const g = e.features?.[0]?.properties?.GEOID;
       if (typeof g === "string") void selectTract(g);
     });
-    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: Math.max(map.getZoom(), tractMinZoomFor(boundaryIndex.current)) + 1, duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 350 }));
+    map.on("click", "county-fill", (e: MapMouseEvent) => map.easeTo({ center: e.lngLat, zoom: Math.max(map.getZoom(), tractMinZoomFor(boundaryIndex.current)) + 1, duration: readPreferences().reducedMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 350 }));
     return () => {
       map.remove();
       mapRef.current = null;

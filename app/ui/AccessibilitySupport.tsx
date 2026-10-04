@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import { applyPreferences } from "./DevicePreferences";
 
 /** Keep focused controls and fragment destinations below the wrapping sticky notice. */
 export default function AccessibilitySupport() {
+  useEffect(() => {
+    applyPreferences();
+    window.addEventListener("oz-preferences-changed", applyPreferences); window.addEventListener("storage", applyPreferences);
+    return () => { window.removeEventListener("oz-preferences-changed", applyPreferences); window.removeEventListener("storage", applyPreferences); };
+  }, []);
   useEffect(() => {
     const notice = document.querySelector(".disclaimer");
     if (!notice) return;

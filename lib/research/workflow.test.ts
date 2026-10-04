@@ -9,6 +9,7 @@ import { TERMS_VERSION } from "@/lib/content/siteTerms";
 import { comparePlacesHandler } from "@/lib/tools/researchAccess";
 import { loadTractData } from "@/lib/data/tracts";
 import { entryReturnDestination } from "@/lib/client/termsConsent";
+import { browserAllowance } from "@/lib/access/browserAllowance";
 
 describe("bounded export samples and exact research handoffs", () => {
   it("preserves public research fragments through consent without permitting external redirects", () => {
@@ -23,7 +24,8 @@ describe("bounded export samples and exact research handoffs", () => {
     (await db().prepare("INSERT INTO sessions VALUES(?,?,?,?)").run(hashToken(token), id, Date.now() + DAY, Date.now()));
     const geoids = loadTractData().payload.geoids.filter((g) => g.startsWith("01") && canResearchTract(g)).slice(0, 4);
     const input = { geoids, columns: ["population", "median_household_income"], format: "json" as const };
-    const response = await POST(new Request("http://localhost:3000/api/exports", { method: "POST", headers: { Origin: "http://localhost:3000", Cookie: `oz_session=${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ preview: true, input }) }));
+    const browser = await browserAllowance(new Request("http://localhost:3000/api/account"), true);
+    const response = await POST(new Request("http://localhost:3000/api/exports", { method: "POST", headers: { Origin: "http://localhost:3000", Cookie: `oz_session=${token}; ${browser.cookie.split(";")[0]}`, "Content-Type": "application/json" }, body: JSON.stringify({ preview: true, input }) }));
     expect(response.status).toBe(200);
     const preview = await response.json();
     const file = JSON.parse(buildExport(input, prepareExport(input)).body.toString());

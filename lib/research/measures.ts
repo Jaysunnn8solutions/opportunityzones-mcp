@@ -27,21 +27,39 @@ export const DEFAULT_MEASURES: MeasureKey[] = [...FOCUSES.overview.measures];
 export function selectedMeasures(keys: string[]) { return MEASURES.filter((m) => keys.includes(m.column)); }
 export function sourceFor(profile: PlaceProfile, key: string) { const id = profile.measures[key]?.source; return id ? profile.sources?.[id] : undefined; }
 
-/** Factual ranges only. No composite score or preference direction. */
-export function differences(profiles: PlaceProfile[], keys: string[]): string[] {
-  if (profiles.length < 2) return [];
-  return selectedMeasures(keys).map((measure) => {
-    const entries = profiles.map((p) => ({ id: p.geoid, value: p.measures[measure.column]?.value, source: sourceFor(p, measure.column) }));
-    if (entries.some((e) => e.value == null)) return `${measure.label}: comparison incomplete; one or more places have no published value.`;
-    const vintages = new Set(entries.map((e) => e.source?.vintage).filter(Boolean));
-    if (vintages.size > 1) return `${measure.label}: source vintages differ; review the sources before comparing.`;
-    entries.sort((a, b) => a.value! - b.value!);
-    const low = entries[0], high = entries[entries.length - 1];
-    const lo = displayValue(low.value, measure.unit), hi = displayValue(high.value, measure.unit);
-    if (lo === hi) return `${measure.label}: all selected tracts display ${lo} at this precision.`;
-    const gap = measure.unit === "pct" ? `${((high.value! - low.value!) * 100).toFixed(1)} percentage points` : displayValue(high.value! - low.value!, measure.unit);
-    return `${measure.label}: ${lo} in tract ${low.id} to ${hi} in tract ${high.id}; a displayed range of ${gap}.`;
-  });
+/** Describe the selection, without ranking places or pooling medians/rates. */
+export function comparisonOverview(profiles: PlaceProfile[], keys: string[]) {
+  const tracts = [...new Map(profiles.map((profile) => [profile.geoid, profile])).values()];
+  const statistics = selectedMeasures(keys)
+    // A margin of error is uncertainty, not an additive housing count.
+    .filter((measure) => measure.column !== "built_2020_or_later_moe")
+    .map((measure) => {
+      const entries = tracts.flatMap((profile) => {
+        const value = profile.measures[measure.column]?.value;
+        return typeof value === "number" && Number.isFinite(value)
+          ? [{ value, source: sourceFor(profile, measure.column) }] : [];
+      });
+      const partial = entries.length < tracts.length;
+      const method = measure.unit === "count" ? (partial ? "Partial total" : "Total")
+        : measure.unit === "usd" ? "Median of tract medians" : "Median tract rate";
+      const base = { key: measure.column, label: measure.label, unit: measure.unit, method,
+        available: entries.length, total: tracts.length, partial };
+      if (!entries.length) return { ...base, value: null, source: undefined, reason: "No published values in this selection." };
+      if (entries.some(({ source }) => !source?.vintage || !source.name || !source.publisher || !source.geography)) {
+        return { ...base, value: null, source: undefined, reason: "Source metadata is incomplete; summary withheld." };
+      }
+      const sources = new Set(entries.map(({ source }) => JSON.stringify([source!.name, source!.publisher, source!.vintage, source!.geography])));
+      if (sources.size > 1) return { ...base, value: null, source: undefined, reason: "Sources, years, or geographies differ; summary withheld." };
+      const values = entries.map(({ value }) => value).sort((a, b) => a - b);
+      const middle = Math.floor(values.length / 2);
+      const value = measure.unit === "count" ? values.reduce((sum, item) => sum + item, 0)
+        : values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
+      return { ...base, value, source: entries[0].source, reason: undefined };
+    });
+  return { tractCount: tracts.length,
+    countyCount: new Set(tracts.map((profile) => profile.geoid.slice(0, 5))).size,
+    stateCount: new Set(tracts.map((profile) => profile.geoid.slice(0, 2))).size,
+    statistics };
 }
 
 export function placeNarrative(profile: PlaceProfile, focus: Focus) {

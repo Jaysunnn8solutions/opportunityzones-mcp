@@ -1,8 +1,8 @@
 name: CI
 
 # Type-check, lint, test and build on every pull request and every push to
-# main. Needs no secrets: tests use recorded fixtures and the committed data/,
-# and never touch the network.
+# main. Needs no secrets: tests use fixtures and committed data/.
+# Dependency installation/advisory checks use the free public npm registry.
 on:
   push:
     branches: [main]
@@ -21,7 +21,4 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run type-check
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
+      - run: npm run release:build

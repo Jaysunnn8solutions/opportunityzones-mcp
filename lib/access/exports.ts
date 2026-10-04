@@ -1,3 +1,4 @@
+import { requireService } from "./serviceControl";
 import { createHash } from "node:crypto";
 import { zipSync, strToU8 } from "fflate";
 import { csvCell, DISCLAIMER, RESEARCH_NOTICE } from "@/lib/client/presentation";
@@ -9,6 +10,7 @@ import { MEASURES } from "@/lib/research/measures";
 import { parseResearchFile } from "@/lib/research/file";
 import { authorizeFilters, searchRows } from "./search";
 import { AccessError, DAY, checkBudgets, db, prune, recordBudgets, transaction } from "./store";
+import { EXPORT_ALLOWANCES } from "./allowance";
 
 export const EXPORT_COLUMNS = MEASURES.map((m) => m.column);
 export const csv = (rows: unknown[][]) => "\uFEFF" + rows.map((r) => r.map(csvCell).join(",")).join("\r\n");
@@ -73,15 +75,14 @@ export function buildExport(input: ExportInput, prepared: ReturnType<typeof prep
   if (Object.values(files).reduce((sum, bytes) => sum + bytes.length, 0) > 10_000_000) throw new AccessError("This export exceeds 10 MB. Select fewer rows or columns.", 400);
   return { body: Buffer.from(zipSync(files)), filename: input.dictionaryOnly ? "research-dictionary.zip" : "area-research.zip", mime: "application/zip", rows: rows.length };
 }
-export function exportBudgets(account: string, rows: number, research: boolean) {
-  return research ? [{ subject: account, action: "research-files", limit: 20, window: DAY }] : [
-    { subject: account, action: "exports", limit: 3, window: DAY }, { subject: account, action: "exports", limit: 10, window: 30 * DAY },
-    { subject: account, action: "export-rows", amount: rows, limit: 1000, window: DAY }, { subject: account, action: "export-rows", amount: rows, limit: 5000, window: 30 * DAY },
-  ];
+export function exportBudgets(account: string, rows: number, research: boolean, browser?: string) {
+  return [account, ...(browser ? [browser] : [])].flatMap((subject) => research
+    ? [{ subject, action: "research-files", limit: 20, window: DAY, amount: 1 }]
+    : EXPORT_ALLOWANCES.map((rule) => ({ subject, action: rule.action, limit: rule.limit, window: rule.window, amount: rule.action === "export-rows" ? rows : 1 })));
 }
 /** Synchronous bounded generation under a transaction serializes reservations across local server processes. */
-export async function generateExport(account: string, id: string, input: ExportInput) {
-  if (process.env.OZ_EXPORTS_PAUSED === "1") throw new AccessError("Research downloads are temporarily paused. Your selections are preserved.", 503);
+export async function generateExport(account: string, id: string, input: ExportInput, browser?: string) {
+  await requireService("exports");
   if (!/^[\w-]{16,80}$/.test(id)) throw new AccessError("A valid retry identifier is required.", 400);
   // Invalidate old retry artifacts created under the previous all-tract scope.
   const fingerprint = createHash("sha256").update("oz-scope-v1:" + JSON.stringify(input)).digest("hex");
@@ -92,7 +93,7 @@ export async function generateExport(account: string, id: string, input: ExportI
     const existing = (await store.prepare("SELECT * FROM exports WHERE id=?").get(id)) as { account: string; fingerprint: string; body: Uint8Array; filename: string; mime: string } | undefined;
     if (existing) { if (existing.account !== account || existing.fingerprint !== fingerprint) throw new AccessError("This retry identifier belongs to another request.", 409); return existing; }
     const prepared = prepareExport(input);
-    const budgets = exportBudgets(account, prepared.research ? 0 : prepared.geoids.length, !!prepared.research);
+    const budgets = exportBudgets(account, prepared.research ? 0 : prepared.geoids.length, !!prepared.research, browser);
     (await checkBudgets(store, budgets, now));
     (await checkBudgets(store, [{ subject: "service", action: "exports", limit: 100, window: DAY }], now));
     const result = buildExport(input, prepared);

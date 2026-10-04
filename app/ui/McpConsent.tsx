@@ -16,6 +16,8 @@ export default function McpConsent() {
   const [revealed, setRevealed] = useState(false);
   const [listing, setListing] = useState<{ owner?: string; connections: McpConnectionSummary[] } | null>(null);
   const [message, setMessage] = useState("");
+  const [endpoint, setEndpoint] = useState("/mcp");
+  useEffect(() => { const frame = requestAnimationFrame(() => setEndpoint(`${window.location.origin}/mcp`)); return () => cancelAnimationFrame(frame); }, []);
   const checkbox = useRef<HTMLInputElement>(null);
   const submit = useRef<HTMLButtonElement>(null);
   const connections = account.member && listing && listing.owner === account.id ? listing.connections : [];
@@ -69,6 +71,7 @@ export default function McpConsent() {
   }
   return <section className="mcp-consent" aria-labelledby="mcp-consent-heading">
     <h2 id="mcp-consent-heading">Connected apps / MCP</h2>
+    <div className="connection-guide"><h3>Connect your chat app</h3><ol><li>Create a named connection below and save the token privately.</li><li>In your chat app’s MCP settings, choose a remote HTTP server and use this address: <code>{endpoint}</code> <button type="button" className="link" onClick={async () => { try { await navigator.clipboard.writeText(endpoint); setMessage("MCP server address copied."); } catch { setMessage("Copy unavailable. Select the server address and copy it manually."); } }}>Copy server address</button>.</li><li>If the client supports a private bearer-token setting, enter the token there. If it only offers browser sign-in, follow the <Link href="/use-with-claude">supported connection instructions</Link>; do not put tokens in chat messages.</li><li>Ask your chat app to run <code>usage_status</code> to confirm the full connection.</li></ol><p><strong>Permissions:</strong> bounded, read-only place research. Connections cannot change your account or automatically download files.</p></div>
     <p>A free research account is required to create and manage MCP connections. Each token permits limited informational research. We record your account identifier, connection, terms version and document fingerprint, acceptance time, expiration, and last-used time. We do not record your questions or tool arguments.</p>
     <form onSubmit={(event) => { event.preventDefault(); void issue(); }}>
       <label className="scope-field">Connection name<input value={label} maxLength={60} required disabled={busy} onChange={(event) => setLabel(event.target.value)} autoComplete="off" /></label>
@@ -90,6 +93,7 @@ export default function McpConsent() {
       {connections.length ? <ul className="mcp-connection-list">{connections.map((connection) => <li className="lab-card" key={connection.id}>
         <h4>{connection.label} · {connection.status.replace("-", " ")}</h4>
         <dl><dt>Created</dt><dd>{date(connection.created)}</dd><dt>Terms accepted</dt><dd>{date(connection.accepted)} · {connection.version}</dd><dt>Expires</dt><dd>{date(connection.expires)}</dd><dt>Last used</dt><dd>{connection.lastUsed ? date(connection.lastUsed) : "Not yet used"}</dd></dl>
+        <p><strong>Permissions:</strong> Read-only research · shared account limits</p><button type="button" className="button secondary" disabled={busy} onClick={async () => { setBusy(true); setMessage(""); try { const result = await action({ action: "test", id: connection.id }); setMessage(result.message); await refresh(); } catch (error) { setMessage(error instanceof Error ? error.message : "Connection check unavailable."); } finally { setBusy(false); } }}>Test connection</button>
         <details><summary>Acceptance record</summary><p>Connection ID: <code>{connection.id}</code></p><p>Accepted document fingerprint: <code style={{ overflowWrap: "anywhere" }}>{connection.digest}</code></p></details>
         <div className="answer-actions"><button type="button" className="button secondary" disabled={busy} onClick={() => { setReplace(connection.id); setLabel(connection.label); setAccepted(false); checkbox.current?.focus(); checkbox.current?.scrollIntoView({ block: "center" }); }}>Replace token</button><button type="button" className="button secondary" disabled={busy || connection.status === "revoked"} onClick={() => void revoke(connection.id)} aria-label={`Revoke ${connection.label}`}>Revoke connection</button></div>
       </li>)}</ul> : <p>{listing?.owner === account.id ? "No MCP connections yet." : "Loading connections…"}</p>}

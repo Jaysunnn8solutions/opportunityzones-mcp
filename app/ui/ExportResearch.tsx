@@ -7,6 +7,8 @@ import Link from "next/link";
 import { parseFilters } from "@/lib/explore/filter";
 import FieldSets from "./FieldSets";
 import { useResearchRecipe } from "./useResearchRecipe";
+import AccountUsage from "./AccountUsage";
+import { readPreferences } from "./DevicePreferences";
 
 type ExportProps = { input: ExportInput; label?: string; disabled?: boolean; print?: boolean };
 export default function ExportResearch(props: ExportProps) {
@@ -17,8 +19,8 @@ function ExportDialog({ input, label = "Export research", disabled = false, prin
   const recipe = useResearchRecipe();
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
-  const [columns, setColumns] = useState<string[]>(input.columns ?? ["population", "median_household_income", "median_home_value"]);
-  const [format, setFormat] = useState<"zip" | "json">(input.format ?? "zip");
+  const [columns, setColumns] = useState<string[]>(() => input.columns ?? readPreferences().columns);
+  const [format, setFormat] = useState<"zip" | "json">(() => input.format ?? readPreferences().format);
   const [subset, setSubset] = useState(false);
   const [preview, setPreview] = useState<{ total: number; selected: number; version: string; missing: Record<string, number>; fields: number; sample?: { columns: Array<{ name: string; unit: string }>; rows: Record<string, unknown>[] }; allowance?: { available: boolean; message: string; resetsAt: string | null } } | null>(null);
   const [downloaded, setDownloaded] = useState(false);
@@ -30,8 +32,6 @@ function ExportDialog({ input, label = "Export research", disabled = false, prin
   const requestKey = JSON.stringify(requestInput);
   const [previewKey, setPreviewKey] = useState("");
   const validPreview = previewKey === requestKey && !!preview;
-  const usage = account.usage ?? [];
-  const used = (action: string, days: number) => usage.filter((entry) => entry.action === action && entry.at > (account.asOf ?? 0) - days * 86_400_000).reduce((sum, entry) => sum + entry.amount, 0);
   async function prepare() {
     setBusy(true); setMessage("");
     try {
@@ -66,7 +66,8 @@ function ExportDialog({ input, label = "Export research", disabled = false, prin
     {!settingsOnly && !input.dictionaryOnly && <p className="hint">The ZIP package includes report.html: an offline report with headings, labeled tables, and source links for keyboard and screen-reader use. Browser-generated PDFs have not been verified as tagged accessible PDFs.</p>}
     <p className="hint">Free account limits: 500 rows per file; 3 exports / 1,000 rows per rolling 24 hours; 10 exports / 5,000 rows per rolling 30 days. Dictionary downloads consume one export and zero rows. Settings-only research files have a separate limit of 20 per day.</p>
     {!account.member || !account.termsCurrent ? <><p>Sign in to download. You will return to this export with your fields and selections preserved. Nothing downloads automatically.</p><button type="button" className="button" onClick={() => { dialog.current?.close(); resumeAfterSignIn(() => dialog.current?.showModal()); }}>Free account / sign in</button></> : <>
-    {!settingsOnly && <p className="hint">Remaining allowance: {Math.max(0, 3 - used("exports", 1))} exports / {Math.max(0, 1000 - used("export-rows", 1))} rows in 24 hours; {Math.max(0, 10 - used("exports", 30))} exports / {Math.max(0, 5000 - used("export-rows", 30))} rows in 30 days. Shared service capacity also applies.</p>}
+    {!settingsOnly && <AccountUsage allowances={account.allowances} asOf={account.asOf} />}
+    {validPreview && preview && !settingsOnly && <p className="export-estimate"><strong>This new export uses 1 export and {preview.selected.toLocaleString("en-US")} rows.</strong> {preview.allowance?.available ? "It fits your current allowance." : "Review the allowance message before downloading."}</p>}
     {!settingsOnly && <><FieldSets onChange={setColumns} /><fieldset className="export-columns"><legend>Published measures</legend>{MEASURES.map((m) => <label key={m.column}><input type="checkbox" checked={columns.includes(m.column)} onChange={(event) => setColumns((current) => event.target.checked ? [...current, m.column] : current.filter((key) => key !== m.column))} />{m.label}</label>)}</fieldset><label className="scope-field">File format<select value={format} onChange={(e) => setFormat(e.target.value as "zip" | "json")}><option value="zip">CSV package with sources (.zip)</option><option value="json">Typed data and sources (.json)</option></select></label>{!input.dictionaryOnly && !input.geoids?.length && <label className="export-subset"><input type="checkbox" checked={subset} onChange={(e) => setSubset(e.target.checked)} />Explicitly select the first 500 matches in the current sort order (or all, if fewer).</label>}</>}
     <div className="answer-actions"><button type="button" className="button secondary" disabled={busy || (!settingsOnly && !columns.length)} onClick={() => void prepare()}>Preview export</button><button type="button" className="button" disabled={busy || !validPreview || (!preview?.selected && !input.dictionaryOnly) || (!settingsOnly && preview.selected > 500)} onClick={() => void download()}>{print ? "Print brief / save PDF" : "Download"}</button></div>
     {validPreview && preview && <div className="export-preview" role="status"><strong>{input.dictionaryOnly ? `Dictionary only · ${preview.fields} fields · no tract rows` : `${preview.selected.toLocaleString("en-US")} selected of ${preview.total.toLocaleString("en-US")} tracts${!settingsOnly ? ` · ${preview.fields} fields` : ""}`}</strong><p>Dataset version: {preview.version}</p>{preview.allowance && <p>{preview.allowance.message}{preview.allowance.resetsAt && ` Next capacity may be available ${new Date(preview.allowance.resetsAt).toLocaleString("en-US")}.`} Allowances are checked again at download time; exact prepared-file retries have a separate one-hour window.</p>}{!settingsOnly && preview.selected > 500 && <p>Narrow your criteria or explicitly select a subset before downloading.</p>}{Object.entries(preview.missing).some(([, count]) => count > 0) && <section><h3>Missing values</h3><ul>{Object.entries(preview.missing).map(([column, count]) => <li key={column}>{MEASURES.find((m) => m.column === column)?.label}: {count} unavailable</li>)}</ul></section>}</div>}

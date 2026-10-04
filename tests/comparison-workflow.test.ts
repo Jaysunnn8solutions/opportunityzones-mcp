@@ -28,6 +28,11 @@ it("shows all 25 tracts side by side, keeps data and selection controls visible,
   expect(table.querySelectorAll("thead th")).toHaveLength(26);
   expect(table.textContent).toContain("4,200");
   expect(table.textContent).toContain("Census · 2020–2024");
+  expect(host.querySelector('.comparison-overview')?.textContent).toContain('Your selection at a glance');
+  expect(host.querySelector('.comparison-overview')?.textContent).toContain('105,000');
+  expect(host.querySelector('.comparison-overview')?.textContent).toContain('25 of 25 tracts');
+  expect(host.querySelector('.comparison-overview')?.closest('details')).toBeNull();
+  expect(host.textContent).not.toContain('Differences in the published numbers');
   expect(host.querySelector('input[type="file"]')).toBeNull();
   expect(host.querySelector('.comparison-search')).toBeNull();
   expect(host.querySelector('.selection-chips')?.closest('details')).toBeNull();
@@ -36,8 +41,17 @@ it("shows all 25 tracts side by side, keeps data and selection controls visible,
   expect(JSON.parse(host.querySelector('[data-export]')!.getAttribute('data-export')!).geoids).toEqual(ids);
   await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Remove selected tract 13001000100"]')!.click()); await settle();
   expect(host.querySelectorAll('.comparison-table thead th')).toHaveLength(25);
+  expect(host.querySelector('.comparison-overview')?.textContent).toContain('100,800');
   await act(async () => [...host.querySelectorAll('button')].find((b) => b.textContent === 'Clear comparison list')!.click());
   expect(host.textContent).toContain('Your comparison is empty');
+  expect(host.querySelector('.comparison-overview')).toBeNull();
+});
+
+it("includes the same visible overview in the printable brief", async () => {
+  await act(async () => root.render(createElement(ResearchSession, null, createElement(Comparison, { brief: true })))); await settle();
+  const overview = host.querySelector('.comparison-overview')!;
+  expect(overview.textContent).toContain('105,000');
+  expect(overview.closest('.no-print, details')).toBeNull();
 });
 
 function EvidenceHarness() {

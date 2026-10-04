@@ -12,6 +12,7 @@ import "./globals.css";
 import { AccountAccess, AccountButton } from "./ui/AccountAccess";
 import ResearchTrail from "./ui/ResearchTrail";
 import AccessibilitySupport from "./ui/AccessibilitySupport";
+import ConnectionNotice from "./ui/ConnectionNotice";
 import ResearchBar from "./ui/ResearchBar";
 import { loadTractData } from "@/lib/data/tracts";
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <LegalAccess>
         <AccountAccess>
+        <ConnectionNotice />
         <header className="site-header">
           <div className="site-brand">
             <Link href="/">
@@ -56,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <p className="footer-independence">{INDEPENDENCE_NOTICE}</p>
           <p className="footer-reliance">{RELIANCE_NOTICE}</p>
           <nav className="resource-links" aria-label="Official government sources">{OFFICIAL_SOURCES.map((source) => <a key={source.url} href={source.url}>{source.name} · official information ↗</a>)}</nav>
-          <nav aria-label="Resources" className="resource-links"><Link href="/check">Check multiple properties</Link><Link href="/how-it-works">Program overview</Link><Link href="/rules">Rules & sources</Link><Link href="/funds">Fund research checklist</Link><Link href="/2018-zones">2018 zone research</Link><Link href="/use-with-claude">Research through chat / MCP</Link><Link href="/accessibility">Accessibility</Link><Link href="/legal">Disclaimer, terms & privacy</Link></nav>
+          <nav aria-label="Resources" className="resource-links"><Link href="/status">Service status</Link><Link href="/help">Help & data corrections</Link><Link href="/check">Check multiple properties</Link><Link href="/how-it-works">Program overview</Link><Link href="/rules">Rules & sources</Link><Link href="/funds">Fund research checklist</Link><Link href="/2018-zones">2018 zone research</Link><Link href="/use-with-claude">Research through chat / MCP</Link><Link href="/accessibility">Accessibility</Link><Link href="/legal">Disclaimer, terms & privacy</Link></nav>
           Basemap: OpenFreeMap, © OpenStreetMap contributors, or USGS The National Map. Boundaries: U.S. Census Bureau. Data: U.S.
           Treasury, Census Bureau, HUD, CDFI Fund, CFPB/FFIEC, EPA, FHWA, FEMA, USGS, USDA Forest Service, BLS, NCES, CMS; see each
           tract page for sources and vintages. Research stays in browser memory unless you explicitly save a project on this device. Saved projects include local notes and can be removed in the workbench.

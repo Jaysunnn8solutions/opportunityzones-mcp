@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { isPlaceResult, lookupPlace, type PlaceResult } from "@/lib/client/place";
 import { dateLabel, DISCLAIMER, displayValue } from "@/lib/client/presentation";
 import { filterDescription, filtersActive, NO_FILTERS, type Filters } from "@/lib/explore/filter";
-import { DEFAULT_MEASURES, FOCUSES, differences, placeNarrative, selectedMeasures, sourceFor, type Focus, type MeasureKey } from "@/lib/research/measures";
+import { FOCUSES, placeNarrative, selectedMeasures, sourceFor, type Focus, type MeasureKey } from "@/lib/research/measures";
 import { STATE_FIPS } from "@/lib/geo/states";
 import { useResearchState } from "./ResearchSession";
 import { PlaceReportLink } from "./ResearchActions";
@@ -15,6 +15,8 @@ import ExportResearch from "./ExportResearch";
 import { useAccount } from "./AccountAccess";
 import Badges from "./Badges";
 import ComparisonRows from "./ComparisonRows";
+import ComparisonOverview from "./ComparisonOverview";
+import { readPreferences } from "./DevicePreferences";
 
 export default function Comparison({ brief = false }: { brief?: boolean }) {
   const [ready, setReady] = useState(false);
@@ -31,7 +33,7 @@ function ResearchWorkspace({ brief }: { brief: boolean }) {
   });
   const [selected, setSelected] = useResearchState<string[]>(brief ? "brief-tracts" : "comparison", initialSelection.ids);
   const [focus] = useResearchState<Focus>("research-focus", "overview");
-  const [keys, setKeys] = useResearchState<MeasureKey[]>("comparison-measures", DEFAULT_MEASURES);
+  const [keys, setKeys] = useResearchState<MeasureKey[]>("comparison-measures", () => readPreferences().columns);
   const [filters] = useResearchState<Filters>("explore-filters", NO_FILTERS);
   const [scope] = useResearchState("explore-state", "");
   const [places, setPlaces] = useState<Record<string, PlaceResult | null>>({});
@@ -41,12 +43,11 @@ function ResearchWorkspace({ brief }: { brief: boolean }) {
   const [loadedKey, setLoadedKey] = useState("");
   const loading = requestKey !== loadedKey;
   const message = initialSelection.error;
-  const [rowsView, setRowsView] = useState(brief && selected.length > 4);
+  const [rowsView, setRowsView] = useState(() => readPreferences().orientation === "rows" || (brief && selected.length > 4));
   const measures = selectedMeasures(keys);
   const profiles = selected.flatMap((id) => places[id] ? [places[id]!.profile] : []);
   const scopeLabel = profiles.find((p) => p.geoid.startsWith(scope))?.state ?? Object.entries(STATE_FIPS).find(([, fips]) => fips === scope)?.[0] ?? "Selected state";
   const complete = !loading && profiles.length === selected.length;
-  const summary = complete ? differences(profiles, keys) : [];
   const criteria = filtersActive(filters) ? filterDescription(filters) : "No screening criteria selected";
   const criteriaKey = JSON.stringify({ scope, filters });
   const [evidenceState, setEvidenceState] = useState<Record<string, string>>({});
@@ -88,8 +89,8 @@ function ResearchWorkspace({ brief }: { brief: boolean }) {
         <tr><th scope="row">Dataset built</th>{permitted.map((id) => <td key={id}>{dateLabel(places[id]?.profile.publishedAt)}</td>)}</tr>
         <tr className="no-print"><th scope="row">Evidence</th>{permitted.map((id) => <td key={id}>{places[id] && <PlaceReportLink place={places[id]!} from={brief ? "/brief" : "/compare"}>Full report</PlaceReportLink>}</td>)}</tr>
       </tbody></table>}</div>
+      {complete && <ComparisonOverview profiles={profiles} keys={keys} />}
       <section id="comparison-measures" className="no-print" tabIndex={-1}><h2>Displayed measures</h2><ResearchControls customize /></section>
-      {summary.length > 0 && <section className="comparison-differences"><p className="eyebrow">What changes between places</p><h2>Differences in the published numbers</h2><ul>{summary.map((line) => <li key={line}>{line}</li>)}</ul><p className="hint">These are descriptive differences. Statistical uncertainty has not been assessed, and higher or lower does not mean better.</p></section>}
       {complete && filtersActive(filters) && <section><h2>Criteria evidence</h2><p>{criteria}{scope ? ` · Search within ${scopeLabel}` : " · Nationwide criteria"}</p>{permitted.map((id) => <article className="brief-evidence" key={id}><h3>Tract {id}</h3><ResearchEvidence geoid={id} onResolved={brief ? evidenceResolved : undefined} /></article>)}</section>}
       {brief && <section className="brief-questions"><h2>Questions this screening leaves open</h2><ul><li>Has a newer certified designation or source release been published?</li><li>Does the exact property fall within the relevant tract boundary and zone vintage?</li><li>What do local zoning, infrastructure, building condition, and site records establish?</li><li>Which fund, business, or property requirements would need separate verification?</li></ul><p>Site hazards and live address-level lookups are not included in this tract brief. Open the place report to research those sources.</p></section>}
       {brief && complete && <section><h2>Sources and data dates</h2>{Array.from(new Map(profiles.flatMap((p) => Object.entries(p.sources ?? {}))).entries()).filter(([id]) => profiles.some((p) => measures.some((m) => p.measures[m.column]?.source === id)) || ["oz2Eligible", "oz2Designated", "urbanAreas2020", "oz1Designated", "hudQct", "hudDda", "nmtcLic"].includes(id)).map(([id, s]) => <p className="brief-source" key={id}><a href={s.url}>{s.name}</a> · {s.publisher}<br /><small>{s.vintage} · {s.geography}</small><span className="print-source-url">{s.url}</span></p>)}</section>}

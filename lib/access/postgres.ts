@@ -2,6 +2,8 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { Pool, types } from "pg";
 import type { Parameters, Row, Store } from "./database";
 import { POSTGRES_SCHEMA } from "./postgresSchema";
+import { ACCOUNT_SCHEMA } from "./accountSchema";
+import { OPERATIONS_SCHEMA } from "./operationsSchema";
 
 /** Only application-owned SQL reaches this adapter; values remain bound parameters. */
 export function postgresSql(sql: string) {
@@ -65,6 +67,16 @@ export function createPostgresStore(pool: PostgresPool): Store {
         if (!version.rows.length) {
           await client.query(POSTGRES_SCHEMA);
           await client.query("INSERT INTO oz_schema_migrations VALUES (1, $1)", [Date.now()]);
+        }
+        const accountVersion = await client.query("SELECT version FROM oz_schema_migrations WHERE version=2");
+        if (!accountVersion.rows.length) {
+          await client.query(ACCOUNT_SCHEMA);
+          await client.query("INSERT INTO oz_schema_migrations VALUES (2, $1)", [Date.now()]);
+        }
+        const operationsVersion = await client.query("SELECT version FROM oz_schema_migrations WHERE version=3");
+        if (!operationsVersion.rows.length) {
+          await client.query(OPERATIONS_SCHEMA);
+          await client.query("INSERT INTO oz_schema_migrations VALUES (3, $1)", [Date.now()]);
         }
         await client.query("COMMIT");
       } catch (error) { await client.query("ROLLBACK").catch(() => {}); throw error; }

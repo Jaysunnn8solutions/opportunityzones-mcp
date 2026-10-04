@@ -10,7 +10,7 @@ function ratio(a: string, b: string) { const x = luminance(a), y = luminance(b);
 
 describe("core text color pairs", () => {
   const css = readFileSync(path.resolve(import.meta.dirname, "../app/globals.css"), "utf8");
-  const blocks = [...css.matchAll(/:root\s*\{([^}]+)\}/g)].slice(0, 2);
+  const blocks = [...css.matchAll(/:root[^{}]*\{([^}]+)\}/g)].filter((match) => match[1].includes("--ink:")).slice(0, 2);
   for (const [index, block] of blocks.entries()) {
     const colors = Object.fromEntries([...block[1].matchAll(/--([\w-]+):\s*(#[\da-f]{6})\s*;/gi)].map((match) => [match[1], match[2]]));
     it(`${index ? "dark" : "light"} theme text and primary buttons meet 4.5:1`, () => {

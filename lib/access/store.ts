@@ -4,6 +4,8 @@ import { dirname, resolve } from "node:path";
 
 import { sqliteStore, type Store } from "./database";
 import { postgresStore } from "./postgres";
+import { ACCOUNT_SCHEMA } from "./accountSchema";
+import { OPERATIONS_SCHEMA } from "./operationsSchema";
 
 export const DAY = 86_400_000;
 export class AccessError extends Error {
@@ -61,6 +63,8 @@ export function openStore(location: string) {
     CREATE TABLE IF NOT EXISTS oauth_codes (hash TEXT PRIMARY KEY, client TEXT NOT NULL REFERENCES oauth_clients(id), account TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE, redirect TEXT NOT NULL, challenge TEXT NOT NULL, resource TEXT NOT NULL, accepted INTEGER NOT NULL, version TEXT NOT NULL, digest TEXT NOT NULL, expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS oauth_access (hash TEXT PRIMARY KEY REFERENCES consents(hash) ON DELETE CASCADE, client TEXT NOT NULL REFERENCES oauth_clients(id), resource TEXT NOT NULL, scope TEXT NOT NULL);`);
   store.exec(`CREATE TRIGGER IF NOT EXISTS account_mcp_cleanup AFTER DELETE ON accounts BEGIN DELETE FROM mcp_events WHERE subject=OLD.id; DELETE FROM mcp_cooldowns WHERE subject=OLD.id; END;`);
+  store.exec(ACCOUNT_SCHEMA);
+  store.exec(OPERATIONS_SCHEMA);
   return sqliteStore(store);
 }
 export function transaction<T>(store: Store, run: () => T | Promise<T>): Promise<T> {
@@ -94,6 +98,10 @@ export async function prune(store: Store, now = Date.now()) {
   (await store.prepare("DELETE FROM usage WHERE at<?").run(now - 35 * DAY));
   (await store.prepare("DELETE FROM usage WHERE action IN ('read','read:public','mcp-read','auth','auth:public','download','download:public') AND at<?").run(now - 3_600_000));
   (await store.prepare("DELETE FROM usage WHERE subject LIKE 'network:%' AND at<?").run(now - 2 * DAY));
+  (await store.prepare("DELETE FROM usage WHERE subject LIKE 'browser:%' AND at<=?").run(now - 30 * DAY));
+  await store.prepare("DELETE FROM account_allowances WHERE expires<=?").run(now);
+  await store.prepare("DELETE FROM security_events WHERE at<?").run(now - 30 * DAY);
+  await store.prepare("DELETE FROM operator_audit WHERE at<?").run(now - 90 * DAY);
   (await store.prepare("DELETE FROM sessions WHERE expires<?").run(now));
   (await store.prepare("DELETE FROM challenges WHERE expires<?").run(now));
   (await store.prepare("DELETE FROM exports WHERE at<?").run(now - 3_600_000));

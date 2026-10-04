@@ -18,6 +18,9 @@ export function ResearchSession({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Remove the previous version's persisted guide; never read personal answers from it.
     try { window.sessionStorage.removeItem("oz-guided-check-v1"); } catch { /* Storage may be disabled. */ }
+    const clear = () => setRecords({});
+    window.addEventListener("research-clear", clear);
+    return () => window.removeEventListener("research-clear", clear);
   }, []);
   const value = useMemo(() => ({ records, update }), [records, update]);
   return <Context.Provider value={value}>{children}</Context.Provider>;

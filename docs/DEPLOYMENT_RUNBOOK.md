@@ -29,6 +29,8 @@ Firebase Hosting plus Cloud Run is not a fit under the current rule: dynamic Clo
 
 ## Release preparation
 
+Use [Operations and recovery](OPERATIONS_AND_RECOVERY.md) for the operator allowlist, verified proxy flag, MCP quota continuity, privacy retention, and restored-credential quarantine. `npm run release:build` is now the CI and repository Vercel build command; it enforces the automated gates. Remaining deployed/device checks are listed separately and are not marked complete by a local build.
+
 1. Run `npm ci`, `npm test`, `npm run type-check`, `npm run lint`, `npm run build`, and `npm run release:audit` on the exact candidate. Review `.runtime/release-audit.json` privately; it contains public data fingerprints and completeness findings, not secrets.
 2. Resolve deployment blockers and owner decisions in `PRE_LAUNCH_CHECKLIST.md`. Confirm accurate operator/contact disclosures and review document accuracy. Paid attorney review has been declined by the owner; professional review remains an optional precaution and legal sufficiency is unverified. No automated check establishes legal compliance.
 3. Keep the published data, dependency lockfile, source registry, legal captures, and their reviewed fingerprints together. Re-run the audit after a source update; unexpected columns, publisher URLs, licenses, control characters, or instruction-like source additions require human review. Do not publish an unreviewed refresh over the prior working release.
@@ -40,7 +42,28 @@ Firebase Hosting plus Cloud Run is not a fit under the current rule: dynamic Clo
 
 ### Repeatable local production check
 
-After building, run `npm run release:smoke`. It launches the built server on an unused loopback port with a unique private test database, checks 21 public/protected HTTP behaviors, then stops its child server and removes that test directory. It never accepts terms, creates accounts, calls data providers, or uses the operator's access database. Evidence is saved in `.runtime/release-smoke.json` only after success. This checks the Next.js boundary locally; repeat deployment-specific verification through the actual HTTPS proxy/CDN before launch.
+After building, run `npm run release:smoke`. It launches the built server on an unused loopback port with a unique private test database, checks 25 public/protected HTTP behaviors, then stops its child server and removes that test directory. It never accepts terms, creates accounts, calls data providers, or uses the operator's access database. Evidence is saved in `.runtime/release-smoke.json` only after success. This checks the Next.js boundary locally; repeat deployment-specific verification through the actual HTTPS proxy/CDN before launch.
+
+## Download allowance abuse controls
+
+My account and the export dialog show server-calculated usage, limits, remaining amounts, and the first expiration time for both rolling windows. Account and signed-browser allowances are checked together during previews and atomically during generation. Exact prepared-file retries are charged only once. Browser counts can include earlier accounts used in that browser; the stricter allowance applies.
+
+The `oz_allowance` HttpOnly cookie is signed with a database-held random secret and renewed for 30 days during account use. Only its identifier hash, operation, time, and amount appear in the separate usage ledger. Deletion transfers any outstanding account download counts to that browser ledger, then removes account-linked records. Browser events expire 30 days after the original event, during routine pruning. No schema migration or extra environment secret is needed. Deploying this change updates the terms/privacy version and requires renewed acceptance.
+
+Signup is capped at 100 service-wide per rolling day. When `OZ_TRUSTED_IP_HEADER` is verified and configured at a proxy that replaces client-supplied copies, a daily-rotating network identifier also caps signups at five within that identifier's lifetime. Do not trust arbitrary forwarded headers. Without that configuration only the global signup cap applies. Shared households/offices can encounter the network cap.
+
+These are abuse deterrents, not one-person identity verification: clearing browser data, changing browsers, and changing networks can evade individual controls. Shared export capacity and the existing request limits remain independent of account deletion. This change does not carry account-specific MCP call/row allowances across deletion; MCP still has its existing network and service controls.
+
+Before release, verify deletion/recreation with the browser cookie intact, retained monthly row limits, forged-cookie rejection, free same-file retries, and two simultaneous exports sharing the last slot. Confirm the trusted proxy configuration separately. Local tests cover both SQLite and offline PostgreSQL; deployment validation is still required.
+
+## October 3 account management update
+
+- Database migration 2 adds credential labels/dates, opaque session-management IDs, and account acceptance timestamps. It is additive and runs under the existing migration lock; existing accounts and credentials remain valid. Legacy dates stay null and appear as “Not recorded.” SQLite adds the same tables at initialization.
+- Renaming passkeys, revoking individual sessions, and downloading account records require recent authentication. Session-management IDs are separate from stored authentication-token hashes. Security metadata cascades when its parent credential/session/account is deleted. Account-record downloads exclude authentication secrets, prepared file bodies, and local research.
+- My account shows website and MCP usage separately. Recent files are listed only within the existing one-hour retention window; authenticated same-owner retries do not consume another export allowance and still use download request limits.
+- MCP “Test connection” checks account ownership, recorded token status, accepted terms, service pause/cooldown, and available account quotas. It makes no external/provider calls and does not verify the external chat client's transport configuration. Users finish testing by invoking `usage_status` from their chat client.
+- Device preferences use `oz-preferences-v1` local storage only after an explicit save. Clearing device research removes the saved-project key and current-tab research state, not authentication cookies or quota counters. Other tabs can retain unsaved research in memory.
+- Updated terms/privacy version is `2026-10-03.2`; deploy with renewed acceptance. Operator access requires `OZ_OPERATOR_ACCOUNT_IDS`; per-network protection requires a verified proxy configuration. No new service or paid API is used. Recheck live passkey prompts, downloads, and PostgreSQL migrations after deploying; local tests do not establish live availability.
 
 ## Bounded MCP operations
 

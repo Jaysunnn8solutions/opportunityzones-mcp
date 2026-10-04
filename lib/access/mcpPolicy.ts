@@ -4,6 +4,7 @@ import { z } from "zod";
 import { AccessError, checkBudgets, consume, DAY, db, prune, recordBudgets, transaction } from "./store";
 import { networkSubject } from "./http";
 import { DISCLAIMER, error } from "@/lib/tools/shared";
+import { mcpAllowanceSubject, withMcpAllowance } from "./mcpAllowance";
 
 export const MCP_LIMITS = { callsPerMinute: 60, callsPerDay: 500, rowsPerDay: 1000, bytesPerDay: 16 * 1024 * 1024, responseBytes: 128 * 1024, concurrentPerAccount: 2, concurrentGlobal: 8 } as const;
 export const mcpContext = new AsyncLocalStorage<{ account: string; network: string }>();
@@ -50,13 +51,13 @@ export async function acquireMcpWork(account: string, rows: number, now = Date.n
     (await db().prepare("DELETE FROM mcp_leases WHERE expires<=?").run(now));
     const active = (await db().prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN account=? THEN 1 ELSE 0 END) AS own FROM mcp_leases").get(account)) as { n: number; own: number };
     if (active.n >= MCP_LIMITS.concurrentGlobal || active.own >= MCP_LIMITS.concurrentPerAccount) throw new AccessError("MCP is busy. Wait for the current research to finish.", 429, 5);
-    const budgets = [
+    const budgets = await withMcpAllowance([
       { subject: account, action: "mcp-calls", limit: MCP_LIMITS.callsPerMinute, window: 60_000 },
       { subject: account, action: "mcp-calls", limit: MCP_LIMITS.callsPerDay, window: DAY },
       { subject: account, action: "mcp-rows", amount: rows, limit: MCP_LIMITS.rowsPerDay, window: DAY },
       { subject: "mcp-service", action: "mcp-calls", limit: 20_000, window: DAY },
       { subject: "mcp-service", action: "mcp-rows", amount: rows, limit: 50_000, window: DAY },
-    ];
+    ], account, now);
     (await checkBudgets(db(), budgets, now)); (await recordBudgets(db(), budgets, now));
     const id = randomUUID(); (await db().prepare("INSERT INTO mcp_leases VALUES(?,?,?)").run(id, account, now + 30_000)); return id;
   }));
@@ -65,8 +66,12 @@ export async function releaseMcpWork(id: string) { (await db().prepare("DELETE F
 export async function usageStatus(account: string, now = Date.now()) {
   const budgets = [["mcp-calls", MCP_LIMITS.callsPerDay], ["mcp-rows", MCP_LIMITS.rowsPerDay], ["mcp-bytes", MCP_LIMITS.bytesPerDay]] as const;
   return Promise.all(budgets.map(async ([name, limit]) => {
-    const events = (await db().prepare("SELECT at,amount FROM usage WHERE subject=? AND action=? AND at>? ORDER BY at").all(account, name, now - DAY)) as Array<{ at: number; amount: number }>;
-    const used = events.reduce((sum, item) => sum + item.amount, 0);
+    const subject = await mcpAllowanceSubject(account, now);
+    const read = async (s: string) => await db().prepare("SELECT at,amount FROM usage WHERE subject=? AND action=? AND at>? ORDER BY at").all(s, name, now - DAY) as Array<{ at: number; amount: number }>;
+    const own = await read(account), browser = subject ? await read(subject) : [];
+    const total = (items: typeof own) => items.reduce((sum, item) => sum + item.amount, 0);
+    const events = total(browser) > total(own) ? browser : own;
+    const used = total(events);
     return { name, limit, used, remaining: Math.max(0, limit - used), nextReleaseAt: events.length ? new Date(events[0].at + DAY).toISOString() : null, windowHours: 24 };
   }));
 }
@@ -85,7 +90,7 @@ export async function protectedMcpTool(name: string, rows: number, run: () => un
     if (bytes > MCP_LIMITS.responseBytes || !output.data.content.every((item) => item.text.includes(DISCLAIMER))) {
       (await mcpEvent("mcp-service", "invalid-output")); return error("This result exceeds the supported response size or format. Narrow the request.");
     }
-    (await consume([{ subject: context.account, action: "mcp-bytes", amount: bytes, limit: MCP_LIMITS.bytesPerDay, window: DAY }, { subject: "mcp-service", action: "mcp-bytes", amount: bytes, limit: 128 * 1024 * 1024, window: DAY }]));
+    (await consume(await withMcpAllowance([{ subject: context.account, action: "mcp-bytes", amount: bytes, limit: MCP_LIMITS.bytesPerDay, window: DAY }, { subject: "mcp-service", action: "mcp-bytes", amount: bytes, limit: 128 * 1024 * 1024, window: DAY }], context.account)));
     return output.data;
   } catch (reason) {
     if (reason instanceof AccessError) return { ...error(reason.message), structuredContent: { error: "research_limit", retryAfter: reason.retryAfter, disclaimer: DISCLAIMER } };

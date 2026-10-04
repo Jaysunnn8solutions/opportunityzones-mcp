@@ -47,7 +47,13 @@ try {
     await delay(250);
   }
   assert(ready && !exited, "Isolated production server must start");
-  for (const route of ["/entry", "/entry/agreement", "/legal", "/account"]) await check(`Public ${route}`, route, 200);
+  for (const route of ["/entry", "/entry/agreement", "/legal", "/account", "/status", "/help"]) await check(`Public ${route}`, route, 200);
+  const serviceStatus = await check("Public service status", "/api/status", 200);
+  const serviceBody = await serviceStatus.json();
+  assert.equal(serviceBody.database, "reachable");
+  assert.equal(serviceBody.services.signup, "paused");
+  for (const key of ["accounts", "usage", "proxy", "audit", "storage"]) assert.equal(key in serviceBody, false);
+  await check("Anonymous operator denied", "/api/operator", 401, undefined, true);
   const consent = await check("No implicit consent", "/api/consent", 200);
   const initial = await consent.json();
   assert.equal(initial.accepted, false);

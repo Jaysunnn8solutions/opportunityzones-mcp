@@ -5,6 +5,7 @@ import states from "@/lib/content/entryMap.json";
 import scenes from "@/lib/content/entryTracts.json";
 import censusFacts from "@/lib/content/entryTractFacts.json";
 import censusGrowth from "@/lib/content/entryTractGrowth.json";
+import { readPreferences, usePreferences } from "./DevicePreferences";
 
 const tractFacts: Record<string, { county: string; population: number | null; medianHouseholdIncome: number | null }> = censusFacts.tracts;
 const countFormat = new Intl.NumberFormat("en-US");
@@ -24,7 +25,7 @@ function PointerHalo() {
     let frame = 0;
     function hide() { cancelAnimationFrame(frame); halo!.style.opacity = "0"; }
     function move(event: PointerEvent) {
-      if (!motion.matches || event.pointerType === "touch" || !(event.target instanceof Node) || !halo!.closest(".entry-screen")?.contains(event.target)) { hide(); return; }
+      if (readPreferences().reducedMotion || !motion.matches || event.pointerType === "touch" || !(event.target instanceof Node) || !halo!.closest(".entry-screen")?.contains(event.target)) { hide(); return; }
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => { halo!.style.transform = `translate3d(${event.clientX - 16}px, ${event.clientY - 16}px, 0)`; halo!.style.opacity = "1"; });
     }
@@ -36,6 +37,7 @@ function PointerHalo() {
 }
 
 export default function EntryAtmosphere() {
+  const preferences = usePreferences();
   const [paused, setPaused] = useState(false);
   const [inactive, setInactive] = useState(false);
   const backdrop = useRef<HTMLDivElement>(null);
@@ -64,7 +66,7 @@ export default function EntryAtmosphere() {
   } as CSSProperties;
   return <>
     <PointerHalo />
-    <div ref={backdrop} className={`entry-atmosphere${paused || inactive ? " is-paused" : ""}`} aria-hidden="true">
+    <div ref={backdrop} className={`entry-atmosphere${paused || inactive || preferences.reducedMotion ? " is-paused" : ""}`} aria-hidden="true">
       <div className="entry-atlas" style={cameraStyle}>
       <svg className="entry-atlas-definitions" width="0" height="0" fill="none" focusable="false">
         <defs>

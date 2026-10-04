@@ -1,3 +1,4 @@
+import { withMcpAllowance } from "@/lib/access/mcpAllowance";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { compareTractConfig, compareTractHandler } from "@/lib/tools/compareTract";
@@ -85,7 +86,7 @@ async function handlePost(req: Request) {
       const call = z.object({ name: z.string().max(80), arguments: z.record(z.string(), z.unknown()).optional(), _meta: z.record(z.string(), z.unknown()).optional() }).strict().safeParse(value.params);
       const definition = call.success ? hostedTools.get(call.data.name) : undefined;
       if (!call.success || !definition || !definition.config.inputSchema.safeParse(call.data.arguments ?? {}).success) { (await mcpEvent(subject, "invalid-tool")); return rpcError(value.id ?? null, -32602, "Choose an advertised tool and supported arguments. No request text was retained."); }
-    } else (await consume([{ subject: connection.account, action: "mcp-discovery", limit: 120, window: DAY }, { subject: "mcp-service", action: "mcp-discovery", limit: 4000, window: DAY }]));
+    } else (await consume(await withMcpAllowance([{ subject: connection.account, action: "mcp-discovery", limit: 120, window: DAY }, { subject: "mcp-service", action: "mcp-discovery", limit: 4000, window: DAY }], connection.account)));
     (await markMcpConnectionUsed(connection.id));
     const forwarded = new Request(req.url, { method: "POST", headers: req.headers, body: JSON.stringify(value) });
     const response = await mcpContext.run({ account: connection.account, network }, () => handler(forwarded));

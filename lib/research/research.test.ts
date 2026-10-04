@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { PlaceProfile } from "@/lib/client/place";
-import { differences, placeNarrative } from "./measures";
+import { comparisonOverview, placeNarrative } from "./measures";
 import { parseResearchFile } from "./file";
 import { compileCriteria, criteriaDiagnostics, removeCriterion } from "@/lib/explore/evidence";
 import { matchingTracts, NO_FILTERS, type Filters } from "@/lib/explore/filter";
@@ -10,22 +10,52 @@ function profile(id: string, value: number | null, vintage = "2020–2024"): Pla
   return { geoid: id, state: "Georgia", county: "Test", rural: { treasury: null }, designation2027: { status: "pending", text: "Eligible; designation not recorded.", stateEligible: 10, stateCap: 2 }, measures: { poverty_rate: { value, source: "acs5" } }, sources: { acs5: { name: "ACS", publisher: "Census", geography: "tract", vintage, url: "https://www.census.gov/programs-surveys/acs" } } };
 }
 describe("descriptive research", () => {
-  it("compares shares in percentage points without a ranking", () => {
-    expect(differences([profile("13001000100", .2), profile("13001000200", .3)], ["poverty_rate"])[0]).toContain("10.0 percentage points");
+  it("reports the unweighted middle tract rate for odd and even selections", () => {
+    const profiles = [.1, .2, .6, .9].map((value, index) => profile(String(13001000100 + index), value));
+    expect(comparisonOverview(profiles, ["poverty_rate"]).statistics[0]).toMatchObject({ value: .4, method: "Median tract rate", available: 4, partial: false });
+    expect(comparisonOverview(profiles.slice(0, 3), ["poverty_rate"]).statistics[0].value).toBe(.2);
   });
   it("does not turn a missing value into zero", () => {
-    expect(differences([profile("13001000100", null), profile("13001000200", .3)], ["poverty_rate"])[0]).toContain("incomplete");
+    expect(comparisonOverview([profile("13001000100", null), profile("13001000200", .3)], ["poverty_rate"]).statistics[0]).toMatchObject({ value: .3, available: 1, total: 2, partial: true });
     expect(placeNarrative(profile("13001000100", null), "work").facts.find((f) => f.key === "poverty_rate")?.text).toContain("Not available");
   });
   it("does not compare different source vintages", () => {
-    expect(differences([profile("13001000100", .2), profile("13001000200", .3, "2010–2014")], ["poverty_rate"])[0]).toContain("vintages differ");
+    expect(comparisonOverview([profile("13001000100", .2), profile("13001000200", .3, "2010–2014")], ["poverty_rate"]).statistics[0]).toMatchObject({ value: null, reason: "Sources, years, or geographies differ; summary withheld." });
   });
   it("keeps pending designation explicit", () => {
     expect(placeNarrative(profile("13001000100", .2), "overview").unknowns.join(" ")).toContain("not recorded");
   });
-  it("handles tied display precision and fewer than two places", () => {
-    expect(differences([profile("13001000100", .20001), profile("13001000200", .20002)], ["poverty_rate"])[0]).toContain("at this precision");
-    expect(differences([profile("13001000100", .2)], ["poverty_rate"])).toEqual([]);
+  it("handles empty selections, unavailable values, and actual zero", () => {
+    expect(comparisonOverview([], []).statistics).toEqual([]);
+    expect(comparisonOverview([profile("13001000100", null)], ["poverty_rate"]).statistics[0].value).toBeNull();
+    expect(comparisonOverview([profile("13001000100", 0), profile("13001000200", NaN)], ["poverty_rate"]).statistics[0]).toMatchObject({ value: 0, available: 1, partial: true });
+  });
+  it("sums unique tract counts and labels partial totals", () => {
+    const a = profile("13001000100", .2), b = profile("13003000200", .3), c = profile("01001000300", .4);
+    a.measures.population = { value: 100, source: "acs5" };
+    b.measures.population = { value: 300, source: "acs5" };
+    const complete = comparisonOverview([a, b, a], ["population"]);
+    expect(complete).toMatchObject({ tractCount: 2, countyCount: 2, stateCount: 1 });
+    expect(complete.statistics[0]).toMatchObject({ value: 400, method: "Total", total: 2 });
+    expect(comparisonOverview([a, b, c], ["population"]).statistics[0]).toMatchObject({ value: 400, method: "Partial total", available: 2, total: 3 });
+  });
+  it("labels median-of-medians and honors selected measures without aggregating margins of error", () => {
+    const a = profile("13001000100", .2), b = profile("13001000200", .3);
+    a.measures.median_household_income = { value: 40000, source: "acs5" };
+    b.measures.median_household_income = { value: 80000, source: "acs5" };
+    const overview = comparisonOverview([a, b], ["median_household_income", "built_2020_or_later_moe"]);
+    expect(overview.statistics).toHaveLength(1);
+    expect(overview.statistics[0]).toMatchObject({ value: 60000, method: "Median of tract medians" });
+  });
+  it("withholds statistics with missing or incompatible source metadata", () => {
+    const a = profile("13001000100", .2), b = profile("13001000200", .3);
+    for (const field of ["name", "publisher", "geography"] as const) {
+      const changed = structuredClone(b);
+      changed.sources!.acs5[field] = "Different";
+      expect(comparisonOverview([a, changed], ["poverty_rate"]).statistics[0].value).toBeNull();
+    }
+    delete b.sources;
+    expect(comparisonOverview([a, b], ["poverty_rate"]).statistics[0]).toMatchObject({ value: null, reason: "Source metadata is incomplete; summary withheld." });
   });
 });
 

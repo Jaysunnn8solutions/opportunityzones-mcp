@@ -1,7 +1,8 @@
 "use client";
 import { useResearchState } from "./ResearchSession";
+import { readPreferences } from "./DevicePreferences";
 import { NO_FILTERS, type Filters } from "@/lib/explore/filter";
-import { DEFAULT_MEASURES, type MeasureKey } from "@/lib/research/measures";
+import { type MeasureKey } from "@/lib/research/measures";
 import { specification, readProjects, type LocalProject, type Specification } from "@/lib/research/workbench";
 
 export const PROJECT_STORAGE = "oz-research-projects-v1";
@@ -12,8 +13,8 @@ export function useResearchRecipe() {
   const [comparison] = useResearchState<string[]>("comparison", []);
   const [selection, setIds] = useResearchState<string[] | null>("workspace-tracts", null);
   const ids = selection ?? comparison;
-  const [keys, setKeys] = useResearchState<MeasureKey[]>("comparison-measures", DEFAULT_MEASURES);
-  const [format, setFormat] = useResearchState<"zip" | "json">("workspace-format", "zip");
+  const [keys, setKeys] = useResearchState<MeasureKey[]>("comparison-measures", () => readPreferences().columns);
+  const [format, setFormat] = useResearchState<"zip" | "json">("workspace-format", () => readPreferences().format);
   const [title, setTitle] = useResearchState("project-title", "Untitled research");
   const [notes, setNotes] = useResearchState("project-notes", "");
   const [activeId, setActiveId] = useResearchState("project-id", "");

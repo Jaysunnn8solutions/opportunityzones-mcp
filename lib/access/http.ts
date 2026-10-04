@@ -48,7 +48,10 @@ export async function readBody(req: Request, max = 32_000) {
 export async function session(req: Request) {
   const raw = cookie(req, "oz_session");
   if (!raw || raw.length > 100) return null;
-  return (await db().prepare("SELECT a.id, a.terms, s.verified FROM sessions s JOIN accounts a ON a.id=s.account WHERE s.hash=? AND s.expires>? AND NOT EXISTS (SELECT 1 FROM settings WHERE key='account-disabled:' || a.id AND value='1')").get(hashToken(raw), Date.now())) as { id: string; terms: string; verified: number } | undefined ?? null;
+  const now = Date.now();
+  const account = (await db().prepare("SELECT a.id, a.terms, s.verified FROM sessions s JOIN accounts a ON a.id=s.account WHERE s.hash=? AND s.expires>? AND NOT EXISTS (SELECT 1 FROM settings WHERE key='account-disabled:' || a.id AND value='1')").get(hashToken(raw), now)) as { id: string; terms: string; verified: number } | undefined ?? null;
+  if (account) await db().prepare("UPDATE session_details SET last_used=? WHERE hash=? AND (last_used IS NULL OR last_used<?)").run(Math.floor(now / 300_000) * 300_000, hashToken(raw), now - 300_000);
+  return account;
 }
 export async function requireMember(req: Request, recent = false) {
   const account = (await session(req));
@@ -68,10 +71,14 @@ export async function networkSubject(req: Request) {
   const store = db();
   (await store.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES('network-secret',?)").run(token()));
   const secret = ((await store.prepare("SELECT value FROM settings WHERE key='network-secret'").get()) as { value: string }).value;
-  const header = process.env.OZ_TRUSTED_IP_HEADER;
+  const header = process.env.OZ_TRUSTED_PROXY_VERIFIED === "1" ? process.env.OZ_TRUSTED_IP_HEADER : undefined;
   const address = header ? req.headers.get(header)?.slice(0, 200) ?? "shared" : "shared";
   // A conservative shared bucket is used when the hosting proxy is not configured.
   return `network:${createHmac("sha256", secret).update(`${Math.floor(Date.now() / DAY)}:${address}`).digest("hex")}`;
+}
+export async function signupBudgets(req: Request): Promise<Budget[]> {
+  return [{ subject: "service", action: "accounts", limit: 100, window: DAY },
+    ...(process.env.OZ_TRUSTED_IP_HEADER && process.env.OZ_TRUSTED_PROXY_VERIFIED === "1" ? [{ subject: await networkSubject(req), action: "accounts", limit: 5, window: DAY }] : [])];
 }
 export async function limitRequest(req: Request, action: "read" | "address" | "site" | "auth" | "download", account?: Awaited<ReturnType<typeof session>>) {
   if (account === undefined) account = await session(req);
