@@ -32,8 +32,12 @@ export function loadIndicatorArtifact(): { status: TractAnalysis["modelStatus"];
   if (existsSync(file)) {
     try {
       const data = artifactSchema.parse(JSON.parse(readFileSync(file, "utf8")));
-      const matches = ["tracts.bin", "manifest.json"].every((name) =>
-        createHash("sha256").update(readFileSync(path.join(dir, name))).digest("hex") === data.fingerprints[`data/${name}`]);
+      const matches = ["tracts.bin", "manifest.json"].every((name) => {
+        const bytes = readFileSync(path.join(dir, name));
+        // Git may convert text line endings on Windows. Binary data remains byte-exact.
+        const input = name.endsWith(".json") ? bytes.toString("utf8").replace(/\r\n/g, "\n") : bytes;
+        return createHash("sha256").update(input).digest("hex") === data.fingerprints[`data/${name}`];
+      });
       result = matches ? { status: "available", data } : { status: "stale", data: null };
     } catch { result = { status: "invalid", data: null }; }
   }

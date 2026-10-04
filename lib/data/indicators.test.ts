@@ -42,3 +42,18 @@ it("withholds missing, malformed and stale artifacts", () => {
     expect(loadIndicatorArtifact()).toEqual({ status: mode, data: null });
   }
 });
+
+it("accepts either checkout line ending but rejects changed manifest content", () => {
+  const actualDir = process.env.OZ_DATA_DIR ?? path.join(process.cwd(), "data");
+  const artifact = readFileSync(path.join(actualDir, "research-indicators.json"));
+  const binary = readFileSync(path.join(actualDir, "tracts.bin"));
+  const manifest = readFileSync(path.join(actualDir, "manifest.json"), "utf8").replace(/\r\n/g, "\n");
+  for (const mode of ["lf", "crlf", "changed"] as const) {
+    const dir = mkdtempSync(path.join(os.tmpdir(), "oz-indicator-test-")); temporary.push(dir);
+    writeFileSync(path.join(dir, "research-indicators.json"), artifact);
+    writeFileSync(path.join(dir, "tracts.bin"), binary);
+    writeFileSync(path.join(dir, "manifest.json"), mode === "crlf" ? manifest.replace(/\n/g, "\r\n") : mode === "changed" ? manifest + " " : manifest);
+    vi.stubEnv("OZ_DATA_DIR", dir);
+    expect(loadIndicatorArtifact().status).toBe(mode === "changed" ? "stale" : "available");
+  }
+});

@@ -142,7 +142,10 @@ def main():
         histories[mapping[row["geoid10"]]] = {"geoid2010": row["geoid10"], "changes": changes}
     manifest = json.loads((ROOT / "data/manifest.json").read_text(encoding="utf-8"))
     paths = [analysis_path, mapping_path, ROOT / "data/tracts.bin", ROOT / "data/manifest.json"]
-    fingerprints = {str(p.relative_to(ROOT)).replace("\\", "/"): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
+    # Normalize JSON line endings so a Git checkout on Linux or Windows validates equally.
+    fingerprints = {str(p.relative_to(ROOT)).replace("\\", "/"): hashlib.sha256(
+        p.read_bytes().replace(b"\r\n", b"\n") if p.suffix == ".json" else p.read_bytes()
+    ).hexdigest() for p in paths}
     result = {"schemaVersion": 1, "datasetVersion": manifest["generated"], "seed": SEED,
         "libraries": {"sklearn": sklearn.__version__, "numpy": np.__version__, "pandas": pd.__version__},
         "fingerprints": fingerprints, "models": models, "histories": histories,
