@@ -22,3 +22,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run release:build
+        # Reproduce hosted build settings without any real credentials.
+        env:
+          NODE_ENV: production
+          VERCEL: "1"
+          OZ_ORIGIN: https://research.example
+          DATABASE_URL: ""

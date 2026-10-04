@@ -45,6 +45,8 @@ Do not directly resume restored accounts. Reconcile against an independent curre
 
 The release gate also runs `npm run security:audit` (`npm audit --omit=dev --audit-level=high`). It queries the free public npm advisory registry and fails on high/critical production findings or registry failures. It is not evidence of complete security and does not assess every development dependency. Do not automatically upgrade major dependencies or install paid security services. Review actionable findings and rerun the release gates after changes.
 
+Both test commands launch an isolated subprocess with `NODE_ENV=test`, without inherited deployment origins, database credentials, provider keys, or service switches. Each suite supplies its own synthetic configuration and in-memory database. This also applies during Vercel production builds: the parent build keeps its deployment settings and the application still builds for production. Production-mode safeguards remain covered by tests that explicitly set that mode.
+
 Keep the last successful application deployment and a compatible database restore plan. Schema migrations here are additive (version 3 adds operations metadata). Roll back application code only after checking schema and terms compatibility; an older legal document must not silently reaccept a newer receipt. A code rollback does not restore deleted accounts or revoke newly issued tokens.
 
 ## Remaining live acceptance checks

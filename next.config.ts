@@ -14,6 +14,8 @@ function commit(): string {
 }
 
 const nextConfig: NextConfig = {
+  // Bound prerender worker memory on desktops and free hosted builders.
+  experimental: { cpus: 2 },
   // Shown on the map and in the footer (lib/version.ts).
   env: {
     APP_VERSION: pkg.version,

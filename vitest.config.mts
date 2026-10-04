@@ -4,7 +4,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     // Bound process/memory use on both large desktops and small hosted builders.
-    maxWorkers: 4,
+    maxWorkers: 2,
     environment: "node",
     setupFiles: ["./tests/access-setup.ts"],
     include: ["lib/**/*.test.ts", "pipeline/**/*.test.ts", "tests/**/*.test.ts", "app/**/*.test.ts"],
